@@ -1,0 +1,95 @@
+<mxfile host="Electron">
+  <diagram name="Page-1" id="t6HskUdcYdPEaupkAVdl">
+    <mxGraphModel dx="1290" dy="940" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="EEN9fXm-df5wC6PGS464-5" edge="1" parent="1" source="EEN9fXm-df5wC6PGS464-2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=default;" target="EEN9fXm-df5wC6PGS464-4" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="EEN9fXm-df5wC6PGS464-2" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=default;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="Player connects" vertex="1">
+          <mxGeometry height="30" width="100" x="30" y="20" as="geometry" />
+        </mxCell>
+        <mxCell id="EEN9fXm-df5wC6PGS464-8" edge="1" parent="1" source="EEN9fXm-df5wC6PGS464-4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.006;entryY=0.532;entryDx=0;entryDy=0;entryPerimeter=0;strokeColor=default;" target="EEN9fXm-df5wC6PGS464-7">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="80" y="126" />
+            </Array>
+            <mxPoint x="90" y="120" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="EEN9fXm-df5wC6PGS464-9" edge="1" parent="1" source="EEN9fXm-df5wC6PGS464-4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;strokeColor=default;" target="EEN9fXm-df5wC6PGS464-6">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="EEN9fXm-df5wC6PGS464-4" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=default;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="Is player_id in session?" vertex="1">
+          <mxGeometry height="30" width="140" x="10" y="70" as="geometry" />
+        </mxCell>
+        <mxCell id="EEN9fXm-df5wC6PGS464-13" edge="1" parent="1" source="EEN9fXm-df5wC6PGS464-6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="EEN9fXm-df5wC6PGS464-12">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="160" y="150" />
+              <mxPoint x="160" y="225" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="EEN9fXm-df5wC6PGS464-6" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=default;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="Yes" vertex="1">
+          <mxGeometry height="20" width="30" x="120" y="140" as="geometry" />
+        </mxCell>
+        <mxCell id="EEN9fXm-df5wC6PGS464-11" edge="1" parent="1" source="EEN9fXm-df5wC6PGS464-7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=default;" target="EEN9fXm-df5wC6PGS464-10" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="EEN9fXm-df5wC6PGS464-7" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=default;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="No" vertex="1">
+          <mxGeometry height="20" width="30" x="120" y="115" as="geometry" />
+        </mxCell>
+        <mxCell id="EEN9fXm-df5wC6PGS464-10" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=default;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="session = {player_id:uuid4()}" vertex="1">
+          <mxGeometry height="30" width="170" x="180" y="110" as="geometry" />
+        </mxCell>
+        <mxCell id="EEN9fXm-df5wC6PGS464-12" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=default;fillColor=none;align=left;verticalAlign=middle;rounded=0;" value="if connected_to in session:&lt;div&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;if that game in that players session:&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;session = {player_id:player_id}&lt;br&gt;&lt;/div&gt;&lt;div&gt;if game in session:&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;if that game_id exists:&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;join_game&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;else:&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;session = {player_id:player_id}&lt;/span&gt;&lt;br&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="150" width="240" x="180" y="150" as="geometry" />
+        </mxCell>
+        <mxCell id="EEN9fXm-df5wC6PGS464-16" edge="1" parent="1" source="EEN9fXm-df5wC6PGS464-14" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.25;entryDx=0;entryDy=0;" target="EEN9fXm-df5wC6PGS464-15">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="EEN9fXm-df5wC6PGS464-14" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=default;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="connect to player" vertex="1">
+          <mxGeometry height="30" width="140" x="10" y="400" as="geometry" />
+        </mxCell>
+        <mxCell id="EEN9fXm-df5wC6PGS464-26" edge="1" parent="1" source="EEN9fXm-df5wC6PGS464-15" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="EEN9fXm-df5wC6PGS464-25" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="EEN9fXm-df5wC6PGS464-15" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=default;fillColor=none;align=left;verticalAlign=middle;rounded=0;" value="&lt;div&gt;if anyone is connected to you (the player requesting to connect):&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;error (someone is already connected to you)&lt;br&gt;&lt;/div&gt;is connected_to in session of the target player:&lt;div&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;error&lt;br&gt;&lt;/div&gt;&lt;div&gt;else:&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;session add: connected_to: player_id of the target&lt;br&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="100" width="350" x="180" y="390" as="geometry" />
+        </mxCell>
+        <mxCell id="EEN9fXm-df5wC6PGS464-21" edge="1" parent="1" source="EEN9fXm-df5wC6PGS464-19" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="EEN9fXm-df5wC6PGS464-20" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="EEN9fXm-df5wC6PGS464-19" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=default;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="Chnage name" vertex="1">
+          <mxGeometry height="30" width="140" x="10" y="560" as="geometry" />
+        </mxCell>
+        <mxCell id="EEN9fXm-df5wC6PGS464-20" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=default;fillColor=none;align=left;verticalAlign=middle;rounded=0;" value="&lt;div&gt;if len(name) &amp;gt; 3: session name = new_name&lt;/div&gt;" vertex="1">
+          <mxGeometry height="30" width="305" x="180" y="560" as="geometry" />
+        </mxCell>
+        <mxCell id="EEN9fXm-df5wC6PGS464-22" edge="1" parent="1" source="EEN9fXm-df5wC6PGS464-23" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="EEN9fXm-df5wC6PGS464-24" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="EEN9fXm-df5wC6PGS464-23" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=default;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="disconnect from player" vertex="1">
+          <mxGeometry height="30" width="140" x="10" y="510" as="geometry" />
+        </mxCell>
+        <mxCell id="EEN9fXm-df5wC6PGS464-24" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=default;fillColor=none;align=left;verticalAlign=middle;rounded=0;" value="&lt;div&gt;session connected_to = null&lt;/div&gt;" vertex="1">
+          <mxGeometry height="30" width="305" x="180" y="510" as="geometry" />
+        </mxCell>
+        <mxCell id="EEN9fXm-df5wC6PGS464-25" parent="1" style="whiteSpace=wrap;html=1;align=center;fillColor=none;gradientColor=none;rounded=0;" value="The player that someone is connected to gets redirected to lobby if not to lobby yet,&lt;div&gt;the player connecting to the host gets redirected to a waiting room&lt;/div&gt;&lt;div&gt;on lobby load when connected to a player, requests a sync_lobby function&lt;/div&gt;&lt;div&gt;server requests its host to send the lobby settings&lt;/div&gt;&lt;div&gt;the host player then runs the sync_lobby that emits the new lobby settings to all the connected players&lt;/div&gt;" vertex="1">
+          <mxGeometry height="142.5" width="400" x="600" y="368.75" as="geometry" />
+        </mxCell>
+        <mxCell id="EEN9fXm-df5wC6PGS464-27" edge="1" parent="1" source="EEN9fXm-df5wC6PGS464-28" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="EEN9fXm-df5wC6PGS464-29" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="EEN9fXm-df5wC6PGS464-28" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=default;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="edit lobby" vertex="1">
+          <mxGeometry height="30" width="140" x="10" y="610" as="geometry" />
+        </mxCell>
+        <mxCell id="EEN9fXm-df5wC6PGS464-29" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=default;fillColor=none;align=left;verticalAlign=middle;rounded=0;" value="run the sync_lobby func where it emits the new lobby settings to all the connected players, as used above" vertex="1">
+          <mxGeometry height="30" width="580" x="180" y="610" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
