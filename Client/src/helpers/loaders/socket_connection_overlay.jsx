@@ -2,7 +2,7 @@ import { useApp } from "../context/app_provider";
 import "./css/socket_connection_overlay.css";
 
 
-const SocketConnectionOverlay = (display = true) => {
+const SocketConnectionOverlay = ({display = true}) => {
     if (display == false){return null;}
 
     const { socketStatus, SocketStatusModes } = useApp();

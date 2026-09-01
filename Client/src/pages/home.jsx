@@ -2,19 +2,17 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import mainUnoImage from "../assets/main-uno-image.png";
 import "./css/Home.css";
-import * as socketAPI from "../api/socket_handler"
-import FSLoading from "../helpers/loaders/fullscreen1"
-import SpinnerLoading from "../helpers/loaders/inside_spinner1"
 
 
 function Home() {
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(false);
 
-  async function startBtn(){
+  async function createLobbyBtn(){
     navigate("/lobby");
   }
-
+  async function joinLobbyBtn(){
+    navigate("/joinlobby");
+  }
 
   return (
     <div className="game-container">
@@ -26,14 +24,15 @@ function Home() {
         <div className="button-group">
           <button 
             className="btn btn-create" 
-            onClick={startBtn} 
-            disabled={loading} 
+            onClick={createLobbyBtn} 
           >
-            { loading ? 
-            <SpinnerLoading />
-            :
-            "Start"
-            }
+            Create Lobby
+          </button>
+          <button 
+            className="btn btn-create" 
+            onClick={joinLobbyBtn} 
+          >
+            Join Lobby
           </button>
         </div>
       </div>

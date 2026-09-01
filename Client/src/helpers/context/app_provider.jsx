@@ -6,6 +6,7 @@ import React, {
 } from "react";
 
 import socket from "../../api/socket_init";
+import * as SocketAPI from "../../api/socket_handler"
 
 
 const AppContext = createContext(null);
@@ -64,6 +65,15 @@ export const AppProvider = ({ children }) => {
             socket.disconnect();
         };
 
+    }, []);
+
+
+    useEffect(() => {
+        const unsubscribe = SocketAPI.listenForSessionSync((newSession) => {
+            console.log(newSession)
+            setSession(newSession);
+        });
+        return unsubscribe;
     }, []);
 
 

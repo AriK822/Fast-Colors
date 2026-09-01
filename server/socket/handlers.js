@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
-import { loadLobby, saveLobby, loadAllLobbies } from "../DB/lobby.js";
 import { game_options } from "../game/game_options.js";
-import withPlayer from "../DB/player_data.js"
+import * as LobbyHandler from "../game/lobbies.js"
+import * as GameHandler from "../game/games.js"
 
 
 
@@ -42,19 +42,213 @@ io.on("connection", async (socket) => {
         next()
     })
 
+    if (!socket.request.session.player_id){
+        socket.request.session.player_id = randomUUID()
+        await saveSession(socket.request.session)
+    }
 
-    // // Authorize
-    // if (!socket.request.session.player_id){
-    //     socket.request.session.player_id = randomUUID()
-    //     await saveSession(socket.request.session)
-    // }
+    if (!socket.request.session.player_name){
+        socket.request.session.player_name = `Guest-${Math.floor(Math.random()*1000)}`;
+        await saveSession(socket.request.session)
+    }
+
+    socket.emit("sync_session", {
+        player_id: socket.request.session.player_id,
+        player_name: socket.request.session.player_name,
+    })
+
+    socket.on("load_lobby", async (data, ack) => {
+        const game_id = GameHandler.Player_To_Game[socket.request.session.player_id];
+        if (game_id){
+            ack({
+                "error":true,
+                "msg": "An ongoing game is still in progress.",
+                "redirect": "/game",
+            })
+            return;
+        }
+
+        const lobby_id = LobbyHandler.Player_To_Lobby[socket.request.session.player_id];
+        if (lobby_id){
+            socket.join(lobby_id);
+            ack({
+                "msg": "Loaded the connected lobby. IF you want to create a new lobby, leave this lobby first.",
+                "lobby": LobbyHandler.LOBBIES[lobby_id],
+            })
+            return;
+        }
+
+        const this_lobby = LobbyHandler.createNewLobby(
+            socket.request.session.player_id, socket.request.session.player_name
+        );
+        socket.join(this_lobby.id);
+        ack({
+            "msg": "Successfully created a new lobby.",
+            "lobby":this_lobby,
+        });
+        console.log(LobbyHandler.LOBBIES)
+        console.log(LobbyHandler.Player_To_Lobby)
+        return
+    })
 
 
-    // socket.on("join_lobby", async (data, ack) => {
-    //     socket.request.session
-    //     ack();
-    //     return
-    // })
+    socket.on("load_join_lobby", async (data, ack) => {
+        const game_id = GameHandler.Player_To_game[socket.request.session.player_id];
+        if (game_id){
+            ack({
+                "error":true,
+                "msg": "An ongoing game is still in progress.",
+                "redirect": "/game",
+            })
+            return;
+        }
+
+        const lobby_id = LobbyHandler.Player_To_Lobby[socket.request.session.player_id];
+        if (lobby_id){
+            ack({
+                "error":true,
+                "msg": "Already joined a lobby.",
+                "redirect": "/lobby",
+            })
+            return;
+        }
+
+        ack({
+            "lobbies": LobbyHandler.LOBBIES,
+        });
+        return
+    })
+    
+    
+    socket.on("join_lobby", async (data, ack) => {
+        const game_id = GameHandler.Player_To_game[socket.request.session.player_id];
+        if (game_id){
+            ack({
+                "error":true,
+                "msg": "An ongoing game is still in progress.",
+                "redirect": "/game",
+            })
+            return;
+        }
+
+        const lobby_id = LobbyHandler.Player_To_Lobby[socket.request.session.player_id];
+        if (lobby_id){
+            ack({
+                "error":true,
+                "msg": "Already joined a lobby.",
+                "redirect": "/lobby",
+            })
+            return;
+        }
+
+        if (LobbyHandler.LOBBIES[data.lobby_id] === null){
+            ack({
+                "error":true,
+                "msg": "Lobby doesnt exist",
+            })
+            return;
+        }
+
+        LobbyHandler.joinPlayerToLobby(
+            socket.request.session.player_id, 
+            data.lobby_id,
+            socket.request.session.player_name,
+        );
+
+        ack({
+            "msg": "Successfully joined the lobby.",
+            "redirect": "/lobby",
+        });
+        socket.to(lobby_id).emit("sync_lobby", LobbyHandler.LOBBIES[lobby_id])
+        return
+    })
+
+
+    socket.on("change_lobby_settings", async (data, ack) => {
+        const lobby_id = LobbyHandler.Player_To_Lobby[socket.request.session.player_id];
+        if (lobby_id === null){
+            ack({
+                "error":true,
+                "msg": "Lobby doesnt exist",
+            })
+            return;
+        }
+
+        if (LobbyHandler.LOBBIES[lobby_id][owner] != socket.request.session.player_id){
+            ack({
+                "error":true,
+                "msg": "Access denied. Settings can be changed only by the owner of the lobby.",
+            })
+            return;
+        }
+
+        const new_options = data.game_options;
+        if (new_options.selected_player_count === null || new_options.selected_card_types === null){
+            ack({
+                "error":true,
+                "msg": "Invalid settings",
+            })
+            return;
+        }
+
+        try {
+            if (!new_options.selected_card_types || !Array.isArray(new_options.selected_card_types)) {
+                ack({
+                    "error": true,
+                    "msg": "Invalid settings: selected_card_types must be an array"
+                });
+                return false;
+            }
+            for (const cardType of new_options.selected_card_types) {
+                if (!game_options.card_types[cardType]) {
+                    ack({
+                        "error": true,
+                        "msg": `Invalid settings: card type "${cardType}" is not supported`
+                    });
+                    return false;
+                }
+            }
+            if (new_options.selected_player_count === undefined || 
+                new_options.selected_player_count === null || 
+                typeof new_options.selected_player_count !== 'number') {
+                ack({
+                    "error": true,
+                    "msg": "Invalid settings: selected_player_count must be a number"
+                });
+                return false;
+            }
+            if (!game_options.allowed_player_counts.includes(new_options.selected_player_count)) {
+                ack({
+                    "error": true,
+                    "msg": `Invalid settings: player count `+
+                    `${new_options.selected_player_count} is not allowed. `+
+                    `Allowed: ${game_options.allowed_player_counts.join(', ')}`
+                });
+                return false;
+            }
+        } catch (error) {
+            ack({
+                "error": true,
+                "msg": "Invalid settings: validation error"
+            });
+            return false;
+        }
+
+        LobbyHandler.LOBBIES[lobby_id].game_options.selected_player_count = 
+            new_options.selected_player_count;
+        
+        LobbyHandler.LOBBIES[lobby_id].game_options.selected_card_types = 
+            new_options.selected_card_types;
+        
+
+        ack({
+            "msg": "Successfully updated the settings",
+        });
+        socket.to(lobby_id).emit("sync_lobby", LobbyHandler.LOBBIES[lobby_id])
+
+        return
+    })
+
 
 
 
