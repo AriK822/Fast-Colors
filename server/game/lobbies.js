@@ -1,13 +1,17 @@
 import { game_options } from "./game_options.js"
 import { randomUUID } from "node:crypto";
+import * as PlayerstateHandler from "./player_states.js"
 
 export const LOBBIES = new Map();
 export const Player_To_Lobby = new Map();
 
 
 export function joinPlayerToLobby(player_id, lobby_id, player_name){
-    if (LOBBIES.lobby_id !== null){
-        LOBBIES[lobby_id].players[player_id] = {"status":"online", "name":player_name};
+    if (LOBBIES[lobby_id] != null){
+        LOBBIES[lobby_id].players[player_id] = {
+            get status() {return PlayerstateHandler.getPlayerState(player_id);}, 
+            "name":player_name
+        };
         Player_To_Lobby[player_id] = lobby_id;
     }
     else {
@@ -43,4 +47,19 @@ export function createNewLobby(owner_id, owner_name){
 
     return this_lobby;
 }
+
+
+export function lobbyCleanup(player_id){
+    const lobby_id = Player_To_Lobby[player_id];
+    if (lobby_id){
+        const playerCount = Object.entries(LOBBIES[lobby_id].players).length;
+        if (playerCount <= 1){
+            delete LOBBIES[lobby_id];
+            return null
+        }
+        return LOBBIES[lobby_id];
+    }
+    return null
+}
+
 

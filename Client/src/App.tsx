@@ -5,9 +5,11 @@ import "./api/socket_init";
 // Pages
 import Home from "./pages/Home"
 import Lobby from "./pages/lobby"
+import JoinLobby from "./pages/join_lobby"
 
 // CSS
-// import "./helpers/base.css"
+import "./helpers/base.css";
+import "react-loading-skeleton/dist/skeleton.css";
 
 // Overlays
 import SocketConnectionOverlay from "./helpers/loaders/socket_connection_overlay"
@@ -38,6 +40,8 @@ function App() {
         <Route path="/" element={<Home />} />
 
         <Route path="/lobby" element={<Lobby />} />
+        
+        <Route path="/joinlobby" element={<JoinLobby />} />
 
         <Route path="*" element={<Navigate to="/" replace />} />
 

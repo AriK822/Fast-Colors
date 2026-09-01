@@ -1,12 +1,10 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import "../helpers/base.css";
 
 import * as SocketAPI from "../api/socket_handler"
 import { useNotification } from "../helpers/context/notification";
 
 import Skeleton from "react-loading-skeleton";
-import "react-loading-skeleton/dist/skeleton.css";
 
 
 function Lobby() {
@@ -29,7 +27,7 @@ function Lobby() {
             }
 
             if (result.redirect) {
-                navigate(result.redirect);
+                navigate(result.redirect, {replace:true});
                 return;
             }
 
@@ -41,13 +39,9 @@ function Lobby() {
 
     }, []);
 
+  
+  SocketAPI.listenForLobbySync((new_lobby) => {setLobby(new_lobby); console.log(new_lobby)})
 
-  async function createLobbyBtn(){
-    navigate("/lobby");
-  }
-  async function joinLobbyBtn(){
-    navigate("/joinlobby");
-  }
 
   if (!lobby){
     return (

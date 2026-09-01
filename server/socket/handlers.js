@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 import { game_options } from "../game/game_options.js";
 import * as LobbyHandler from "../game/lobbies.js"
 import * as GameHandler from "../game/games.js"
+import * as PlayerstateHandler from "../game/player_states.js"
 
 
 
@@ -42,6 +43,8 @@ io.on("connection", async (socket) => {
         next()
     })
 
+    {
+
     if (!socket.request.session.player_id){
         socket.request.session.player_id = randomUUID()
         await saveSession(socket.request.session)
@@ -51,6 +54,16 @@ io.on("connection", async (socket) => {
         socket.request.session.player_name = `Guest-${Math.floor(Math.random()*1000)}`;
         await saveSession(socket.request.session)
     }
+
+    PlayerstateHandler.setPlayerState(socket.request.session.player_id, "online")
+    const lobby_id = LobbyHandler.Player_To_Lobby[socket.request.session.player_id];
+    if (lobby_id){
+        const active_lobby = LobbyHandler.LOBBIES[lobby_id];
+        socket.to(active_lobby.id).emit("sync_lobby", active_lobby)
+    }
+
+    }
+
 
     socket.emit("sync_session", {
         player_id: socket.request.session.player_id,
@@ -86,14 +99,12 @@ io.on("connection", async (socket) => {
             "msg": "Successfully created a new lobby.",
             "lobby":this_lobby,
         });
-        console.log(LobbyHandler.LOBBIES)
-        console.log(LobbyHandler.Player_To_Lobby)
         return
     })
 
 
     socket.on("load_join_lobby", async (data, ack) => {
-        const game_id = GameHandler.Player_To_game[socket.request.session.player_id];
+        const game_id = GameHandler.Player_To_Game[socket.request.session.player_id];
         if (game_id){
             ack({
                 "error":true,
@@ -121,7 +132,7 @@ io.on("connection", async (socket) => {
     
     
     socket.on("join_lobby", async (data, ack) => {
-        const game_id = GameHandler.Player_To_game[socket.request.session.player_id];
+        const game_id = GameHandler.Player_To_Game[socket.request.session.player_id];
         if (game_id){
             ack({
                 "error":true,
@@ -131,8 +142,8 @@ io.on("connection", async (socket) => {
             return;
         }
 
-        const lobby_id = LobbyHandler.Player_To_Lobby[socket.request.session.player_id];
-        if (lobby_id){
+        const previous_joined_lobby_id = LobbyHandler.Player_To_Lobby[socket.request.session.player_id];
+        if (previous_joined_lobby_id){
             ack({
                 "error":true,
                 "msg": "Already joined a lobby.",
@@ -141,7 +152,7 @@ io.on("connection", async (socket) => {
             return;
         }
 
-        if (LobbyHandler.LOBBIES[data.lobby_id] === null){
+        if (LobbyHandler.LOBBIES[data.lobby_id] == null){
             ack({
                 "error":true,
                 "msg": "Lobby doesnt exist",
@@ -159,14 +170,14 @@ io.on("connection", async (socket) => {
             "msg": "Successfully joined the lobby.",
             "redirect": "/lobby",
         });
-        socket.to(lobby_id).emit("sync_lobby", LobbyHandler.LOBBIES[lobby_id])
+        socket.to(data.lobby_id).emit("sync_lobby", LobbyHandler.LOBBIES[data.lobby_id])
         return
     })
 
 
     socket.on("change_lobby_settings", async (data, ack) => {
         const lobby_id = LobbyHandler.Player_To_Lobby[socket.request.session.player_id];
-        if (lobby_id === null){
+        if (lobby_id == null){
             ack({
                 "error":true,
                 "msg": "Lobby doesnt exist",
@@ -183,7 +194,7 @@ io.on("connection", async (socket) => {
         }
 
         const new_options = data.game_options;
-        if (new_options.selected_player_count === null || new_options.selected_card_types === null){
+        if (new_options.selected_player_count == null || new_options.selected_card_types == null){
             ack({
                 "error":true,
                 "msg": "Invalid settings",
@@ -208,8 +219,8 @@ io.on("connection", async (socket) => {
                     return false;
                 }
             }
-            if (new_options.selected_player_count === undefined || 
-                new_options.selected_player_count === null || 
+            if (new_options.selected_player_count == undefined || 
+                new_options.selected_player_count == null || 
                 typeof new_options.selected_player_count !== 'number') {
                 ack({
                     "error": true,
@@ -251,7 +262,6 @@ io.on("connection", async (socket) => {
 
 
 
-
     // socket.on("create_lobby", withSession(socket, async (data, ack) => {
     //     const player = socket.request.session
     //     socket.join(lobby_.id)
@@ -259,10 +269,26 @@ io.on("connection", async (socket) => {
     //     return
     // }));
 
+
+
+    socket.on("disconnecting", () => {
+
+        // update state in lobbies
+        PlayerstateHandler.setPlayerState(socket.request.session.player_id, "offline")
+        const active_lobby = LobbyHandler.lobbyCleanup(socket.request.session.player_id);
+        if (active_lobby){
+            console.log("Updating")
+            socket.to(active_lobby.id).emit("sync_lobby", active_lobby)
+        }
+
+    });
+
     
 });
 
 
 }
+
+
 
 export default attachIOHandlers
