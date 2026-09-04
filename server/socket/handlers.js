@@ -35,6 +35,9 @@ function withSession(socket, handler) {
 
 function attachIOHandlers(io){
 
+LobbyHandler.hookIO(io);
+
+
 
 io.on("connection", async (socket) => {   
     // TEST DELAY ⚠️
@@ -55,7 +58,9 @@ io.on("connection", async (socket) => {
         await saveSession(socket.request.session)
     }
 
-    PlayerstateHandler.setPlayerState(socket.request.session.player_id, "online")
+    socket.join(`player-${socket.request.session.player_id}`)
+
+    PlayerstateHandler.setPlayerState(socket.request.session.player_id, true)
     const lobby_id = LobbyHandler.Player_To_Lobby[socket.request.session.player_id];
     if (lobby_id){
         const active_lobby = LobbyHandler.LOBBIES[lobby_id];
@@ -65,10 +70,12 @@ io.on("connection", async (socket) => {
     }
 
 
-    socket.emit("sync_session", {
-        player_id: socket.request.session.player_id,
-        player_name: socket.request.session.player_name,
-    })
+    socket.on("sync_session", async (data, ack) => {
+        ack({
+            player_id: socket.request.session.player_id,
+            player_name: socket.request.session.player_name,
+        });
+    });
 
     socket.on("load_lobby", async (data, ack) => {
         const game_id = GameHandler.Player_To_Game[socket.request.session.player_id];
@@ -261,23 +268,103 @@ io.on("connection", async (socket) => {
     })
 
 
+    socket.on("leave_lobby", async (data, ack) => {
+        const lobby_id = LobbyHandler.Player_To_Lobby[socket.request.session.player_id];
+        if (!lobby_id){
+            ack({
+                "error":true,
+                "msg": "No active lobby to leave from.",
+            })
+            return;
+        }
 
-    // socket.on("create_lobby", withSession(socket, async (data, ack) => {
-    //     const player = socket.request.session
-    //     socket.join(lobby_.id)
-    //     ack(lobby_)
-    //     return
-    // }));
+        LobbyHandler.leaveLobby(socket.request.session.player_id);
+
+        ack({
+            "msg": "Successfully left the lobby.",
+            "redirect": "/",
+        });
+
+        const active_lobby = LobbyHandler.LOBBIES[lobby_id];
+        if (active_lobby){
+            socket.to(active_lobby.id).emit("sync_lobby", active_lobby)
+        }
+        socket.leave(lobby_id)
+
+        return
+    })
+
+
+    socket.on("kick_player_from_lobby", async (data, ack) => {
+        const lobby_id = LobbyHandler.Player_To_Lobby[socket.request.session.player_id];
+        if (!lobby_id){
+            ack({
+                "error":true,
+                "msg": "No active lobby.",
+            })
+            return;
+        }
+
+        const this_lobby = LobbyHandler.LOBBIES[lobby_id];
+        if (this_lobby.owner != socket.request.session.player_id){
+            ack({
+                "error":true,
+                "msg": "Action not allowed. You are not the lobby owner.",
+            })
+            return;
+        }
+
+        if (!data.player_id){
+            ack({
+                "error":true,
+                "msg": "No id provided.",
+            })
+            return;
+        }
+
+        if (this_lobby.owner == data.player_id){
+            ack({
+                "error":true,
+                "msg": "Cannot kick lobby owner.",
+            })
+            return;
+        }
+
+        const kicked = LobbyHandler.kickPlayer(this_lobby.id, data.player_id);
+
+        if (!kicked){
+            ack({
+                "error":true,
+                "msg": "Player doesnt exist",
+            });
+            return
+        }
+
+        ack({
+            "msg": "Successfully kicked player.",
+        });
+
+        const kciked_sockets = await io.in(`player-${data.player_id}`).fetchSockets();
+
+        for (const kicked_socket of kciked_sockets) {
+            kicked_socket.leave(this_lobby.id);
+            kicked_socket.emit("kicked_from_lobby");
+        }
+
+        io.to(this_lobby.id).emit("sync_lobby", this_lobby)
+
+        return
+    })
 
 
 
     socket.on("disconnecting", () => {
 
-        // update state in lobbies
-        PlayerstateHandler.setPlayerState(socket.request.session.player_id, "offline")
+        PlayerstateHandler.setPlayerState(socket.request.session.player_id, false)
+
+        // update lobbies
         const active_lobby = LobbyHandler.lobbyCleanup(socket.request.session.player_id);
         if (active_lobby){
-            console.log("Updating")
             socket.to(active_lobby.id).emit("sync_lobby", active_lobby)
         }
 

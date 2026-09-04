@@ -8,6 +8,8 @@ import React, {
 import socket from "../../api/socket_init";
 import * as SocketAPI from "../../api/socket_handler"
 
+import SocketConnectionOverlay from "../loaders/socket_connection_overlay"
+
 
 const AppContext = createContext(null);
 
@@ -24,6 +26,7 @@ export const useApp = () => {
 
 
 export const SocketStatusModes = Object.freeze({
+    CONNECTING: "connecting",
     CONNECTED: "connected",
     DISCONNECTED: "disconnected",
     RECONNECTING: "reconnecting",
@@ -35,7 +38,7 @@ export const AppProvider = ({ children }) => {
     const [session, setSession] = useState(null);
 
     const [socketStatus, setSocketStatus] = useState(
-        SocketStatusModes.DISCONNECTED
+        SocketStatusModes.CONNECTING
     );
 
 
@@ -46,7 +49,7 @@ export const AppProvider = ({ children }) => {
 
         const onDisconnect = (reason) => {
             console.log("Socket disconnected:", reason);
-            setSocketStatus(SocketStatusModes.RECONNECTING);
+            setSocketStatus(SocketStatusModes.DISCONNECTED);
         };
 
         const onReconnectAttempt = (attempt) => {
@@ -69,11 +72,12 @@ export const AppProvider = ({ children }) => {
 
 
     useEffect(() => {
-        const unsubscribe = SocketAPI.listenForSessionSync((newSession) => {
-            console.log(newSession)
-            setSession(newSession);
-        });
-        return unsubscribe;
+        const sync_session_func_ = async () => {
+            const new_session = await SocketAPI.syncSession()
+            console.log("NEW SESSION: ", new_session)
+            setSession(new_session);
+        }
+        sync_session_func_();
     }, []);
 
 
@@ -87,8 +91,21 @@ export const AppProvider = ({ children }) => {
     };
 
 
+    if (!session){
+        return <SocketConnectionOverlay 
+            socketStatus={socketStatus} 
+            SocketStatusModes = {SocketStatusModes.CONNECTING} 
+            display={true} 
+            />
+    }
+
     return (
         <AppContext.Provider value={value}>
+            <SocketConnectionOverlay 
+                socketStatus={socketStatus} 
+                SocketStatusModes = {SocketStatusModes} 
+                display={true} 
+            />
             {children}
         </AppContext.Provider>
     );

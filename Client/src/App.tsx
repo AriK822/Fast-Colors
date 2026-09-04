@@ -11,9 +11,6 @@ import JoinLobby from "./pages/join_lobby"
 import "./helpers/base.css";
 import "react-loading-skeleton/dist/skeleton.css";
 
-// Overlays
-import SocketConnectionOverlay from "./helpers/loaders/socket_connection_overlay"
-
 // Context
 import { AppProvider } from "./helpers/context/app_provider"
 import { NotificationProvider } from "./helpers/context/notification"
@@ -31,9 +28,6 @@ function App() {
         baseColor="#2a2a2a"
         highlightColor="#3a3a3a"
     >
-
-      <SocketConnectionOverlay display={true} />
-
 
       <Routes>
 
