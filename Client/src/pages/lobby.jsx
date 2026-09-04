@@ -7,6 +7,7 @@ import { useApp } from "../helpers/context/app_provider"
 
 import SpinnerLoader from "../helpers/loaders/inside_spinner1"
 import Skeleton from "react-loading-skeleton";
+import { useCountdown } from "../helpers/utils/timer_hooks";
 
 
 function Lobby() {
@@ -98,6 +99,11 @@ function Lobby() {
     }
   }
 
+  function KickTimer({target_time}){
+    const time_left = useCountdown(target_time);
+    return <p>Kicking in {time_left}</p>
+  }
+
 
   if (!lobby){
     return (
@@ -121,8 +127,14 @@ function Lobby() {
             <strong>Players:</strong>
             {Object.entries(lobby.players).map(([id, desc]) => (
                 <div key={id} className="flex gap-3">
+
                     <p>Name: {desc.name}</p>
                     <p>Status: {desc.status}</p>
+
+                    {desc.disconnect_expires_at ? 
+                    <KickTimer target_time={desc.disconnect_expires_at} />
+                    : <></>}
+
                     {session.player_id == lobby.owner && id != lobby.owner ? (
                         <button 
                         onClick={() => kickPlayer(id)}
@@ -131,7 +143,9 @@ function Lobby() {
                             {kick_player_loading == id ? <SpinnerLoader /> : "Kick"}
                         </button>
                     ) : <></>}
+
                     {id == lobby.owner ? <p>👑</p> : <></>}
+
                 </div>
             ))}
         </div>

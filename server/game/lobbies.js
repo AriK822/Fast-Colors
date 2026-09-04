@@ -17,7 +17,8 @@ export function joinPlayerToLobby(player_id, lobby_id, player_name){
     if (LOBBIES[lobby_id] != null){
         LOBBIES[lobby_id].players[player_id] = {
             get status() {return PlayerstateHandler.getPlayerState(player_id);}, 
-            "name":player_name
+            "name":player_name,
+            get disconnect_expires_at() {return PlayerstateHandler.getPlayerTimeout(player_id);}
         };
         Player_To_Lobby[player_id] = lobby_id;
     }

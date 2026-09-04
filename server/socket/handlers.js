@@ -61,6 +61,8 @@ io.on("connection", async (socket) => {
     socket.join(`player-${socket.request.session.player_id}`)
 
     PlayerstateHandler.setPlayerState(socket.request.session.player_id, true)
+    PlayerstateHandler.clearPlayerTimeout(socket.request.session.player_id);
+
     const lobby_id = LobbyHandler.Player_To_Lobby[socket.request.session.player_id];
     if (lobby_id){
         const active_lobby = LobbyHandler.LOBBIES[lobby_id];
@@ -365,6 +367,11 @@ io.on("connection", async (socket) => {
         // update lobbies
         const active_lobby = LobbyHandler.lobbyCleanup(socket.request.session.player_id);
         if (active_lobby){
+            PlayerstateHandler.setPlayerTimeout(socket.request.session.player_id, () => {
+                LobbyHandler.leaveLobby(socket.request.session.player_id)
+                io.to(active_lobby.id).emit("sync_lobby", active_lobby)
+            })
+
             socket.to(active_lobby.id).emit("sync_lobby", active_lobby)
         }
 

@@ -10,16 +10,41 @@ export function getPlayerState(player_id) {
 }
 
 
-export const OFFLINE_PLAYER_TIMEOUTS = new Map();
+export const PLAYER_TO_TIMEOUT = new Map();
 
-export function setPlayerTimeout(player_id, callback, timeout=30000){
-    const this_timeout = setTimeout(callback, timeout);
-    OFFLINE_PLAYER_TIMEOUTS.set(player_id, this_timeout)
+export function setPlayerTimeout(player_id, callback, timeout = 10000) {
+    clearPlayerTimeout(player_id);
+
+    const start_time = Date.now();
+
+    const this_timeout = setTimeout(() => {
+        PLAYER_TO_TIMEOUT.delete(player_id);
+        callback();
+    }, timeout);
+
+    PLAYER_TO_TIMEOUT.set(player_id, {
+        timeout: this_timeout,
+        start_time,
+        duration: timeout
+    });
 }
 
-export function clearPlayerTimeout(player_id){
-    const this_timeout = OFFLINE_PLAYER_TIMEOUTS.get(player_id);
-    if (this_timeout){
-        clearTimeout(this_timeout)
+export function clearPlayerTimeout(player_id) {
+    const player_timeout = PLAYER_TO_TIMEOUT.get(player_id);
+
+    if (player_timeout) {
+        clearTimeout(player_timeout.timeout);
+        PLAYER_TO_TIMEOUT.delete(player_id);
     }
 }
+
+export function getPlayerTimeout(player_id) {
+    const player_timeout = PLAYER_TO_TIMEOUT.get(player_id);
+
+    if (!player_timeout) {
+        return null;
+    }
+
+    return player_timeout.start_time + player_timeout.duration;
+}
+
