@@ -9,6 +9,7 @@ import socket from "../../api/socket_init";
 import * as SocketAPI from "../../api/socket_handler"
 
 import SocketConnectionOverlay from "../loaders/socket_connection_overlay"
+import FullScreenLoader from "../../helpers/loaders/fullscreen1"
 
 
 const AppContext = createContext(null);
@@ -38,17 +39,23 @@ export const AppProvider = ({ children }) => {
     const [session, setSession] = useState(null);
 
     const [socketStatus, setSocketStatus] = useState(
-        SocketStatusModes.CONNECTING
+        socket.connected ? SocketStatusModes.CONNECTED : SocketStatusModes.CONNECTING
     );
 
 
     useEffect(() => {
         const onConnect = () => {
+            console.log("Socket connected");
             setSocketStatus(SocketStatusModes.CONNECTED);
         };
 
         const onDisconnect = (reason) => {
             console.log("Socket disconnected:", reason);
+            setSocketStatus(SocketStatusModes.DISCONNECTED);
+        };
+
+        const onConnectError = (error) => {
+            console.log("Socket connection error:", error);
             setSocketStatus(SocketStatusModes.DISCONNECTED);
         };
 
@@ -59,31 +66,45 @@ export const AppProvider = ({ children }) => {
 
         socket.on("connect", onConnect);
         socket.on("disconnect", onDisconnect);
+        socket.on("connect_error", onConnectError);
         socket.io.on("reconnect_attempt", onReconnectAttempt);
+
+        socket.connect();
 
         return () => {
             socket.off("connect", onConnect);
             socket.off("disconnect", onDisconnect);
-            socket.io.off("reconnect_attempt",onReconnectAttempt);
-            socket.disconnect();
+            socket.off("connect_error", onConnectError);
+            socket.io.off("reconnect_attempt", onReconnectAttempt);
         };
-
     }, []);
 
 
+    const runSyncSession = async () => {
+        const new_session = await SocketAPI.syncSession()
+        console.log("NEW SESSION: ", new_session)
+        setSession(new_session);
+    }
+
     useEffect(() => {
-        const sync_session_func_ = async () => {
-            const new_session = await SocketAPI.syncSession()
-            console.log("NEW SESSION: ", new_session)
-            setSession(new_session);
+        if (socket.connected) {
+            runSyncSession();
+            return;
         }
-        sync_session_func_();
+
+        socket.once("connect", runSyncSession);
+
+        return () => {
+            socket.off("connect", runSyncSession);
+        };
+
     }, []);
 
 
     const value = {
         session,
         setSession,
+        runSyncSession,
 
         socketStatus,
         SocketStatusModes,
@@ -92,11 +113,7 @@ export const AppProvider = ({ children }) => {
 
 
     if (!session){
-        return <SocketConnectionOverlay 
-            socketStatus={socketStatus} 
-            SocketStatusModes = {SocketStatusModes.CONNECTING} 
-            display={true} 
-            />
+        return <FullScreenLoader text={"Loading..."} />
     }
 
     return (

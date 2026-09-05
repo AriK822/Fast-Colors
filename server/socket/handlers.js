@@ -53,10 +53,7 @@ io.on("connection", async (socket) => {
         await saveSession(socket.request.session)
     }
 
-    if (!socket.request.session.player_name){
-        socket.request.session.player_name = `Guest-${Math.floor(Math.random()*1000)}`;
-        await saveSession(socket.request.session)
-    }
+    PlayerstateHandler.initPlayerName(socket.request.session.player_id);
 
     socket.join(`player-${socket.request.session.player_id}`)
 
@@ -75,7 +72,7 @@ io.on("connection", async (socket) => {
     socket.on("sync_session", async (data, ack) => {
         ack({
             player_id: socket.request.session.player_id,
-            player_name: socket.request.session.player_name,
+            player_name: PlayerstateHandler.getPlayerName(socket.request.session.player_id),
         });
     });
 
@@ -355,6 +352,29 @@ io.on("connection", async (socket) => {
 
         io.to(this_lobby.id).emit("sync_lobby", this_lobby)
 
+        return
+    })
+
+
+    socket.on("set_player_name", async (data, ack) => {
+        if (String(data.name ?? "").trim().length < 4){
+            ack({
+                "error":true,
+                "msg": "Name cannot be less than 4 characters",
+            })
+            return;
+        }
+
+        PlayerstateHandler.setPlayerName(socket.request.session.player_id, data.name)
+
+        const lobby_id = LobbyHandler.Player_To_Lobby[socket.request.session.player_id];
+        if (lobby_id){
+            io.to(lobby_id).emit("sync_lobby", LobbyHandler.LOBBIES[lobby_id])
+        }
+
+        ack({
+            "msg": "name updated successfully",
+        })
         return
     })
 

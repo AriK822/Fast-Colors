@@ -91,3 +91,12 @@ export function listenForKickedFromLobby(callback) {
     };
 }
 
+
+export async function setPlayerName(name) {
+    return new Promise((resolve, reject) => {
+        socket.emit("set_player_name", {name}, (response) => {
+            resolve(response);
+        });
+    });
+}
+

@@ -1,4 +1,4 @@
-export const PLAYER_STATE = new Map();
+const PLAYER_STATE = new Map();
 
 export function setPlayerState(player_id, online=true) {
     if (online){PLAYER_STATE.set(player_id, true);}
@@ -10,9 +10,10 @@ export function getPlayerState(player_id) {
 }
 
 
-export const PLAYER_TO_TIMEOUT = new Map();
 
-export function setPlayerTimeout(player_id, callback, timeout = 10000) {
+const PLAYER_TO_TIMEOUT = new Map();
+
+export function setPlayerTimeout(player_id, callback, timeout = 30000) {
     clearPlayerTimeout(player_id);
 
     const start_time = Date.now();
@@ -48,3 +49,21 @@ export function getPlayerTimeout(player_id) {
     return player_timeout.start_time + player_timeout.duration;
 }
 
+
+
+
+const PLAYER_NAMES = new Map();
+
+export function initPlayerName(player_id){
+    if (!PLAYER_NAMES.get(player_id)){
+        PLAYER_NAMES.set(player_id, `Guest-${Math.floor(Math.random()*1000)}`);
+    }
+}
+
+export function setPlayerName(player_id, name){
+    PLAYER_NAMES.set(player_id, name);
+}
+
+export function getPlayerName(player_id){
+    return PLAYER_NAMES.get(player_id);
+}
