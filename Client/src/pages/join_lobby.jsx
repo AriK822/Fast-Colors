@@ -81,7 +81,7 @@ function JoinLobby() {
           <p>ID: {lobby.id}</p>
           <p>Owner: {lobby.players[lobby.owner]?.name ?? "Owner"}</p>
           <p>Player count: {Object.entries(lobby.players).length}</p>
-          <p>Max players: {lobby.game_options.selected_player_count}</p>
+          <p>Bots: {lobby.game_options.bot_count}</p>
           <p>Game settings: {lobby.game_options.selected_card_types}</p>
         </div>
       ))

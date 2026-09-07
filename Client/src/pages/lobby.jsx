@@ -172,7 +172,7 @@ function Lobby() {
         <p>Owner id: {lobby.owner}</p>
 
 
-        <div>
+        <div className="card">
             <strong>Players:</strong>
             {Object.entries(lobby.players).map(([id, desc]) => (
                 <div key={id} className="flex gap-3">
@@ -199,20 +199,31 @@ function Lobby() {
             ))}
         </div>
 
-
-        <div>
-            <strong>Card Types:</strong>
+        {lobby.owner == session.player_id ? 
+        (<>
             {Object.entries(lobby.game_options.card_types).map(([key, value]) => (
-            <span key={key}>{value}</span>
+            <div key={key} className="flex">
+                <p>{value}</p>
+                <input 
+                type="checkbox" 
+                checked={lobby.game_options.selected_card_types.includes(key)} 
+                onChange={() => (null)}
+                />
+            </div>
             ))}
-        </div>
+        </>) 
+        : 
+        (<div className="card">
+            {Object.entries(lobby.game_options.card_types).map(([key, value]) => (
+            <div key={key} className="">
+                {value} 
+                {lobby.game_options.selected_card_types.includes(key) ? "✅" : ""}
+            </div>
+            ))}
 
-        <div>
-            <strong>Player Counts:</strong>
-            {lobby.game_options.allowed_player_counts.map((value) => (
-            <span key={value}>{value}</span>
-            ))}
-        </div>
+            <div>Bot count: {lobby.game_options.bot_count}</div>
+        </div>)
+        }
 
     </div>
   );
