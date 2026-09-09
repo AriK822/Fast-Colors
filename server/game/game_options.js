@@ -39,11 +39,27 @@ export function validateGameOptions(new_options) {
 
     if (!Array.isArray(new_options.selected_card_objects)) return false;
     if (!Array.isArray(new_options.bots)) return false;
+    
+    if (new_options.bots.length > 10) return false;
 
     for (const card_id of new_options.selected_card_objects) {
         if (!(card_id in game_options.card_objects)) return false;
     }
 
     return true;
+}
+
+
+export function startGameValidation(lobby){
+    if (Object.entries(lobby.players).length < 2)
+        return [false, "At least 2 players in required to start the game."]
+
+    if (Object.entries(lobby.players).length + lobby.game_options.bots.length > 10)
+        return [false, "Maximum 10 players and bots are allowed"]
+
+    if (lobby.game_options.selected_card_objects.length == 0)
+        return [false, "Please select at least one card type to start the game"]
+    
+    return [true, ""];
 }
 

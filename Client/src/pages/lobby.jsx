@@ -166,6 +166,25 @@ function Lobby() {
     }
 
 
+    function startGame(){
+
+    }
+
+
+    function startGameValidation(){
+        if (Object.entries(lobby.players).length < 2)
+            return [false, "At least 2 players in required to start the game."]
+
+        if (Object.entries(lobby.players).length + lobby.game_options.bots.length > 10)
+            return [false, "Maximum 10 players and bots are allowed"]
+
+        if (lobby.game_options.selected_card_objects.length == 0)
+            return [false, "Please select at least one card type to start the game"]
+        
+        return [true, ""];
+    }
+
+
   if (!lobby){
     return (
       <Skeleton />
@@ -227,7 +246,9 @@ function Lobby() {
         </div>
 
 
+
         {lobby.owner == session.player_id ? 
+        // Lobby owner settings
         (<>
           <div className="card">
             <strong>Game settings:</strong>
@@ -272,7 +293,7 @@ function Lobby() {
                 <div className="flex gap-3" key={i}>
                     <p>{bot_name}</p>
                     <button 
-                        style={{color:"red"}}
+                        style={{color:"orange"}}
                         onClick={() => {
                             const new_bot_names = [...lobby.game_options.bots];
                             new_bot_names.splice(i, 1);
@@ -304,6 +325,11 @@ function Lobby() {
                         new_bot_names.push(this_name);
                         setGameOptions("bots", new_bot_names);
                     }}
+                    disabled={
+                        lobby.game_options.bots.length + 
+                        Object.entries(lobby.players).length 
+                        >= 10
+                    }
                 >
                     Add new bot
                 </button>
@@ -439,8 +465,38 @@ function Lobby() {
             </div>
 
           </div>
+
+          <button 
+            className="w-full"
+            style={{background:"lime", color:"black"}}
+            onClick={startGame}
+            disabled={!startGameValidation()[0]}
+          >
+            Start Game
+            </button>
+
+            {
+            !startGameValidation()[0] &&
+            <p>{startGameValidation()[1]}</p>
+            }
+
+            {
+            Object.entries(lobby.players).some(([p_id, p_info]) => p_info.status == "offline") &&
+            <p style={{color:"orange"}}>
+                Warning: some players appear to be offline. 
+                You wont be able to kick them after starting the game
+            </p>
+            }
         </>) 
+
+
+
+
         : 
+        // Non owner clients
+
+
+
         (<>
           <div className="card">
             <strong>Game settings:</strong>
@@ -454,9 +510,10 @@ function Lobby() {
                         <button
                             key={card_id}
                             className="flex"
-                            style={
-                                {border: `1px solid ${selected ? "lime" : "grey"}`}
-                            }
+                            style={{
+                                border: `1px solid ${selected ? "lime" : "grey"}`,
+                                color: `${selected ? "white" : "grey"}`
+                            }}
                         >
                             {card_desc}
                         </button>

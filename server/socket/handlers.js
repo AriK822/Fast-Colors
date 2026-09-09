@@ -76,7 +76,7 @@ io.on("connection", async (socket) => {
         });
     });
 
-    
+
     socket.on("load_lobby", async (data, ack) => {
         const game_id = GameHandler.Player_To_Game[socket.request.session.player_id];
         if (game_id){
@@ -327,6 +327,33 @@ io.on("connection", async (socket) => {
         const lobby_id = LobbyHandler.Player_To_Lobby[socket.request.session.player_id];
         if (lobby_id){
             io.to(lobby_id).emit("sync_lobby", LobbyHandler.LOBBIES[lobby_id])
+        }
+
+        ack({
+            "msg": "name updated successfully",
+        })
+        return
+    })
+
+
+    socket.on("start_game", async (data, ack) => {
+        const lobby_id = LobbyHandler.Player_To_Lobby[socket.request.session.player_id];
+        if (!lobby_id){
+            ack({
+                "error": true,
+                "msg": "No lobby assigned to this player",
+            })
+            return
+        }
+
+        const this_lobby = LobbyHandler.LOBBIES[lobby_id];
+
+        if (this_lobby.owner != socket.request.session.player_id){
+            ack({
+                "error": true,
+                "msg": "Only the lobby owner is allowed to start game",
+            })
+            return
         }
 
         ack({
