@@ -98,9 +98,8 @@ io.on("connection", async (socket) => {
             return;
         }
 
-        const this_lobby = LobbyHandler.createNewLobby(
-            socket.request.session.player_id, socket.request.session.player_name
-        );
+        const this_lobby = LobbyHandler.createNewLobby(socket.request.session.player_id);
+
         socket.join(this_lobby.id);
         ack({
             "msg": "Successfully created a new lobby.",
@@ -132,7 +131,7 @@ io.on("connection", async (socket) => {
         }
 
         ack({
-            "lobbies": LobbyHandler.LOBBIES,
+            "lobbies": LobbyHandler.makeClientJoinLobbyList(),
         });
         return
     })
@@ -170,7 +169,6 @@ io.on("connection", async (socket) => {
         LobbyHandler.joinPlayerToLobby(
             socket.request.session.player_id, 
             data.lobby_id,
-            socket.request.session.player_name,
         );
 
         ack({
@@ -360,6 +358,37 @@ io.on("connection", async (socket) => {
             "msg": "name updated successfully",
         })
         return
+    })
+
+
+    socket.on("add_lobby_chat_message", async (data, ack) => {
+        const lobby_id = LobbyHandler.Player_To_Lobby[socket.request.session.player_id];
+        if (!lobby_id){
+            ack({
+                "error":true,
+                "msg": "No active lobby.",
+            })
+            return;
+        }
+
+        if (String(data.msg).trim() == ""){
+            ack({
+                "error":true,
+                "msg": "No message provided.",
+            })
+            return;            
+        }
+
+        LobbyHandler.LOBBIES[lobby_id].chat.push(["player-msg", 
+            `${PlayerstateHandler.getPlayerName(socket.request.session.player_id)}: ` +
+            `${data.msg}`
+        ])
+
+        ack({
+            "msg": "msg added.",
+        })
+
+        io.to(lobby_id).emit("sync_lobby", LobbyHandler.LOBBIES[lobby_id])
     })
 
 

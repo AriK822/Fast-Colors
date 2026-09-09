@@ -71,18 +71,31 @@ function JoinLobby() {
 
   return (
     <>
-    <button onClick={loadJoinLobby}>
+    <button 
+      onClick={loadJoinLobby}
+      disabled={refresh_lobbies_loading}  
+    >
       {refresh_lobbies_loading ? <SpinnerLoader /> : "Refresh"}
     </button>
 
     <div className="join-lobby-container">
       {Object.entries(lobbies).map(([lobbyId, lobby]) => (
-        <div key={lobby.id} className="flex gap-3 card pointer" onClick={() => joinLobbyFunc(lobby.id)}>
+        <div 
+          key={lobby.id} 
+          className="flex gap-1 card pointer" 
+          onClick={() => joinLobbyFunc(lobby.id)}
+        >
           <p>ID: {lobby.id}</p>
-          <p>Owner: {lobby.players[lobby.owner]?.name ?? "Owner"}</p>
-          <p>Player count: {Object.entries(lobby.players).length}</p>
-          <p>Bots: {lobby.game_options.bot_count}</p>
-          <p>Game settings: {lobby.game_options.selected_card_types}</p>
+          <p>Owner: {lobby.owner}</p>
+          <p>Player count: {lobby.players}</p>
+          <p>Bots: {lobby.bots}</p>
+          <div className="flex">
+            <p>Game settings: </p>
+            {lobby.selected_card_objects.map((val, i) => (
+              <p key={i}>{val}</p>
+            ))
+          }
+          </div>
         </div>
       ))
       }

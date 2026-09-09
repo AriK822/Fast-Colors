@@ -23,6 +23,9 @@ function Lobby() {
   const isNameInputInitLoad = useRef(true);
   const [nameInputLoading, setNameInputLoading] = useState(false);
   const [bot_name_input, setBotNameInput] = useState("");
+  const chat_container = useRef(null);
+  const [lobby_chat_input, setLobbyChatInput] = useState("");
+  const [lobby_chat_sending, setLobbyChatSending] = useState(false);
 
 
     async function loadLobby(show_notifications=true) {
@@ -182,6 +185,28 @@ function Lobby() {
             return [false, "Please select at least one card type to start the game"]
         
         return [true, ""];
+    }
+
+
+    useEffect(() => {
+        if (chat_container.current) {
+            chat_container.current.scrollTop = chat_container.current.scrollHeight;
+        }
+    }, [lobby?.chat]);
+
+
+    async function addLobbyMsg(){
+        setLobbyChatInput("")
+        setLobbyChatSending(true)
+        const result = await SocketAPI.addLobbyChatMessage(lobby_chat_input)
+        setLobbyChatSending(false)
+
+        if (result.error){
+            showNotification({
+                text: result.msg,
+                type: "error",
+            });
+        }
     }
 
 
@@ -542,6 +567,40 @@ function Lobby() {
           </div>
         </>)
         }
+
+        <div className="card">
+            <strong>Chat:</strong>
+            <div 
+                className="card" 
+                style={{height:"200px", overflowY:"scroll"}}
+                ref={chat_container}
+            >
+            {lobby.chat.map(([source, msg], i) => (
+                source === "server-log" 
+                    ? <p key={i} >{msg}</p>
+                    : <p key={i} style={{color:"white"}}>{msg}</p>
+            ))}
+            </div>
+            
+            <div className="flex">
+                <input 
+                    placeholder="Chat" 
+                    value={lobby_chat_input} 
+                    onChange={(e)=>{setLobbyChatInput(e.target.value)}}
+                    onKeyDown={(e) => {
+                        if (e.key === 'Enter' && lobby_chat_input.trim() != ""){
+                            addLobbyMsg();
+                        }
+                    }}
+                ></input>
+                <button 
+                    onClick={addLobbyMsg} 
+                    disabled={lobby_chat_sending || lobby_chat_input.trim() == ""}
+                >
+                    {lobby_chat_sending ? <SpinnerLoader/> : "Send"}
+                </button>
+            </div>
+        </div>
 
     </div>
   );

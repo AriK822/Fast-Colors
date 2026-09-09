@@ -109,3 +109,12 @@ export async function changeGameOptions(game_options) {
     });
 }
 
+
+export async function addLobbyChatMessage(msg) {
+    return new Promise((resolve, reject) => {
+        socket.emit("add_lobby_chat_message", {msg}, (response) => {
+            resolve(response);
+        });
+    });
+}
+
