@@ -100,3 +100,12 @@ export async function setPlayerName(name) {
     });
 }
 
+
+export async function changeGameOptions(game_options) {
+    return new Promise((resolve, reject) => {
+        socket.emit("change_game_options", {game_options}, (response) => {
+            resolve(response);
+        });
+    });
+}
+

@@ -178,7 +178,7 @@ function timeout_move(game){
         return true;
     }
     else{
-        return skip_turn();
+        return skip_turn(game);
     }
 }
 
@@ -196,12 +196,27 @@ function random_move(game){
         const allowed_cards = possible_cards_to_play(game);
         if (allowed_cards.length > 0){
             const rand_card = allowed_cards[Math.floor(Math.random() * allowed_cards.length)]
-            return rand_card.place_func(game);
+            return place_card(game, rand_card)
         }
         else{
-            return skip_turn();
+            return skip_turn(game);
         }
     }
+}
+
+
+function place_card(game, card){
+    if (!card.allowed_to_play_func(game)){return false;}
+
+    const card_index = game.players[game.turn].cards.indexOf(card);
+    if (card_index == -1){return false;}
+    game.players[game.turn].cards.splice(card_index, 1);
+
+    card.place_func(game)
+
+    game.current_card = card;
+
+    return true;
 }
 
 
@@ -210,12 +225,12 @@ function random_move(game){
 const this_game = makeNewGame([{id:1, type:"player"},{id:2, type:"bot", name:"ttv"}]);
 
 console.log(this_game)
-console.log(this_game.players[0].cards)
+// console.log(this_game.players[0].cards)
 console.log(possible_cards_to_play(this_game))
 
 console.log(random_move(this_game))
-console.log(random_move(this_game))
-console.log(random_move(this_game))
+// console.log(random_move(this_game))
+// console.log(random_move(this_game))
 
 console.log(this_game)
 console.log(this_game.players[0].cards)

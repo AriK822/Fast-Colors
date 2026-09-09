@@ -22,31 +22,31 @@ function Lobby() {
   const [nameInputValue, setNameInputValue] = useState(session.player_name);
   const isNameInputInitLoad = useRef(true);
   const [nameInputLoading, setNameInputLoading] = useState(false);
+  const [bot_name_input, setBotNameInput] = useState("");
 
 
-    useEffect(() => {
+    async function loadLobby(show_notifications=true) {
+        setLobby(null);
+        const result = await SocketAPI.loadLobby();
 
-        async function loadLobby() {
-            const result = await SocketAPI.loadLobby();
-
-            if (result.msg) {
-                showNotification({
-                    text: result.msg,
-                    type: result.error ? "error" : "success"
-                });
-            }
-
-            if (result.redirect) {
-                navigate(result.redirect, {replace:true});
-                return;
-            }
-
-            setLobby(result.lobby);
-            console.log(result)
+        if (show_notifications && result.msg) {
+            showNotification({
+                text: result.msg,
+                type: result.error ? "error" : "success"
+            });
         }
 
-        loadLobby();
+        if (result.redirect) {
+            navigate(result.redirect, {replace:true});
+            return;
+        }
 
+        setLobby(result.lobby);
+        console.log(result)
+    }
+
+    useEffect(() => {
+        loadLobby();
     }, []);
 
   
@@ -139,6 +139,33 @@ function Lobby() {
   }, [nameInputValue]);
 
 
+    async function setGameOptions(option, value) {
+        const newGameOptions = {
+            ...lobby.game_options,
+            [option]: value,
+        };
+
+        setLobby(prevLobby => ({
+            ...prevLobby,
+            game_options: newGameOptions,
+        }));
+
+        const result = await SocketAPI.changeGameOptions(newGameOptions);
+        console.log(result);
+        
+        if (result.error){
+
+            showNotification({
+                text: `Error changing settings: ${result.msg}. Syncing lobby...`,
+                type: "error",
+            });
+            
+            loadLobby(false);
+        }
+
+    }
+
+
   if (!lobby){
     return (
       <Skeleton />
@@ -199,30 +226,264 @@ function Lobby() {
             ))}
         </div>
 
+
         {lobby.owner == session.player_id ? 
         (<>
-            {Object.entries(lobby.game_options.card_types).map(([key, value]) => (
-            <div key={key} className="flex">
-                <p>{value}</p>
-                <input 
-                type="checkbox" 
-                checked={lobby.game_options.selected_card_types.includes(key)} 
-                onChange={() => (null)}
-                />
+          <div className="card">
+            <strong>Game settings:</strong>
+
+            <div className="card gap-1">
+                <strong>Card types:</strong>
+                {Object.entries(lobby.game_options.card_objects).map(([card_id, card_desc]) => {
+                    const selected =lobby.game_options.selected_card_objects.includes(card_id);
+
+                    return (
+                        <button
+                            key={card_id}
+                            className="flex"
+                            style={
+                                {border: `1px solid ${selected ? "lime" : "grey"}`}
+                            }
+                            onClick={() => {
+                                const selectedCards = [...lobby.game_options.selected_card_objects];
+
+                                if (selected) {
+                                    selectedCards.splice(selectedCards.indexOf(card_id), 1);
+                                } else {
+                                    selectedCards.push(card_id);
+                                }
+
+                                setGameOptions(
+                                    "selected_card_objects",
+                                    selectedCards
+                                );
+                            }}
+                        >
+                            {card_desc}
+                        </button>
+                    );
+                }
+            )}
             </div>
-            ))}
+
+            <div className="card">
+                <strong>Bots:</strong>
+                {lobby.game_options.bots.map((bot_name, i) => (
+                <div className="flex gap-3" key={i}>
+                    <p>{bot_name}</p>
+                    <button 
+                        style={{color:"red"}}
+                        onClick={() => {
+                            const new_bot_names = [...lobby.game_options.bots];
+                            new_bot_names.splice(i, 1);
+                            setGameOptions("bots", new_bot_names)
+                        }}
+                    >
+                        Remove
+                    </button>
+                </div>
+                ))}
+                <strong>Add bot:</strong>
+                <input 
+                    placeholder="bot name"
+                    value={bot_name_input}
+                    onChange={(e) => {setBotNameInput(e.target.value)}}
+                ></input>
+                <button
+                    onClick={() => {
+                        if (bot_name_input.trim() == ""){
+                            showNotification({
+                                type:"warning",
+                                text:"Please enter a name first.",
+                            })
+                            return;
+                        }
+                        const this_name = bot_name_input;
+                        setBotNameInput("");
+                        const new_bot_names = [...lobby.game_options.bots];
+                        new_bot_names.push(this_name);
+                        setGameOptions("bots", new_bot_names);
+                    }}
+                >
+                    Add new bot
+                </button>
+            </div>
+
+            <div className="card">
+                <strong>Other options:</strong>
+
+                <div className="flex gap-3">
+                    <label>
+                        Initial cards:
+                    </label>
+
+                    <select
+                        value={lobby.game_options.init_card_count}
+                        onChange={(e) =>
+                            setGameOptions(
+                                "init_card_count",
+                                Number(e.target.value)
+                            )
+                        }
+                    >
+                        {Array.from({ length: 13 }, (_, i) => i + 3).map(count => (
+                            <option key={count} value={count}>
+                                {count}
+                            </option>
+                        ))}
+                    </select>
+                </div>
+
+
+                <div className="flex gap-3">
+                    <label>
+                        Allow skip move:
+                    </label>
+
+                    <input
+                        type="checkbox"
+                        checked={lobby.game_options.allowed_to_skip_move}
+                        onChange={(e) =>
+                            setGameOptions(
+                                "allowed_to_skip_move",
+                                e.target.checked
+                            )
+                        }
+                    />
+                </div>
+
+
+                <div className="flex gap-3">
+                    <label>
+                        Max card takes:
+                    </label>
+
+                    <select
+                        value={lobby.game_options.max_card_takes}
+                        onChange={(e) =>
+                            setGameOptions(
+                                "max_card_takes",
+                                Number(e.target.value)
+                            )
+                        }
+                    >
+                        {Array.from({ length: 11 }, (_, i) => i).map(count => (
+                            <option key={count} value={count}>
+                                {count}
+                            </option>
+                        ))}
+                    </select>
+                </div>
+
+
+                <div className="flex gap-3">
+                    <label>
+                        Allow wild card stacking:
+                    </label>
+
+                    <input
+                        type="checkbox"
+                        checked={lobby.game_options.allow_wild_card_stacking}
+                        onChange={(e) =>
+                            setGameOptions(
+                                "allow_wild_card_stacking",
+                                e.target.checked
+                            )
+                        }
+                    />
+                </div>
+
+
+                <div className="flex gap-3">
+                    <label>
+                        Wild cards must match:
+                    </label>
+
+                    <input
+                        type="checkbox"
+                        checked={lobby.game_options.wild_cards_must_match}
+                        onChange={(e) =>
+                            setGameOptions(
+                                "wild_cards_must_match",
+                                e.target.checked
+                            )
+                        }
+                    />
+                </div>
+
+
+                <div className="flex gap-3">
+                    <label>
+                        Turn timer:
+                    </label>
+
+                    <select
+                        value={lobby.game_options.turn_timer}
+                        onChange={(e) => {
+                            const value = e.target.value;
+
+                            setGameOptions(
+                                "turn_timer",
+                                value === "infinite" ? "infinite" : Number(value)
+                            );
+                        }}
+                    >
+                        <option value="infinite">Infinite</option>
+                        {[5, 10, 15, 20, 25, 30, 45, 60].map(seconds => (
+                            <option key={seconds} value={seconds}>
+                                {seconds} seconds
+                            </option>
+                        ))}
+                    </select>
+                </div>
+            </div>
+
+          </div>
         </>) 
         : 
-        (<div className="card">
-            {Object.entries(lobby.game_options.card_types).map(([key, value]) => (
-            <div key={key} className="">
-                {value} 
-                {lobby.game_options.selected_card_types.includes(key) ? "✅" : ""}
-            </div>
-            ))}
+        (<>
+          <div className="card">
+            <strong>Game settings:</strong>
 
-            <div>Bot count: {lobby.game_options.bot_count}</div>
-        </div>)
+            <div className="card gap-1">
+                <strong>Card types:</strong>
+                {Object.entries(lobby.game_options.card_objects).map(([card_id, card_desc]) => {
+                    const selected =lobby.game_options.selected_card_objects.includes(card_id);
+
+                    return (
+                        <button
+                            key={card_id}
+                            className="flex"
+                            style={
+                                {border: `1px solid ${selected ? "lime" : "grey"}`}
+                            }
+                        >
+                            {card_desc}
+                        </button>
+                    );
+                }
+            )}
+            </div>
+
+            <div className="card">
+                <strong>Bots:</strong>
+                {lobby.game_options.bots.map((bot_name, i) => (
+                <div key={i}>{bot_name}</div>
+                ))}
+            </div>
+
+            <div className="card">
+                <strong>Other options:</strong>
+                <li>Initial cards: {lobby.game_options.init_card_count}</li>
+                <li>Allow skip move: {lobby.game_options.allowed_to_skip_move ? 'Yes' : 'No'}</li>
+                <li>Max card takes: {lobby.game_options.max_card_takes}</li>
+                <li>Allow wild card stacking: {lobby.game_options.allow_wild_card_stacking ? 'Yes' : 'No'}</li>
+                <li>Wild cards must match: {lobby.game_options.wild_cards_must_match ? 'Yes' : 'No'}</li>
+                <li>Turn timer: {lobby.game_options.turn_timer} seconds</li>
+            </div>
+
+          </div>
+        </>)
         }
 
     </div>

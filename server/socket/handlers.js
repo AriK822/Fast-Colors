@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { game_options } from "../game/game_options.js";
+import { game_options, validateGameOptions } from "../game/game_options.js";
 import * as LobbyHandler from "../game/lobbies.js"
 import * as GameHandler from "../game/games.js"
 import * as PlayerstateHandler from "../game/player_states.js"
@@ -76,6 +76,7 @@ io.on("connection", async (socket) => {
         });
     });
 
+    
     socket.on("load_lobby", async (data, ack) => {
         const game_id = GameHandler.Player_To_Game[socket.request.session.player_id];
         if (game_id){
@@ -181,9 +182,9 @@ io.on("connection", async (socket) => {
     })
 
 
-    socket.on("change_lobby_settings", async (data, ack) => {
+    socket.on("change_game_options", async (data, ack) => {
         const lobby_id = LobbyHandler.Player_To_Lobby[socket.request.session.player_id];
-        if (lobby_id == null){
+        if (!lobby_id){
             ack({
                 "error":true,
                 "msg": "Lobby doesnt exist",
@@ -191,7 +192,7 @@ io.on("connection", async (socket) => {
             return;
         }
 
-        if (LobbyHandler.LOBBIES[lobby_id][owner] != socket.request.session.player_id){
+        if (LobbyHandler.LOBBIES[lobby_id].owner != socket.request.session.player_id){
             ack({
                 "error":true,
                 "msg": "Access denied. Settings can be changed only by the owner of the lobby.",
@@ -200,68 +201,24 @@ io.on("connection", async (socket) => {
         }
 
         const new_options = data.game_options;
-        if (new_options.selected_player_count == null || new_options.selected_card_types == null){
+
+        if (!validateGameOptions(new_options)){
             ack({
                 "error":true,
-                "msg": "Invalid settings",
+                "msg": "Lobby validation failed",
             })
             return;
         }
 
-        try {
-            if (!new_options.selected_card_types || !Array.isArray(new_options.selected_card_types)) {
-                ack({
-                    "error": true,
-                    "msg": "Invalid settings: selected_card_types must be an array"
-                });
-                return false;
-            }
-            for (const cardType of new_options.selected_card_types) {
-                if (!game_options.card_types[cardType]) {
-                    ack({
-                        "error": true,
-                        "msg": `Invalid settings: card type "${cardType}" is not supported`
-                    });
-                    return false;
-                }
-            }
-            if (new_options.selected_player_count == undefined || 
-                new_options.selected_player_count == null || 
-                typeof new_options.selected_player_count !== 'number') {
-                ack({
-                    "error": true,
-                    "msg": "Invalid settings: selected_player_count must be a number"
-                });
-                return false;
-            }
-            if (!game_options.allowed_player_counts.includes(new_options.selected_player_count)) {
-                ack({
-                    "error": true,
-                    "msg": `Invalid settings: player count `+
-                    `${new_options.selected_player_count} is not allowed. `+
-                    `Allowed: ${game_options.allowed_player_counts.join(', ')}`
-                });
-                return false;
-            }
-        } catch (error) {
-            ack({
-                "error": true,
-                "msg": "Invalid settings: validation error"
-            });
-            return false;
-        }
-
-        LobbyHandler.LOBBIES[lobby_id].game_options.selected_player_count = 
-            new_options.selected_player_count;
+        const this_lobby = LobbyHandler.LOBBIES[lobby_id];
+        this_lobby.game_options = new_options;
+        this_lobby.game_options.card_objects = game_options.card_objects
         
-        LobbyHandler.LOBBIES[lobby_id].game_options.selected_card_types = 
-            new_options.selected_card_types;
-        
+        socket.to(lobby_id).emit("sync_lobby", LobbyHandler.LOBBIES[lobby_id])
 
         ack({
             "msg": "Successfully updated the settings",
         });
-        socket.to(lobby_id).emit("sync_lobby", LobbyHandler.LOBBIES[lobby_id])
 
         return
     })

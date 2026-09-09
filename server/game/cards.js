@@ -69,21 +69,9 @@ export function makeNormalCards(
             }
 
             const place_func = (game) => {
-                if (!allowed_to_play_func){
-                    return false;
-                }
-                const card_index = game.players[game.turn].cards.indexOf(`${CardType.norm}-${nc[0]}&${nn}`);
-                if (card_index == -1){
-                    return false;
-                }
-
-                game.players[game.turn].cards.splice(card_index, 1);
                 game.base_color = nc;
-                game.current_card = `${CardType.norm}-${nc[0]}&${nn}`;
                 game.turn = (game.turn + game.direction) % game.players.length;
                 game.cards_taken_in_this_turn = 0;
-
-                return true;
             }
 
             const this_card = MakeCard(
