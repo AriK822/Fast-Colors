@@ -3,6 +3,7 @@ import * as LobbyHandler from "../game/lobbies.js"
 import * as PlayerstateHandler from "../game/player_states.js"
 
 import LobbySocketHook from "./lobby_handler.js"
+import GameSocketHook from "./game_handler.js"
 
 
 
@@ -78,6 +79,7 @@ io.on("connection", async (socket) => {
 
     // --------   HOOKS   ---------
     LobbySocketHook(io, socket);
+    GameSocketHook(io, socket);
 
 
     socket.on("disconnecting", () => {

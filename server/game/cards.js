@@ -12,15 +12,19 @@ export const REGISTERED_CARDS = {
 
 
 
-export function MakeCard(
+export function MakeCard({
     id, 
-    type, 
+    type,
+
     rednered_text, 
     base_color, 
     custom_overlay, 
+
     allowed_to_play_func, 
-    place_func
-){
+    place_func,
+
+    choice=null,
+}){
     return {
         id, // Ids should follow: type-uniqueID, For CardType.norm: norm-{color}&{number}
         type,
@@ -32,6 +36,8 @@ export function MakeCard(
 
         allowed_to_play_func,
         place_func,
+
+        choice,
     }
 
 }
@@ -40,20 +46,19 @@ export function MakeCard(
 
 export function makeNormalCards(
     nrom_nums = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
-    norm_colors = {"red":"red", "blue":"blue", "green":"green", "yellow":"yellow"},
+    norm_colors = ["red", "green", "blue", "yellow"],
     weight = 1,
 ){
     const normal_cards = [];
 
-    Object.entries(norm_colors).forEach((nco) => {
-        const [nc, ncv] = nco;
+    norm_colors.forEach((this_base_color) => {
         nrom_nums.forEach((nn) => {
 
             const allowed_to_play_func = (game) => {
                 if (game.cards_to_take > 0){
                     return false;
                 }
-                if (game.base_color == nc){
+                if (game.base_color == this_base_color){
                     return true;
                 }
                 const [ctype, cid] = game.current_card.id.split("-")
@@ -66,20 +71,21 @@ export function makeNormalCards(
             }
 
             const place_func = (game) => {
-                game.base_color = nc;
+                game.base_color = this_base_color;
                 game.turn = (game.turn + game.direction) % game.players.length;
                 game.cards_taken_in_this_turn = 0;
             }
 
-            const this_card = MakeCard(
-                `${CardType.norm}-${nc[0]}&${nn}`,
-                CardType.norm,
-                nn,
-                ncv, // RGB or CSS rendered color value
-                "default_base.png",
-                allowed_to_play_func,
-                place_func,
-            )
+            const this_card = MakeCard({
+                id:`${CardType.norm}-${this_base_color}&${nn}`,
+                type:CardType.norm,
+                rednered_text:nn,
+                base_color:this_base_color, // RGB or CSS rendered color value
+                custom_overlay:"default_base.png",
+                allowed_to_play_func: allowed_to_play_func,
+                place_func: place_func,
+                choice:null,
+            })
 
             normal_cards.push(
                 {

@@ -297,7 +297,7 @@ socket.on("start_game_from_lobby", async (data, ack) => {
 
     LobbyHandler.deleteLobby(this_lobby);
 
-    // Create the game object from lobby
+    GameHandler.createGameFromLobby(this_lobby);
 
     io.to(this_lobby.id).emit("game_started_from_lobby")
 

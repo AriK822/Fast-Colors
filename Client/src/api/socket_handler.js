@@ -1,5 +1,6 @@
 import socket from "./socket_init"
 export * from "./socket_lobbies"
+export * from "./socket_games"
 
 
 export async function syncSession() {

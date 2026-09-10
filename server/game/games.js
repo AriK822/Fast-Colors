@@ -44,3 +44,23 @@ export function createGameFromLobby(lobby){
     })
 }
 
+
+export function hiddenGameForClient(player_id){
+    const this_game = Player_To_Game[player_id];
+    if (!this_game){return}
+
+    return {
+        ...this_game,
+        players: this_game.players.map(player => ({
+            ...player,
+            deck: player.id == player_id ? 
+            player.deck.map(card => ({
+                ...card,
+                allowed_to_play: card.allowed_to_play_func(this_game),
+            }))
+            : undefined,
+            card_count: player.deck.length,
+        }))
+    }
+}
+
