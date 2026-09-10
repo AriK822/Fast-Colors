@@ -60,10 +60,9 @@ io.on("connection", async (socket) => {
     PlayerstateHandler.setPlayerState(socket.request.session.player_id, true)
     PlayerstateHandler.clearPlayerTimeout(socket.request.session.player_id);
 
-    const lobby_id = LobbyHandler.Player_To_Lobby[socket.request.session.player_id];
-    if (lobby_id){
-        const active_lobby = LobbyHandler.LOBBIES[lobby_id];
-        socket.to(active_lobby.id).emit("sync_lobby", active_lobby)
+    const this_lobby = LobbyHandler.Player_To_Lobby[socket.request.session.player_id];
+    if (this_lobby){
+        socket.to(this_lobby.id).emit("sync_lobby", this_lobby)
     }
 
     }
@@ -88,12 +87,12 @@ io.on("connection", async (socket) => {
             return;
         }
 
-        const lobby_id = LobbyHandler.Player_To_Lobby[socket.request.session.player_id];
-        if (lobby_id){
-            socket.join(lobby_id);
+        const active_lobby = LobbyHandler.Player_To_Lobby[socket.request.session.player_id];
+        if (active_lobby){
+            socket.join(active_lobby.id);
             ack({
                 "msg": "Loaded the connected lobby. IF you want to create a new lobby, leave this lobby first.",
-                "lobby": LobbyHandler.LOBBIES[lobby_id],
+                "lobby": active_lobby,
             })
             return;
         }
@@ -120,8 +119,8 @@ io.on("connection", async (socket) => {
             return;
         }
 
-        const lobby_id = LobbyHandler.Player_To_Lobby[socket.request.session.player_id];
-        if (lobby_id){
+        const this_lobby = LobbyHandler.Player_To_Lobby[socket.request.session.player_id];
+        if (this_lobby){
             ack({
                 "error":true,
                 "msg": "Already joined a lobby.",
@@ -148,8 +147,8 @@ io.on("connection", async (socket) => {
             return;
         }
 
-        const previous_joined_lobby_id = LobbyHandler.Player_To_Lobby[socket.request.session.player_id];
-        if (previous_joined_lobby_id){
+        const previous_joined_lobby = LobbyHandler.Player_To_Lobby[socket.request.session.player_id];
+        if (previous_joined_lobby){
             ack({
                 "error":true,
                 "msg": "Already joined a lobby.",
@@ -181,8 +180,9 @@ io.on("connection", async (socket) => {
 
 
     socket.on("change_game_options", async (data, ack) => {
-        const lobby_id = LobbyHandler.Player_To_Lobby[socket.request.session.player_id];
-        if (!lobby_id){
+        const this_lobby = LobbyHandler.Player_To_Lobby[socket.request.session.player_id];
+
+        if (!this_lobby){
             ack({
                 "error":true,
                 "msg": "Lobby doesnt exist",
@@ -190,7 +190,7 @@ io.on("connection", async (socket) => {
             return;
         }
 
-        if (LobbyHandler.LOBBIES[lobby_id].owner != socket.request.session.player_id){
+        if (this_lobby.owner != socket.request.session.player_id){
             ack({
                 "error":true,
                 "msg": "Access denied. Settings can be changed only by the owner of the lobby.",
@@ -208,11 +208,10 @@ io.on("connection", async (socket) => {
             return;
         }
 
-        const this_lobby = LobbyHandler.LOBBIES[lobby_id];
         this_lobby.game_options = new_options;
         this_lobby.game_options.card_objects = game_options.card_objects
         
-        socket.to(lobby_id).emit("sync_lobby", LobbyHandler.LOBBIES[lobby_id])
+        socket.to(this_lobby.id).emit("sync_lobby", this_lobby)
 
         ack({
             "msg": "Successfully updated the settings",
@@ -223,8 +222,8 @@ io.on("connection", async (socket) => {
 
 
     socket.on("leave_lobby", async (data, ack) => {
-        const lobby_id = LobbyHandler.Player_To_Lobby[socket.request.session.player_id];
-        if (!lobby_id){
+        const active_lobby = LobbyHandler.Player_To_Lobby[socket.request.session.player_id];
+        if (!active_lobby){
             ack({
                 "error":true,
                 "msg": "No active lobby to leave from.",
@@ -239,19 +238,16 @@ io.on("connection", async (socket) => {
             "redirect": "/",
         });
 
-        const active_lobby = LobbyHandler.LOBBIES[lobby_id];
-        if (active_lobby){
-            socket.to(active_lobby.id).emit("sync_lobby", active_lobby)
-        }
-        socket.leave(lobby_id)
+        socket.to(active_lobby.id).emit("sync_lobby", active_lobby)
+        socket.leave(active_lobby.id)
 
         return
     })
 
 
     socket.on("kick_player_from_lobby", async (data, ack) => {
-        const lobby_id = LobbyHandler.Player_To_Lobby[socket.request.session.player_id];
-        if (!lobby_id){
+        const this_lobby = LobbyHandler.Player_To_Lobby[socket.request.session.player_id];
+        if (!this_lobby){
             ack({
                 "error":true,
                 "msg": "No active lobby.",
@@ -259,7 +255,6 @@ io.on("connection", async (socket) => {
             return;
         }
 
-        const this_lobby = LobbyHandler.LOBBIES[lobby_id];
         if (this_lobby.owner != socket.request.session.player_id){
             ack({
                 "error":true,
@@ -322,9 +317,9 @@ io.on("connection", async (socket) => {
 
         PlayerstateHandler.setPlayerName(socket.request.session.player_id, data.name)
 
-        const lobby_id = LobbyHandler.Player_To_Lobby[socket.request.session.player_id];
-        if (lobby_id){
-            io.to(lobby_id).emit("sync_lobby", LobbyHandler.LOBBIES[lobby_id])
+        const this_lobby = LobbyHandler.Player_To_Lobby[socket.request.session.player_id];
+        if (this_lobby){
+            io.to(this_lobby.id).emit("sync_lobby", this_lobby)
         }
 
         ack({
@@ -335,16 +330,14 @@ io.on("connection", async (socket) => {
 
 
     socket.on("start_game_from_lobby", async (data, ack) => {
-        const lobby_id = LobbyHandler.Player_To_Lobby[socket.request.session.player_id];
-        if (!lobby_id){
+        const this_lobby = LobbyHandler.Player_To_Lobby[socket.request.session.player_id];
+        if (!this_lobby){
             ack({
                 "error": true,
                 "msg": "No lobby assigned to this player",
             })
             return
         }
-
-        const this_lobby = LobbyHandler.LOBBIES[lobby_id];
 
         if (this_lobby.owner != socket.request.session.player_id){
             ack({
@@ -378,8 +371,8 @@ io.on("connection", async (socket) => {
 
 
     socket.on("add_lobby_chat_message", async (data, ack) => {
-        const lobby_id = LobbyHandler.Player_To_Lobby[socket.request.session.player_id];
-        if (!lobby_id){
+        const this_lobby = LobbyHandler.Player_To_Lobby[socket.request.session.player_id];
+        if (!this_lobby){
             ack({
                 "error":true,
                 "msg": "No active lobby.",
@@ -395,7 +388,7 @@ io.on("connection", async (socket) => {
             return;            
         }
 
-        LobbyHandler.LOBBIES[lobby_id].chat.push(["player-msg", 
+        this_lobby.chat.push(["player-msg", 
             `${PlayerstateHandler.getPlayerName(socket.request.session.player_id)}: ` +
             `${data.msg}`
         ])
@@ -404,7 +397,7 @@ io.on("connection", async (socket) => {
             "msg": "msg added.",
         })
 
-        io.to(lobby_id).emit("sync_lobby", LobbyHandler.LOBBIES[lobby_id])
+        io.to(this_lobby.id).emit("sync_lobby", this_lobby)
     })
 
 

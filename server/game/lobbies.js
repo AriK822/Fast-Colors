@@ -20,7 +20,7 @@ export function joinPlayerToLobby(player_id, lobby_id){
             get name() {return PlayerstateHandler.getPlayerName(player_id);},
             get disconnect_expires_at() {return PlayerstateHandler.getPlayerTimeout(player_id);},
         };
-        Player_To_Lobby[player_id] = lobby_id;
+        Player_To_Lobby[player_id] = LOBBIES[lobby_id];
 
         LOBBIES[lobby_id].chat.push(["server-log", 
             `${PlayerstateHandler.getPlayerName(player_id)} joined the lobby.`])
@@ -32,28 +32,28 @@ export function joinPlayerToLobby(player_id, lobby_id){
 
 
 export function leaveLobby(player_id){
-    const lobby_id = Player_To_Lobby[player_id] ?? null;
+    const this_lobby = Player_To_Lobby[player_id] ?? null;
 
-    if (!lobby_id){
+    if (!this_lobby){
         return false;
     }
 
-    const playerCount = Object.entries(LOBBIES[lobby_id].players).length;
+    const playerCount = Object.entries(this_lobby.players).length;
     if (playerCount <= 1){
-        delete LOBBIES[lobby_id];
+        delete LOBBIES[this_lobby.id];
         delete Player_To_Lobby[player_id];
 
         joinLobbyListUpdate();
         return true;
     }
 
-    delete LOBBIES[lobby_id].players[player_id];
+    delete this_lobby.players[player_id];
     delete Player_To_Lobby[player_id];
 
-    LOBBIES[lobby_id].chat.push(["server-log", 
+    this_lobby.chat.push(["server-log", 
     `${PlayerstateHandler.getPlayerName(player_id)} left the lobby.`])
 
-    updateLobbyOwnership(lobby_id);
+    updateLobbyOwnership(this_lobby.id);
 
     return true;
 }
@@ -67,7 +67,7 @@ export function updateLobbyOwnership(lobby_id){
         if (!this_lobby.players[this_lobby.owner]){
             this_lobby.owner = Object.keys(this_lobby.players)[0];
 
-            LOBBIES[lobby_id].chat.push(["server-log", 
+            this_lobby.chat.push(["server-log", 
                 `${PlayerstateHandler.getPlayerName(Object.keys(this_lobby.players)[0])}`+
                 ` is now the lobby owner`])
 
@@ -99,17 +99,17 @@ export function createNewLobby(owner_id){
 
 
 export function lobbyCleanup(player_id){
-    const lobby_id = Player_To_Lobby[player_id];
-    if (lobby_id){
-        const playerCount = Object.entries(LOBBIES[lobby_id].players).length;
+    const this_lobby = Player_To_Lobby[player_id];
+    if (this_lobby){
+        const playerCount = Object.entries(this_lobby.players).length;
         if (playerCount <= 1){
-            delete LOBBIES[lobby_id];
+            delete LOBBIES[this_lobby.id];
             delete Player_To_Lobby[player_id]
 
             joinLobbyListUpdate();
             return null
         }
-        return LOBBIES[lobby_id];
+        return this_lobby;
     }
     return null
 }

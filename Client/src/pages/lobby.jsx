@@ -606,7 +606,7 @@ function Lobby() {
                     value={lobby_chat_input} 
                     onChange={(e)=>{setLobbyChatInput(e.target.value)}}
                     onKeyDown={(e) => {
-                        if (e.key === 'Enter' && lobby_chat_input.trim() != ""){
+                        if (e.key === 'Enter' && lobby_chat_input.trim() != "" && !lobby_chat_sending){
                             addLobbyMsg();
                         }
                     }}
