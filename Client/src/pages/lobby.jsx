@@ -26,6 +26,7 @@ function Lobby() {
   const chat_container = useRef(null);
   const [lobby_chat_input, setLobbyChatInput] = useState("");
   const [lobby_chat_sending, setLobbyChatSending] = useState(false);
+  const [start_game_btn_loading, setStartGameBtnLoading] = useState(false);
 
 
     async function loadLobby(show_notifications=true) {
@@ -169,13 +170,20 @@ function Lobby() {
     }
 
 
-    function startGame(){
+    async function startGame(){
+        setStartGameBtnLoading(true);
+        const result = await SocketAPI.startGameFromLobby();
+        setStartGameBtnLoading(false);
 
+        showNotification({
+            text: result.msg,
+            type: result.error ? "error" : "success"
+        });
     }
 
 
     function startGameValidation(){
-        if (Object.entries(lobby.players).length < 2)
+        if (Object.entries(lobby.players).length + lobby.game_options.bots.length < 2)
             return [false, "At least 2 players in required to start the game."]
 
         if (Object.entries(lobby.players).length + lobby.game_options.bots.length > 10)
@@ -208,6 +216,16 @@ function Lobby() {
             });
         }
     }
+
+
+    SocketAPI.listenForGameStart(() => {
+        showNotification({
+            text: "Game Started. Redirecting to game...",
+            type: "success"
+        })
+
+        navigate("/game");
+    })
 
 
   if (!lobby){
@@ -495,10 +513,10 @@ function Lobby() {
             className="w-full"
             style={{background:"lime", color:"black"}}
             onClick={startGame}
-            disabled={!startGameValidation()[0]}
+            disabled={!startGameValidation()[0] || start_game_btn_loading}
           >
-            Start Game
-            </button>
+            {start_game_btn_loading ? <SpinnerLoader/> : "Start Game"}
+          </button>
 
             {
             !startGameValidation()[0] &&

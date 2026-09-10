@@ -118,3 +118,21 @@ export async function addLobbyChatMessage(msg) {
     });
 }
 
+
+export async function startGameFromLobby() {
+    return new Promise((resolve, reject) => {
+        socket.emit("start_game_from_lobby", {}, (response) => {
+            resolve(response);
+        });
+    });
+}
+
+
+export function listenForGameStart(callback) {
+    socket.on("game_started_from_lobby", callback);
+
+    return () => {
+        socket.off("game_started_from_lobby", callback);
+    };
+}
+

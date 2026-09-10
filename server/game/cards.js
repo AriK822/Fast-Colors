@@ -1,15 +1,12 @@
-export const CARD_ID_TO_CARD_OBJ = new Map();
-
-
 export const CardType = Object.freeze({
     norm: "norm",
-    magical: "magical",
     wild: "wild",
 })
 
 
 
 export const REGISTERED_CARDS = {
+    // Key: card or card group id,  Value: Array([card_object])
     norm_base_4_colors: makeNormalCards(),
 }
 
@@ -25,16 +22,16 @@ export function MakeCard(
     place_func
 ){
     return {
-        id: id, // Ids should follow: type-uniqueID, For CardType.norm: norm-{color}&{number}
-        type: type,
+        id, // Ids should follow: type-uniqueID, For CardType.norm: norm-{color}&{number}
+        type,
 
-        rednered_text: rednered_text,
-        base_color: base_color,
-        custom_overlay: custom_overlay,
+        rednered_text,
+        base_color, // null if allowed on any color, else color_id
+        custom_overlay,
         // Redner order: Base color -> Overlay -> Text
 
-        allowed_to_play_func: allowed_to_play_func,
-        place_func: place_func,
+        allowed_to_play_func,
+        place_func,
     }
 
 }
@@ -90,8 +87,6 @@ export function makeNormalCards(
                     weight: weight,
                 }
             )
-
-            CARD_ID_TO_CARD_OBJ.set(`${CardType.norm}-${nc[0]}&${nn}`, this_card)
 
         })
     })

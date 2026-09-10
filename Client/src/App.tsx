@@ -6,6 +6,7 @@ import "./api/socket_init";
 import Home from "./pages/Home"
 import Lobby from "./pages/lobby"
 import JoinLobby from "./pages/join_lobby"
+import Game from "./pages/game"
 
 // CSS
 import "./helpers/base.css";
@@ -36,6 +37,8 @@ function App() {
         <Route path="/lobby" element={<Lobby />} />
         
         <Route path="/joinlobby" element={<JoinLobby />} />
+
+        <Route path="/game" element={<Game />} />
 
         <Route path="*" element={<Navigate to="/" replace />} />
 

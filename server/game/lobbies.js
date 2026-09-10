@@ -153,3 +153,15 @@ export function kickPlayer(lobby_id, player_id){
     return false
 }
 
+
+export function deleteLobby(lobby){
+    if (!LOBBIES[lobby.id]){return false}
+
+    delete LOBBIES[lobby.id];
+    Object.entries(lobby.players).forEach(([p_id, p_desc]) => {
+        delete Player_To_Lobby[p_id]
+    })
+
+    return true;
+}
+

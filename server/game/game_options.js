@@ -51,7 +51,7 @@ export function validateGameOptions(new_options) {
 
 
 export function startGameValidation(lobby){
-    if (Object.entries(lobby.players).length < 2)
+    if (Object.entries(lobby.players).length + lobby.game_options.bots.length < 2)
         return [false, "At least 2 players in required to start the game."]
 
     if (Object.entries(lobby.players).length + lobby.game_options.bots.length > 10)

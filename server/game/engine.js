@@ -1,9 +1,10 @@
-import { REGISTERED_CARDS, CardType, CARD_ID_TO_CARD_OBJ } from "./cards.js";
+import { REGISTERED_CARDS, CardType } from "./cards.js";
 import * as PlayerstateHandler from "../game/player_states.js"
 
 
 
 export function makeNewGame(
+    id,
     players=[], // [ {id:uuid4 (seesioID), type:player/bot, name:(if bot)} ]
     card_objects= [
         ...REGISTERED_CARDS.norm_base_4_colors,
@@ -15,12 +16,14 @@ export function makeNewGame(
     allow_wild_card_stacking=true,
     wild_cards_must_match = false,
     turn_timer = 20, // seconds
+    chat=["Game started"]
 ){
     const start_card = generate_random_card(card_objects);
     const start_base_colors = get_start_base_color(start_card, base_colors);
     const players_initiated = init_players(players, init_card_count, card_objects);
 
     return {
+        id,
         turn:0,
         direction:1, // 1 or -1: next_turn = (turn + direction) % players.length
         base_color:start_base_colors,
@@ -28,15 +31,16 @@ export function makeNewGame(
         current_card:start_card,
         players:players_initiated,
         cards_taken_in_this_turn:0,
+        chat,
         
         // settings
-        card_objects:card_objects,
-        base_colors:base_colors,
-        allowed_to_skip_move:allowed_to_skip_move,
-        max_card_takes:max_card_takes,
-        allow_wild_card_stacking:allow_wild_card_stacking,
-        wild_cards_must_match:wild_cards_must_match,
-        turn_timer:turn_timer,
+        card_objects,
+        base_colors,
+        allowed_to_skip_move,
+        max_card_takes,
+        allow_wild_card_stacking,
+        wild_cards_must_match,
+        turn_timer,
         last_move_time:Date.now(),
         }
 }
@@ -87,8 +91,8 @@ function init_players(player_init_info, init_card_count, card_objects) {
             players.push({
                 id:player.id,
                 type:player.type,
-                get status() {return PlayerstateHandler.getPlayerState(player_id);}, 
-                get name() {return PlayerstateHandler.getPlayerName(player_id);},
+                get status() {return PlayerstateHandler.getPlayerState(player.id);}, 
+                get name() {return PlayerstateHandler.getPlayerName(player.id);},
 
                 cards: Array.from({ length: init_card_count }, () => generate_random_card(card_objects)),
             })
@@ -222,15 +226,15 @@ function place_card(game, card){
 
 
 
-const this_game = makeNewGame([{id:1, type:"player"},{id:2, type:"bot", name:"ttv"}]);
+const this_game = makeNewGame(1, [{id:1, type:"player"},{id:2, type:"bot", name:"ttv"}]);
 
 console.log(this_game)
-// console.log(this_game.players[0].cards)
+console.log(this_game.players[0].cards)
 console.log(possible_cards_to_play(this_game))
 
 console.log(random_move(this_game))
-// console.log(random_move(this_game))
-// console.log(random_move(this_game))
+console.log(random_move(this_game))
+console.log(random_move(this_game))
 
 console.log(this_game)
 console.log(this_game.players[0].cards)

@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { game_options, validateGameOptions } from "../game/game_options.js";
+import {  game_options,  validateGameOptions, startGameValidation  } from "../game/game_options.js";
 import * as LobbyHandler from "../game/lobbies.js"
 import * as GameHandler from "../game/games.js"
 import * as PlayerstateHandler from "../game/player_states.js"
@@ -334,7 +334,7 @@ io.on("connection", async (socket) => {
     })
 
 
-    socket.on("start_game", async (data, ack) => {
+    socket.on("start_game_from_lobby", async (data, ack) => {
         const lobby_id = LobbyHandler.Player_To_Lobby[socket.request.session.player_id];
         if (!lobby_id){
             ack({
@@ -354,9 +354,25 @@ io.on("connection", async (socket) => {
             return
         }
 
+        const [success, msg] = startGameValidation(this_lobby);
+        if (!success){
+            ack({
+                "error": true,
+                "msg": msg,
+            })
+            return            
+        }
+
         ack({
-            "msg": "name updated successfully",
+            "msg": "Starting game...",
         })
+
+        LobbyHandler.deleteLobby(this_lobby);
+
+        // Create the game object from lobby
+
+        io.to(this_lobby.id).emit("game_started_from_lobby")
+
         return
     })
 

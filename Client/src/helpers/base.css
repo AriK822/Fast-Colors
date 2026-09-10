@@ -1039,5 +1039,55 @@ progress {
 
 
 /* =========================================================
+   Scroll Bar
+   ========================================================= */
+
+
+   /* =========================================================
+   21. SCROLLBARS
+   ---------------------------------------------------------
+   Subtle, minimal scrollbars that match the dark theme.
+   ========================================================= */
+
+/* Firefox */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-light) transparent;
+}
+
+/* WebKit (Chrome, Edge, Safari) */
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border: 3px solid transparent;
+    border-radius: 999px;
+    background-clip: content-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--border-light);
+    background-clip: content-box;
+}
+
+::-webkit-scrollbar-thumb:active {
+    background: var(--text-muted);
+    background-clip: content-box;
+}
+
+::-webkit-scrollbar-corner {
+    background: transparent;
+}
+
+
+
+/* =========================================================
    END
    ========================================================= */
