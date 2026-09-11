@@ -16,7 +16,7 @@ export function hookIO(this_io){
 export function joinPlayerToLobby(player_id, lobby_id){
     if (LOBBIES[lobby_id] != null){
         LOBBIES[lobby_id].players[player_id] = {
-            get status() {return PlayerstateHandler.getPlayerState(player_id);}, 
+            get connection_status() {return PlayerstateHandler.getPlayerState(player_id);}, 
             get name() {return PlayerstateHandler.getPlayerName(player_id);},
             get disconnect_expires_at() {return PlayerstateHandler.getPlayerTimeout(player_id);},
         };

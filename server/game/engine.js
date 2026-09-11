@@ -81,6 +81,8 @@ function init_players(player_init_info, init_card_count, card_objects) {
                 id:player.id,
                 type:player.type,
                 name: player.name,
+                connection_status: "online",
+                game_status: "playing",
 
                 deck: Array.from({ length: init_card_count }, () => generate_random_card(card_objects)),
             })
@@ -89,8 +91,9 @@ function init_players(player_init_info, init_card_count, card_objects) {
             players.push({
                 id:player.id,
                 type:player.type,
-                get status() {return PlayerstateHandler.getPlayerState(player.id);}, 
+                get connection_status() {return PlayerstateHandler.getPlayerState(player.id);},
                 get name() {return PlayerstateHandler.getPlayerName(player.id);},
+                game_status: "playing",
 
                 deck: Array.from({ length: init_card_count }, () => generate_random_card(card_objects)),
             })

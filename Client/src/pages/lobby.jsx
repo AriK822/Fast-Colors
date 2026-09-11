@@ -267,7 +267,7 @@ function Lobby() {
                 <div key={id} className="flex gap-3">
 
                     <p>Name: {desc.name}</p>
-                    <p>Status: {desc.status}</p>
+                    <p>Status: {desc.connection_status}</p>
 
                     {desc.disconnect_expires_at ? 
                     <KickTimer target_time={desc.disconnect_expires_at} />

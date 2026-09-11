@@ -51,6 +51,7 @@ export function hiddenGameForClient(player_id){
 
     return {
         ...this_game,
+        card_objects: undefined,
         players: this_game.players.map(player => ({
             ...player,
             deck: player.id == player_id ? 
@@ -61,6 +62,18 @@ export function hiddenGameForClient(player_id){
             : undefined,
             card_count: player.deck.length,
         }))
+    }
+}
+
+
+export function leavePlayerFromGame(player_id){
+    const active_game = Player_To_Game[player_id];
+    if (!active_game){return}
+
+    delete Player_To_Game[player_id];
+    const left_player = active_game.players.find((p_info) => (p_info.id == player_id));
+    if (left_player){
+        left_player.game_status = "left";
     }
 }
 

@@ -20,17 +20,17 @@ function saveSession(session) {
 }
 
 
-function withSession(socket, handler) {
-    return async (...args) => {
-        try {
-            const result = await handler(...args);
-            await saveSession(socket.request.session);
-            return result;
-        } catch (err) {
-            throw err;
-        }
-    };
-}
+// function withSession(socket, handler) {
+//     return async (...args) => {
+//         try {
+//             const result = await handler(...args);
+//             await saveSession(socket.request.session);
+//             return result;
+//         } catch (err) {
+//             throw err;
+//         }
+//     };
+// }
 
 
 
