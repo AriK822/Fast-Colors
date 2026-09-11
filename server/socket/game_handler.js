@@ -7,21 +7,43 @@ function hookSocket(io, socket){
 
 
 
+// Utils
+async function broadCastHiddenGame(active_game, property = null) {
+    for (const p_info of active_game.players) {
+        if (p_info.game_status === "left") continue;
 
-async function broadCastHiddenGame(active_game){
-    active_game.players.forEach(async (p_info) => {
         const this_game = GameHandler.hiddenGameForClient(p_info.id);
-
-        const receiver_sockets = await io.in(`player-${p_info.id}`).fetchSockets();
+        const receiver_sockets =
+            await io.in(`player-${p_info.id}`).fetchSockets();
 
         for (const receiver_socket of receiver_sockets) {
-            receiver_socket.emit("sync_game", this_game);
+            if (property === null) {
+                receiver_socket.emit("sync_game", this_game);
+            } else {
+                receiver_socket.emit("sync_game_property", {
+                    property,
+                    value: this_game[property]
+                });
+            }
         }
-    })
+    }
 }
 
 
 
+// Run on connect
+{
+
+const this_game = GameHandler.Player_To_Game[socket.request.session.player_id];
+if (this_game){
+    broadCastHiddenGame(this_game, "players")
+}
+
+}
+
+
+
+// Events
 socket.on("load_game", async (data, ack) => {
     const active_game = GameHandler.Player_To_Game[socket.request.session.player_id];
     if (!active_game){
@@ -88,12 +110,35 @@ socket.on("leave_active_game", async (data, ack) => {
     }
 
     GameHandler.leavePlayerFromGame(socket.request.session.player_id);
+    const removed_game = GameHandler.gameCleanupAfterLeave(active_game);
 
-    broadCastHiddenGame();
+    if (removed_game){
+        ack({
+            "msg": "Game successfully left",
+            "redirect": "/",
+        })
+
+        return
+    }
+
+    ack({
+        "msg": "Game successfully left",
+        "redirect": "/",
+    })
+    broadCastHiddenGame(active_game, "players")
     socket.leave(active_game.id);
 
     return
 })
+
+
+
+socket.on("disconnecting", () => {
+    const active_game = GameHandler.Player_To_Game[socket.request.session.player_id]
+    if (active_game){
+        broadCastHiddenGame(active_game, "players")
+    }
+});
 
 
 

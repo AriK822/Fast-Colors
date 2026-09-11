@@ -11,6 +11,17 @@ function hookSocket(io, socket){
 
 
 
+{
+
+const this_lobby = LobbyHandler.Player_To_Lobby[socket.request.session.player_id];
+if (this_lobby){
+    socket.to(this_lobby.id).emit("sync_lobby", this_lobby)
+}
+
+}
+
+
+
 socket.on("load_lobby", async (data, ack) => {
     const active_game = GameHandler.Player_To_Game[socket.request.session.player_id];
     if (active_game){
@@ -334,6 +345,20 @@ socket.on("add_lobby_chat_message", async (data, ack) => {
 
     io.to(this_lobby.id).emit("sync_lobby", this_lobby)
 })
+
+
+
+socket.on("disconnecting", () => {
+    const active_lobby = LobbyHandler.lobbyCleanup(socket.request.session.player_id);
+    if (active_lobby){
+        PlayerstateHandler.setPlayerTimeout(socket.request.session.player_id, () => {
+            LobbyHandler.leaveLobby(socket.request.session.player_id)
+            io.to(active_lobby.id).emit("sync_lobby", active_lobby)
+        })
+
+        socket.to(active_lobby.id).emit("sync_lobby", active_lobby)
+    }
+});
 
 
 

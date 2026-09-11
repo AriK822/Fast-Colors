@@ -77,3 +77,15 @@ export function leavePlayerFromGame(player_id){
     }
 }
 
+
+export function gameCleanupAfterLeave(this_game){
+    if (this_game.players.filter(p_info => (
+        p_info.type === "player" && p_info.game_status !== "left"
+    )).length == 0){
+        delete GAMES[this_game.id]
+        // console.log("Game deleted")
+        return true
+    }
+    return false
+}
+

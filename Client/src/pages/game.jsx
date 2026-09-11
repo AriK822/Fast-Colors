@@ -5,6 +5,7 @@ import * as SocketAPI from "../api/socket_handler"
 import { useNotification } from "../helpers/context/notification";
 import { useApp } from "../helpers/context/app_provider"
 
+import RenderCard from "../helpers/utils/render_card"
 import SpinnerLoader from "../helpers/loaders/inside_spinner1"
 import FullScreenLoader from "../helpers/loaders/fullscreen1";
 import Skeleton from "react-loading-skeleton";
@@ -71,6 +72,7 @@ function Game(){
   }
 
   SocketAPI.listenForSyncGameProperty((data) => {
+    console.log(data)
     setGame(prevGame => ({
       ...prevGame,
       [data.property]: data.value,
@@ -94,6 +96,10 @@ function Game(){
         text: result.msg,
         type: result.error ? "error" : "success",
     });
+
+    if (result.redirect){
+      navigate(result.redirect);
+    }
   }
 
 
@@ -119,8 +125,14 @@ function Game(){
         <p>type: {game.current_card.type}</p>
         <p>rednered_text: {game.current_card.rednered_text}</p>
         <p>base_color: {game.current_card.base_color}</p>
-        <p>custom_overlay: {game.current_card.custom_overlay}</p>
+        <p>overlay_image: {game.current_card.overlay_image}</p>
         <p>choice: {game.current_card.choice ?? "No choice"}</p>
+
+        <RenderCard 
+          base_color={game.current_card.base_color} 
+          overlay_image={game.current_card.overlay_image} 
+          rednered_text={game.current_card.rednered_text} 
+        />
       </div>
 
 
@@ -138,6 +150,20 @@ function Game(){
             <p>connection_status: {player.connection_status}</p>
             <p>game_status: {player.game_status}</p>
             <p>card_count: {player.card_count}</p>
+
+            {player.deck &&
+            <div className="flex">
+              {player.deck.map(card => (
+                <RenderCard 
+                  base_color={card.base_color} 
+                  overlay_image={card.overlay_image} 
+                  rednered_text={card.rednered_text} 
+                  width={80}
+                  grayscale={card.allowed_to_play ? false : true}
+                />
+              ))}
+            </div>
+            }
           </div>
         ))}
       </div>

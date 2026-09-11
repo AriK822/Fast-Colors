@@ -18,7 +18,7 @@ export function MakeCard({
 
     rednered_text, 
     base_color, 
-    custom_overlay, 
+    overlay_image, 
 
     allowed_to_play_func, 
     place_func,
@@ -31,7 +31,7 @@ export function MakeCard({
 
         rednered_text,
         base_color, // null if allowed on any color, else color_id
-        custom_overlay,
+        overlay_image,
         // Redner order: Base color -> Overlay -> Text
 
         allowed_to_play_func,
@@ -46,7 +46,7 @@ export function MakeCard({
 
 export function makeNormalCards(
     nrom_nums = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
-    norm_colors = ["red", "green", "blue", "yellow"],
+    norm_colors = ["#f76c57", "#58ed80", "#34a8eb", "#ede158"],
     weight = 1,
 ){
     const normal_cards = [];
@@ -81,7 +81,7 @@ export function makeNormalCards(
                 type:CardType.norm,
                 rednered_text:nn,
                 base_color:this_base_color, // RGB or CSS rendered color value
-                custom_overlay:"default_base.png",
+                overlay_image:"default_overlay.png",
                 allowed_to_play_func: allowed_to_play_func,
                 place_func: place_func,
                 choice:null,

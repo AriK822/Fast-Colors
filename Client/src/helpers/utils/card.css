@@ -1,0 +1,60 @@
+.render-cards--card {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    overflow: hidden;
+    border-radius: 12px;
+    border: 5px solid white;
+
+    font-size: 5rem;
+    font-weight: 900;
+    color: white;
+
+    /* black stroke effect */
+    text-shadow:
+        -3px -3px 0 black,
+         3px -3px 0 black,
+        -3px  3px 0 black,
+         3px  3px 0 black;
+
+    user-select: none;
+}
+
+
+.render-cards--card:hover{
+    box-shadow: 0px 0px 5px 5px rgba(255, 255, 255, 0.139);
+}
+
+
+.render-cards--card img {
+    position: absolute;
+
+    width: 100%;
+    height: 100%;
+
+    object-fit: fill;
+
+    pointer-events: none;
+}
+
+
+.render-cards--card > * {
+    z-index: 1;
+}
+
+.render-cards--text {
+    position: relative;
+    z-index: 1;
+
+    font-size: 100%;
+    font-weight: 900;
+    color: white;
+
+    text-shadow:
+        -1px -1px 0 #000,
+         1px -1px 0 #000,
+        -1px  1px 0 #000,
+         1px  1px 0 #000;
+}

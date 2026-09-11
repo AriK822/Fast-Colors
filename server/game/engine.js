@@ -10,7 +10,7 @@ export function makeNewGame({
         ...REGISTERED_CARDS.norm_base_4_colors,
     ],
     init_card_count=7, 
-    base_colors=["red", "green", "blue", "yellow"],
+    base_colors=["#f76c57", "#58ed80", "#34a8eb", "#ede158"],
     allowed_to_skip_move=true, // Allows players to take cards even if they have a card to play
     max_card_takes=1, // How many crads is a player allowed to take in their turn
     allow_wild_card_stacking=true,
