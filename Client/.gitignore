@@ -29,3 +29,7 @@ dist-ssr
 
 .env
 /test.js
+
+# Temporary avoid commiting large size assets until official release
+/src/assets
+
