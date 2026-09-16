@@ -103,7 +103,7 @@ function init_players(player_init_info, init_card_count, card_objects) {
 }
 
 
-function possible_cards_to_play(game){
+export function possible_cards_to_play(game){
     const possible_cards = [];
     game.players[game.turn].deck.forEach((this_card)=>{
         if (this_card.allowed_to_play_func(game)){
@@ -114,66 +114,48 @@ function possible_cards_to_play(game){
 }
 
 
-function take_new_card(game){
+export function take_new_card(game){
     if (game.cards_to_take > 0){
-        return false;
+        return [false, "Cant skip move in danger move. Take the cards or place a wail card."];
     }
 
-    if (game.allowed_to_skip_move){
-        if (game.cards_taken_in_this_turn < game.max_card_takes){
-            game.players[game.turn].deck.push(generate_random_card(game.card_objects));
-            game.cards_taken_in_this_turn += 1;
-            if (game.cards_taken_in_this_turn == game.max_card_takes){
-                game.cards_taken_in_this_turn = 0;
-                game.turn = (game.turn + game.direction) % game.players.length;
-            }
-            return true;
-        }
-        else {
-            return false;
-        }
+    if (!game.allowed_to_skip_move && possible_cards_to_play(game).length > 0){
+        return [false, "Not allowed to take new card. Place cards from your deck."];
     }
-    else {
-        if(possible_cards_to_play(game).length > 0){
-            return false;
-        }
-        else{
-            if (game.cards_taken_in_this_turn < game.max_card_takes){
-                game.players[game.turn].deck.push(generate_random_card(game.card_objects));
-                game.cards_taken_in_this_turn += 1;
-                if (game.cards_taken_in_this_turn == game.max_card_takes){
-                    game.cards_taken_in_this_turn = 0;
-                    game.turn = (game.turn + game.direction) % game.players.length;
-                }
-                return true;
-            }
-            else {
-                return false;
-            }
-        }
+
+    if (game.cards_taken_in_this_turn >= game.max_card_takes){
+        return [false, "Limit for max card takes reached. Please skip turn or play a card."];
     }
+
+    game.players[game.turn].deck.push(generate_random_card(game.card_objects));
+    game.cards_taken_in_this_turn += 1;
+
+    return [true, "Took new card successfully."];
+
 }
 
 
-function skip_turn(game){
+export function skip_turn(game){
     if (game.cards_to_take > 0){
-        return false;
+        return [false, "Cant skip move in danger move. Take the cards or place a wail card."];
+    }
+
+    if (!game.allowed_to_skip_move && possible_cards_to_play(game).length > 0){
+        return [false, "Not allowed to take new card. Place cards from your deck."];
     }
 
     if (game.cards_taken_in_this_turn == 0){
-        game.players[game.turn].deck.push(generate_random_card(game.card_objects));
-        game.turn = (game.turn + game.direction) % game.players.length;
-        return true;
+        return [false, "You must take at least one card before skipping your turn."];
     }
-    else {
-        game.cards_taken_in_this_turn = 0;
-        game.turn = (game.turn + game.direction) % game.players.length;
-        return true;
-    }
+
+    game.cards_taken_in_this_turn = 0;
+    game.turn = (game.turn + game.direction) % game.players.length;
+
+    return [true, "Skipped successfully"];
 }
 
 
-function timeout_move(game){
+export function timeout_move(game){
     if (game.cards_to_take > 0){
         for (let i = 0; i < game.cards_to_take; i++){
             game.players[game.turn].deck.push(generate_random_card(game.card_objects));
@@ -188,7 +170,7 @@ function timeout_move(game){
 }
 
 
-function random_move(game){
+export function random_move(game){
     if (game.cards_to_take > 0){
         for (let i = 0; i < game.cards_to_take; i++){
             game.players[game.turn].deck.push(generate_random_card(game.card_objects));
@@ -210,7 +192,7 @@ function random_move(game){
 }
 
 
-function place_card(game, card){
+export function place_card(game, card){
     if (!card.allowed_to_play_func(game)){return false;}
 
     const card_index = game.players[game.turn].deck.indexOf(card);

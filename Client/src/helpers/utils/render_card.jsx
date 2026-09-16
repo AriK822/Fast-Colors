@@ -22,7 +22,9 @@ function card({
                 background: base_color,
                 width,
                 height: width * (1280/720),
-                filter: grayscale ? "grayscale(100%)" : "",
+                filter: grayscale ? "grayscale(60%)" : "",
+                border: !grayscale ? "5px solid lime" : "",
+                // transform: grayscale ? "translateY(10px)" : "",
             }}
             onClick={() => {if(onclick_enabled){onclikc_callback()}}}
         >

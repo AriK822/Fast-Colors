@@ -1,6 +1,8 @@
 import { randomUUID } from "node:crypto";
 import * as GameEngine from "./engine.js"
 import { REGISTERED_CARDS } from "./cards.js";
+import * as Engine from "./engine.js"
+
 
 export const GAMES = new Map();
 export const Player_To_Game = new Map();
@@ -87,5 +89,52 @@ export function gameCleanupAfterLeave(this_game){
         return true
     }
     return false
+}
+
+
+export function mainPlayCardProcess(game, player_id, card_index){
+    const player_index = game.players.findIndex(player => (player.id == player_id));
+    if (player_index == -1)
+        return [false, "Player not found in active game."]
+
+    if (! game.turn == player_index)
+        return [false, "Not allowed. Wait for your turn to play a card."]
+
+    const card_to_play = game.players[player_index].deck[card_index];
+    if (!card_to_play)
+        return [false, "Card not in deck, invalid card index."]
+
+    if (!card_to_play.allowed_to_play_func(game))
+        return [false, "Not allowed to play this card."]
+
+    game.players[game.turn].deck.splice(card_index, 1);
+    card_to_play.place_func(game);
+    game.current_card = card_to_play;
+
+    return [true, "Card placed successfully."]
+}
+
+
+export function mainSkipMoveProcess(game, player_id){
+    const player_index = game.players.findIndex(player => (player.id == player_id));
+    if (player_index == -1)
+        return [false, "Player not found in active game."]
+
+    if (! game.turn == player_index)
+        return [false, "Not allowed. Wait for your turn to play a card."]
+
+    return Engine.skip_turn(game);
+}
+
+
+export function mainTakeCardProcess(game, player_id){
+    const player_index = game.players.findIndex(player => (player.id == player_id));
+    if (player_index == -1)
+        return [false, "Player not found in active game."]
+
+    if (! game.turn == player_index)
+        return [false, "Not allowed. Wait for your turn to play a card."]
+
+    return Engine.take_new_card(game);
 }
 

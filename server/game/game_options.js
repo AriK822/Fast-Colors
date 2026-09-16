@@ -10,8 +10,8 @@ export const game_options = {
     init_card_count:7, 
     allowed_to_skip_move:true, // Allows players to take cards even if they have a card to play
     max_card_takes:1, // How many crads is a player allowed to take in their turn
-    allow_wild_card_stacking:true,
-    wild_cards_must_match: false,
+    allow_wild_card_stacking:true, // wild cards can be placed on top of eachother
+    wild_cards_must_match: false, // wild cards can stack only if their type is the same
     turn_timer: 20, // seconds
 }
 

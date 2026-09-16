@@ -132,6 +132,96 @@ socket.on("leave_active_game", async (data, ack) => {
 })
 
 
+socket.on("play_card", async (data, ack) => {
+    const active_game = GameHandler.Player_To_Game[socket.request.session.player_id];
+    if (!active_game){
+        ack({
+            "error":true,
+            "msg": "No game found",
+            "redirect": "/",
+        })
+        return;
+    }
+    
+    if (!(typeof data.card_index == "number")){
+        ack({
+            "error":true,
+            "msg": "Invalid card index",
+        })
+        return;
+    }
+
+    const [success, msg] = GameHandler.mainPlayCardProcess(
+        active_game, 
+        socket.request.session.player_id,
+        data.card_index,
+    )
+
+    ack({
+        "error":!success,
+        "msg": msg,
+    })
+
+    if (success){
+        broadCastHiddenGame(active_game)
+    }
+})
+
+
+socket.on("game_skip_move", async (data, ack) => {
+    const active_game = GameHandler.Player_To_Game[socket.request.session.player_id];
+    if (!active_game){
+        ack({
+            "error":true,
+            "msg": "No game found",
+            "redirect": "/",
+        })
+        return;
+    }
+
+    const [success, msg] = GameHandler.mainSkipMoveProcess(
+        active_game, 
+        socket.request.session.player_id,
+    )
+
+    ack({
+        "error":!success,
+        "msg": msg,
+    })
+
+    if (success){
+        broadCastHiddenGame(active_game)
+    }
+})
+
+
+socket.on("game_take_card", async (data, ack) => {
+    const active_game = GameHandler.Player_To_Game[socket.request.session.player_id];
+    if (!active_game){
+        ack({
+            "error":true,
+            "msg": "No game found",
+            "redirect": "/",
+        })
+        return;
+    }
+
+    const [success, msg] = GameHandler.mainTakeCardProcess(
+        active_game, 
+        socket.request.session.player_id,
+    )
+
+    ack({
+        "error":!success,
+        "msg": msg,
+    })
+
+    if (success){
+        broadCastHiddenGame(active_game)
+    }
+})
+
+
 
 socket.on("disconnecting", () => {
     const active_game = GameHandler.Player_To_Game[socket.request.session.player_id]

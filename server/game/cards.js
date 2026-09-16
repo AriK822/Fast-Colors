@@ -61,12 +61,11 @@ export function makeNormalCards(
                 if (game.base_color == this_base_color){
                     return true;
                 }
-                const [ctype, cid] = game.current_card.id.split("-")
-                let cnum = null;
-                if (ctype == "norm"){cnum = cid.split("&")[0]}
-                if (cnum == nn){
+                if(game.current_card.type === CardType.norm && 
+                    game.current_card.rednered_text === nn){
                     return true;
                 }
+                
                 return false;
             }
 

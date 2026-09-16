@@ -20,6 +20,15 @@ export async function sendGameChatMessage(msg) {
 }
 
 
+export function listenForSyncGame(callback) {
+    socket.on("sync_game", callback);
+
+    return () => {
+        socket.off("sync_game", callback);
+    };
+}
+
+
 export function listenForSyncGameProperty(callback) {
     socket.on("sync_game_property", callback);
 
@@ -32,6 +41,33 @@ export function listenForSyncGameProperty(callback) {
 export async function leaveGame() {
     return new Promise((resolve, reject) => {
         socket.emit("leave_active_game", null, (response) => {
+            resolve(response);
+        });
+    });
+}
+
+
+export async function playCard(card_index) {
+    return new Promise((resolve, reject) => {
+        socket.emit("play_card", {card_index}, (response) => {
+            resolve(response);
+        });
+    });
+}
+
+
+export async function skipMove(card_index) {
+    return new Promise((resolve, reject) => {
+        socket.emit("game_skip_move", null, (response) => {
+            resolve(response);
+        });
+    });
+}
+
+
+export async function takeCard(card_index) {
+    return new Promise((resolve, reject) => {
+        socket.emit("game_take_card", null, (response) => {
             resolve(response);
         });
     });

@@ -71,6 +71,11 @@ function Game(){
     }));
   }
 
+  SocketAPI.listenForSyncGame((data) => {
+    console.log(data)
+    setGame(data);
+  })
+
   SocketAPI.listenForSyncGameProperty((data) => {
     console.log(data)
     setGame(prevGame => ({
@@ -100,6 +105,34 @@ function Game(){
     if (result.redirect){
       navigate(result.redirect);
     }
+  }
+
+
+  async function playCard(card_index) {
+    const result = await SocketAPI.playCard(card_index);
+
+    showNotification({
+        text: result.msg,
+        type: result.error ? "error" : "success",
+    });
+  }
+
+  async function skipMove() {
+    const result = await SocketAPI.skipMove();
+
+    showNotification({
+        text: result.msg,
+        type: result.error ? "error" : "success",
+    });
+  }
+
+  async function takeCard() {
+    const result = await SocketAPI.takeCard();
+
+    showNotification({
+        text: result.msg,
+        type: result.error ? "error" : "success",
+    });
   }
 
 
@@ -138,10 +171,13 @@ function Game(){
 
       <div className="card">
         <strong>Players:</strong>
-        {game.players.map((player) => (
+        {game.players.map((player, p_index) => (
           <div 
             className="card"
-            style={{border:session.player_id == player.id ? "1px solid lime" : ""}}
+            style={{
+              border:session.player_id == player.id ? "1px solid lime" : "",
+              outline:p_index == game.turn ? "1px solid orange" : "",
+            }}
             key={player.id}
           >
             <p>id: {player.id}</p>
@@ -151,19 +187,26 @@ function Game(){
             <p>game_status: {player.game_status}</p>
             <p>card_count: {player.card_count}</p>
 
-            {player.deck &&
+            {player.deck && <>
             <div className="flex">
-              {player.deck.map(card => (
+              {player.deck.map((card, i) => (
                 <RenderCard 
+                  key={i}
                   base_color={card.base_color} 
                   overlay_image={card.overlay_image} 
                   rednered_text={card.rednered_text} 
                   width={80}
                   grayscale={card.allowed_to_play ? false : true}
+                  onclick_enabled={true}
+                  onclikc_callback={() => playCard(i)}
                 />
               ))}
             </div>
-            }
+
+            <button onClick={takeCard}>Take card</button>
+            <button onClick={skipMove}>Skip turn</button>
+            </>}
+
           </div>
         ))}
       </div>
