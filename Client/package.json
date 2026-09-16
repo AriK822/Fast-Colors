@@ -14,7 +14,8 @@
     "react-dom": "^19.2.8",
     "react-loading-skeleton": "^3.5.0",
     "react-router-dom": "^7.18.2",
-    "socket.io-client": "^4.8.3"
+    "socket.io-client": "^4.8.3",
+    "motion": "^13.3.0"
   },
   "devDependencies": {
     "@types/node": "^24.13.3",
