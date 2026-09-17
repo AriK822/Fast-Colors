@@ -771,6 +771,11 @@ progress {
     flex-direction: column !important;
 }
 
+.flex-row {
+    display: flex !important;
+    flex-direction: row !important;
+}
+
 .flex-wrap {
     flex-wrap: wrap !important;
 }

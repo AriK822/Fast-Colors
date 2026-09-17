@@ -34,6 +34,7 @@ socket.on("load_lobby", async (data, ack) => {
     }
 
     const active_lobby = LobbyHandler.Player_To_Lobby[socket.request.session.player_id];
+
     if (active_lobby){
         socket.join(active_lobby.id);
         ack({
@@ -349,10 +350,11 @@ socket.on("add_lobby_chat_message", async (data, ack) => {
 
 
 socket.on("disconnecting", () => {
-    const active_lobby = LobbyHandler.lobbyCleanup(socket.request.session.player_id);
+    const active_lobby = LobbyHandler.Player_To_Lobby[socket.request.session.player_id];
     if (active_lobby){
         PlayerstateHandler.setPlayerTimeout(socket.request.session.player_id, () => {
-            LobbyHandler.leaveLobby(socket.request.session.player_id)
+            LobbyHandler.leaveLobby(socket.request.session.player_id);
+            LobbyHandler.lobbyCleanup(socket.request.session.player_id);
             io.to(active_lobby.id).emit("sync_lobby", active_lobby)
         })
 
