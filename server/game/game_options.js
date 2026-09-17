@@ -2,6 +2,7 @@
 export const game_options = {
     card_objects: {
         "norm_base_4_colors": "Default UNO 4 color cards",
+        "wild_base_draw_2_colored": "Wild card: adds +2 cards to the next person"
     },
     selected_card_objects:[
         "norm_base_4_colors",
@@ -19,9 +20,10 @@ export const game_options = {
     base_colors: ["#f76c57", "#58ed80", "#34a8eb", "#ede158"],
     allowed_advanced_card_objects: {
         "norm-custom": "Normal type cards",
+        "wild_base_draw_2_colored": "Wild card: adds +2 cards to the next person",
     },
     advanced_card_objects: [
-        {id:"norm-custom", weight:1, nums:Array.from({length:10}).map((_, i) => i+1)},
+        {id:"norm-custom", weight:4, nums:Array.from({length:10}).map((_, i) => i+1)},
     ],
     
 }
@@ -123,14 +125,18 @@ export function startGameValidation(lobby){
         if (lobby.game_options.advanced_card_objects.length == 0)
             return [false, "Please select at least one card object to continue"]
         
+        let norm_custom_exists = false;
         for (const card_obj of lobby.game_options.advanced_card_objects) {
             if (card_obj.id === "norm-custom") {
+                norm_custom_exists = true;
                 if (card_obj.nums.length == 0){
                     return [false, 
                         "Advanced card object of type Nomral Cards must contains at least on number"]
                 }
             }
         }
+        if (!norm_custom_exists)
+            return [false, "Advanced card objects must contain at least one Normal Cards type"]
     }
     
     return [true, ""];

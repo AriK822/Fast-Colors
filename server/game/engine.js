@@ -16,7 +16,8 @@ export function makeNewGame({
     allow_wild_card_stacking=true,
     wild_cards_must_match = false,
     turn_timer = 20, // seconds
-    chat=["Game started"]
+    chat=["Game started"],
+    history={played_cards:[]},
 }){
     const start_card = generate_random_card(card_objects);
     const start_base_color = get_start_base_color(start_card, base_colors);
@@ -32,6 +33,7 @@ export function makeNewGame({
         players:players_initiated,
         cards_taken_in_this_turn:0,
         chat,
+        history,
         
         // settings
         card_objects,
@@ -48,12 +50,8 @@ export function makeNewGame({
 
 
 function get_start_base_color(start_card, base_colors){
-    if (start_card.type != CardType.norm){
-        return base_colors[Math.floor(Math.random() * base_colors.length)][0];
-    }
-    else {
-        return start_card.base_color;
-    }
+    if (start_card.base_color) return start_card.base_color;
+    return base_colors[Math.floor(Math.random() * base_colors.length)][0];
 }
 
 
@@ -116,16 +114,20 @@ export function possible_cards_to_play(game){
 
 export function take_new_card(game){
     if (game.cards_to_take > 0){
-        return [false, "Cant skip move in danger move. Take the cards or place a wail card."];
+        for (let i = 0; i < game.cards_to_take; i++){
+            game.players[game.turn].deck.push(generate_random_card(game.card_objects));
+        }
+        game.cards_taken_in_this_turn += game.cards_to_take;
+        game.cards_to_take = 0;
+        game.turn = (game.turn + game.direction) % game.players.length;
+        return [true, "Took new cards successfully."];
     }
 
-    if (!game.can_draw_when_playable && possible_cards_to_play(game).length > 0){
+    if (!game.can_draw_when_playable && possible_cards_to_play(game).length > 0)
         return [false, "Not allowed to take new card. Place cards from your deck."];
-    }
 
-    if (game.cards_taken_in_this_turn >= game.max_draws_per_turn){
+    if (game.cards_taken_in_this_turn >= game.max_draws_per_turn)
         return [false, "Limit for max draw per turn reached. Please skip turn or play a card."];
-    }
 
     game.players[game.turn].deck.push(generate_random_card(game.card_objects));
     game.cards_taken_in_this_turn += 1;
@@ -136,17 +138,14 @@ export function take_new_card(game){
 
 
 export function skip_turn(game){
-    if (game.cards_to_take > 0){
+    if (game.cards_to_take > 0)
         return [false, "Cant skip move in danger move. Take the cards or place a wail card."];
-    }
 
-    if (!game.can_draw_when_playable && possible_cards_to_play(game).length > 0){
+    if (!game.can_draw_when_playable && possible_cards_to_play(game).length > 0)
         return [false, "Not allowed to take new card. Place cards from your deck."];
-    }
 
-    if (game.cards_taken_in_this_turn == 0){
+    if (game.cards_taken_in_this_turn == 0)
         return [false, "You must take at least one card before skipping your turn."];
-    }
 
     game.cards_taken_in_this_turn = 0;
     game.turn = (game.turn + game.direction) % game.players.length;
@@ -204,6 +203,13 @@ export function place_card(game, card){
     game.current_card = card;
 
     return true;
+}
+
+
+export function updateHistoryCard(game, card_object){
+    game.history.played_cards.push(card_object);
+    if (game.history.played_cards.length > 5)
+        game.history.played_cards.splice(0, 1);
 }
 
 

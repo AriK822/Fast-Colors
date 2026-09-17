@@ -200,14 +200,18 @@ function Lobby() {
             if (lobby.game_options.advanced_card_objects.length == 0)
                 return [false, "Please select at least one card object to continue"]
 
+            let norm_custom_exists = false;
             for (const card_obj of lobby.game_options.advanced_card_objects) {
                 if (card_obj.id === "norm-custom") {
+                    norm_custom_exists = true;
                     if (card_obj.nums.length == 0){
                         return [false, 
                             "Advanced card object of type Nomral Cards must contains at least on number"]
                     }
                 }
             }
+            if (!norm_custom_exists)
+                return [false, "Advanced card objects must contain at least one Normal Cards type"]
         }
         
         return [true, ""];
@@ -613,7 +617,7 @@ function Lobby() {
 
                         const new_object = {
                         id: firstAllowedId,
-                        weight: 1,
+                        weight: 4,
                         ...(firstAllowedId === "norm-custom" && {
                             nums: Array.from({ length: 10 }, (_, i) => i + 1),
                         }),

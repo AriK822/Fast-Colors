@@ -1,8 +1,10 @@
 import defaultOverlay from "../../assets/dafault_overlay.png"
+import wildPlus2Colored from "../../assets/wild_plus2_colored.png"
 import "./card.css"
 
 const ovrelayMap = {
     "default_overlay.png": defaultOverlay,
+    "wild_plus2_colored.png": wildPlus2Colored,
 }
 
 function card({

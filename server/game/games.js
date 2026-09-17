@@ -139,8 +139,10 @@ export function mainPlayCardProcess(game, player_id, card_index){
         return [false, "Not allowed to play this card."]
 
     game.players[game.turn].deck.splice(card_index, 1);
-    card_to_play.place_func(game);
     game.current_card = card_to_play;
+    Engine.updateHistoryCard(game, card_to_play)
+    card_to_play.place_func(game);
+    game.cards_taken_in_this_turn = 0;
 
     return [true, "Card placed successfully."]
 }

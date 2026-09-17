@@ -188,6 +188,11 @@ function Game(){
             <p>card_count: {player.card_count}</p>
 
             {player.deck && <>
+
+            {game.cards_to_take > 0 &&
+            <p style={{color:"red"}}>Danger, cards to take: {game.cards_to_take}</p>
+            }
+
             <div className="flex">
               {player.deck.map((card, i) => (
                 <RenderCard 

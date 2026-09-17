@@ -6,12 +6,14 @@ export const CardType = Object.freeze({
 
 export const CARD_ID_TO_GENERATE_FUNC = {
     "norm-custom": makeNormalCards,
+    "wild_base_draw_2_colored": makeWildDraw2Colored,
 }
 
 
 export const REGISTERED_CARDS = {
     // Key: card or card group id,  Value: Array([card_object])
-    norm_base_4_colors: makeNormalCards(),
+    "norm_base_4_colors": makeNormalCards(),
+    "wild_base_draw_2_colored": makeWildDraw2Colored(),
 }
 
 
@@ -48,10 +50,43 @@ export function MakeCard({
 
 
 
+
+
+
+// ---   UTILS   ---
+function generate_random_card(card_objects) {
+    const totalWeight = card_objects.reduce((sum, item) => sum + item.weight, 0);
+    let random = Math.random() * totalWeight;
+
+    for (const item of card_objects) {
+        random -= item.weight;
+        if (random <= 0) {
+            return item.card;
+        }
+    }
+
+    return card_objects[card_objects.length - 1].card;
+}
+
+
+function add_cards_to_player(game, player_index, count=1){
+    const target_player = game.players[player_index];
+    if (!target_player) return false;
+    for (let i = 0; i < count; i++){
+        target_player.deck.push(generate_random_card(game.card_objects));
+    }
+    return true;
+}
+
+
+
+
+
+// ---   Card generating funcitons   ---
 export function makeNormalCards(
     norm_colors = ["#f76c57", "#58ed80", "#34a8eb", "#ede158"],
     norm_nums = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
-    weight = 1,
+    weight = 4,
 ){
     const normal_cards = [];
 
@@ -76,7 +111,6 @@ export function makeNormalCards(
             const place_func = (game) => {
                 game.base_color = this_base_color;
                 game.turn = (game.turn + game.direction) % game.players.length;
-                game.cards_taken_in_this_turn = 0;
             }
 
             const this_card = MakeCard({
@@ -102,6 +136,48 @@ export function makeNormalCards(
 
     return normal_cards;
 }
+
+
+export function makeWildDraw2Colored(
+    base_colors = ["#f76c57", "#58ed80", "#34a8eb", "#ede158"],
+    weight = 4,
+){
+    const result = [];
+
+    base_colors.forEach(card_base_color => {
+
+        const allowed_to_play_func = (game) => {
+            if (!game.allow_wild_card_stacking && game.cards_to_take > 0) return false;
+            if (game.base_color == card_base_color) return true;
+            return false;
+        }
+
+        const place_func = (game) => {
+            game.base_color = card_base_color;
+            game.turn = (game.turn + game.direction) % game.players.length;
+            game.cards_to_take += 2;
+        }
+
+        const this_card = MakeCard({
+            id:`${CardType.wild}-${card_base_color}-draw+2-colored`,
+            type:CardType.wild,
+            rednered_text:"+2",
+            base_color:card_base_color,
+            overlay_image:"wild_plus2_colored.png",
+            allowed_to_play_func: allowed_to_play_func,
+            place_func: place_func,
+            choice:null,
+        })
+
+        result.push({
+            card: this_card,
+            weight,
+        })
+    })
+
+    return result;
+}
+
 
 // To DO:
 // Wild: +2, +4
