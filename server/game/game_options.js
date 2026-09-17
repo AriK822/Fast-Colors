@@ -34,8 +34,11 @@ export function validateGameOptions(new_options) {
     if (new_options.init_card_count < 3 || new_options.init_card_count > 15)
         return false;
 
-    if (new_options.max_card_takes < 0 || new_options.max_card_takes > 10)
-        return false;
+    if (
+        new_options.max_card_takes !== "infinite" &&
+        new_options.max_card_takes < 1 || 
+        new_options.max_card_takes > 10
+    ) return false;
 
     if (
         new_options.turn_timer !== "infinite" &&

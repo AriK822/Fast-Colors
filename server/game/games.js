@@ -53,6 +53,10 @@ export function createGameFromLobby(lobby){
         });
     }
 
+    const this_max_card_takes = lobby.game_options.max_card_takes == "infinite"
+        ? Infinity
+        : lobby.game_options.max_card_takes
+
 
     const this_game = GameEngine.makeNewGame({
         id:lobby.id,
@@ -61,7 +65,7 @@ export function createGameFromLobby(lobby){
         base_colors:this_base_colors,
         init_card_count:lobby.game_options.init_card_count,
         allowed_to_skip_move:lobby.game_options.allowed_to_skip_move,
-        max_card_takes:lobby.game_options.max_card_takes,
+        max_card_takes:this_max_card_takes,
         allow_wild_card_stacking:lobby.game_options.allow_wild_card_stacking,
         wild_cards_must_match:lobby.game_options.wild_cards_must_match,
         turn_timer:lobby.game_options.turn_timer,

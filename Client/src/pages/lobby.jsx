@@ -733,14 +733,16 @@ function Lobby() {
 
                     <select
                         value={lobby.game_options.max_card_takes}
-                        onChange={(e) =>
+                        onChange={(e) =>{
+                            const value = e.target.value;
                             setGameOptions(
                                 "max_card_takes",
-                                Number(e.target.value)
+                                value === "infinite" ? "infinite" : Number(value)
                             )
-                        }
+                        }}
                     >
-                        {Array.from({ length: 11 }, (_, i) => i).map(count => (
+                        <option value={"infinite"}>Infinite</option>
+                        {Array.from({ length: 10 }, (_, i) => i+1).map(count => (
                             <option key={count} value={count}>
                                 {count}
                             </option>
