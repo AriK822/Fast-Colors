@@ -228,8 +228,8 @@ function Game(){
         <strong>Game settings:</strong>
         <div>
           <p>Base colors: {game.base_colors.join(" - ")}</p>
-          <p>Allowed to skip move: {game.allowed_to_skip_move}</p>
-          <p>Max card takes: {game.max_card_takes}</p>
+          <p>Can draw when playable: {game.can_draw_when_playable}</p>
+          <p>Max draw per turn: {game.max_draws_per_turn}</p>
           <p>Allow wild card stacking: {game.allow_wild_card_stacking}</p>
           <p>Wild cards must match: {game.wild_cards_must_match}</p>
           <p>Turn timer: {game.turn_timer}</p>

@@ -7,9 +7,9 @@ export const game_options = {
         "norm_base_4_colors",
     ],
     bots: [],
-    init_card_count:7, 
-    allowed_to_skip_move:true, // Allows players to take cards even if they have a card to play
-    max_card_takes:1, // How many crads is a player allowed to take in their turn
+    init_deck_size:7, 
+    can_draw_when_playable:true, // Allows players to take cards even if they have a card to play
+    max_draws_per_turn:1, // How many crads is a player allowed to take in their turn
     allow_wild_card_stacking:true, // wild cards can be placed on top of eachother
     wild_cards_must_match: false, // wild cards can stack only if their type is the same
     turn_timer: 20, // seconds
@@ -31,13 +31,13 @@ export const game_options = {
 export function validateGameOptions(new_options) {
     if (!new_options) return false;
 
-    if (new_options.init_card_count < 3 || new_options.init_card_count > 15)
+    if (new_options.init_deck_size < 3 || new_options.init_deck_size > 15)
         return false;
 
     if (
-        new_options.max_card_takes !== "infinite" &&
-        new_options.max_card_takes < 1 || 
-        new_options.max_card_takes > 10
+        new_options.max_draws_per_turn !== "infinite" &&
+        new_options.max_draws_per_turn < 1 || 
+        new_options.max_draws_per_turn > 10
     ) return false;
 
     if (
@@ -46,7 +46,7 @@ export function validateGameOptions(new_options) {
     ) return false;
 
     if (
-        typeof new_options.allowed_to_skip_move !== "boolean" ||
+        typeof new_options.can_draw_when_playable !== "boolean" ||
         typeof new_options.allow_wild_card_stacking !== "boolean" ||
         typeof new_options.wild_cards_must_match !== "boolean"
     ) return false;

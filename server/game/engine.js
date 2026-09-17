@@ -9,10 +9,10 @@ export function makeNewGame({
     card_objects= [
         ...REGISTERED_CARDS.norm_base_4_colors,
     ],
-    init_card_count=7, 
+    init_deck_size=7, 
     base_colors=["#f76c57", "#58ed80", "#34a8eb", "#ede158"],
-    allowed_to_skip_move=true, // Allows players to take cards even if they have a card to play
-    max_card_takes=1, // How many crads is a player allowed to take in their turn
+    can_draw_when_playable=true, // Allows players to take cards even if they have a card to play
+    max_draws_per_turn=1, // How many crads is a player allowed to take in their turn
     allow_wild_card_stacking=true,
     wild_cards_must_match = false,
     turn_timer = 20, // seconds
@@ -20,7 +20,7 @@ export function makeNewGame({
 }){
     const start_card = generate_random_card(card_objects);
     const start_base_color = get_start_base_color(start_card, base_colors);
-    const players_initiated = init_players(players, init_card_count, card_objects);
+    const players_initiated = init_players(players, init_deck_size, card_objects);
 
     return {
         id,
@@ -36,8 +36,8 @@ export function makeNewGame({
         // settings
         card_objects,
         base_colors,
-        allowed_to_skip_move,
-        max_card_takes,
+        can_draw_when_playable,
+        max_draws_per_turn,
         allow_wild_card_stacking,
         wild_cards_must_match,
         turn_timer,
@@ -73,7 +73,7 @@ function generate_random_card(card_objects) {
 
 
 
-function init_players(player_init_info, init_card_count, card_objects) {
+function init_players(player_init_info, init_deck_size, card_objects) {
     const players = [];
     for (const player of player_init_info){
         if (player.type == "bot"){
@@ -84,7 +84,7 @@ function init_players(player_init_info, init_card_count, card_objects) {
                 connection_status: "online",
                 game_status: "playing",
 
-                deck: Array.from({ length: init_card_count }, () => generate_random_card(card_objects)),
+                deck: Array.from({ length: init_deck_size }, () => generate_random_card(card_objects)),
             })
         }
         if (player.type == "player"){
@@ -95,7 +95,7 @@ function init_players(player_init_info, init_card_count, card_objects) {
                 get name() {return PlayerstateHandler.getPlayerName(player.id);},
                 game_status: "playing",
 
-                deck: Array.from({ length: init_card_count }, () => generate_random_card(card_objects)),
+                deck: Array.from({ length: init_deck_size }, () => generate_random_card(card_objects)),
             })
         }
     }
@@ -119,12 +119,12 @@ export function take_new_card(game){
         return [false, "Cant skip move in danger move. Take the cards or place a wail card."];
     }
 
-    if (!game.allowed_to_skip_move && possible_cards_to_play(game).length > 0){
+    if (!game.can_draw_when_playable && possible_cards_to_play(game).length > 0){
         return [false, "Not allowed to take new card. Place cards from your deck."];
     }
 
-    if (game.cards_taken_in_this_turn >= game.max_card_takes){
-        return [false, "Limit for max card takes reached. Please skip turn or play a card."];
+    if (game.cards_taken_in_this_turn >= game.max_draws_per_turn){
+        return [false, "Limit for max draw per turn reached. Please skip turn or play a card."];
     }
 
     game.players[game.turn].deck.push(generate_random_card(game.card_objects));
@@ -140,7 +140,7 @@ export function skip_turn(game){
         return [false, "Cant skip move in danger move. Take the cards or place a wail card."];
     }
 
-    if (!game.allowed_to_skip_move && possible_cards_to_play(game).length > 0){
+    if (!game.can_draw_when_playable && possible_cards_to_play(game).length > 0){
         return [false, "Not allowed to take new card. Place cards from your deck."];
     }
 

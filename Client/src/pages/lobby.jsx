@@ -687,14 +687,14 @@ function Lobby() {
 
                 <div className="flex gap-3">
                     <label>
-                        Initial cards:
+                        Initial deck size:
                     </label>
 
                     <select
-                        value={lobby.game_options.init_card_count}
+                        value={lobby.game_options.init_deck_size}
                         onChange={(e) =>
                             setGameOptions(
-                                "init_card_count",
+                                "init_deck_size",
                                 Number(e.target.value)
                             )
                         }
@@ -710,15 +710,15 @@ function Lobby() {
 
                 <div className="flex gap-3">
                     <label>
-                        Allow skip move:
+                        Can draw when playable:
                     </label>
 
                     <input
                         type="checkbox"
-                        checked={lobby.game_options.allowed_to_skip_move}
+                        checked={lobby.game_options.can_draw_when_playable}
                         onChange={(e) =>
                             setGameOptions(
-                                "allowed_to_skip_move",
+                                "can_draw_when_playable",
                                 e.target.checked
                             )
                         }
@@ -728,15 +728,15 @@ function Lobby() {
 
                 <div className="flex gap-3">
                     <label>
-                        Max card takes:
+                        Max draw per turn:
                     </label>
 
                     <select
-                        value={lobby.game_options.max_card_takes}
+                        value={lobby.game_options.max_draws_per_turn}
                         onChange={(e) =>{
                             const value = e.target.value;
                             setGameOptions(
-                                "max_card_takes",
+                                "max_draws_per_turn",
                                 value === "infinite" ? "infinite" : Number(value)
                             )
                         }}
@@ -960,9 +960,9 @@ function Lobby() {
 
             <div className="card">
                 <strong>Other options:</strong>
-                <li>Initial cards: {lobby.game_options.init_card_count}</li>
-                <li>Allow skip move: {lobby.game_options.allowed_to_skip_move ? 'Yes' : 'No'}</li>
-                <li>Max card takes: {lobby.game_options.max_card_takes}</li>
+                <li>Initial deck size: {lobby.game_options.init_deck_size}</li>
+                <li>Can draw when playable: {lobby.game_options.can_draw_when_playable ? 'Yes' : 'No'}</li>
+                <li>Max draw per turn: {lobby.game_options.max_draws_per_turn}</li>
                 <li>Allow wild card stacking: {lobby.game_options.allow_wild_card_stacking ? 'Yes' : 'No'}</li>
                 <li>Wild cards must match: {lobby.game_options.wild_cards_must_match ? 'Yes' : 'No'}</li>
                 <li>Turn timer: {lobby.game_options.turn_timer} seconds</li>
