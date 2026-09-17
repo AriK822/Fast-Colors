@@ -199,6 +199,15 @@ function Lobby() {
                 return [false, "Please select at least one base color to continue"]
             if (lobby.game_options.advanced_card_objects.length == 0)
                 return [false, "Please select at least one card object to continue"]
+
+            for (const card_obj of lobby.game_options.advanced_card_objects) {
+                if (card_obj.id === "norm-custom") {
+                    if (card_obj.nums.length == 0){
+                        return [false, 
+                            "Advanced card object of type Nomral Cards must contains at least on number"]
+                    }
+                }
+            }
         }
         
         return [true, ""];
@@ -839,26 +848,106 @@ function Lobby() {
           <div className="card">
             <strong>Game settings:</strong>
 
-            <div className="card gap-1">
-                <strong>Card types:</strong>
-                {Object.entries(lobby.game_options.card_objects).map(([card_id, card_desc]) => {
-                    const selected =lobby.game_options.selected_card_objects.includes(card_id);
+            <div className="card gap-2">
+                <strong>Game settings:</strong>
 
-                    return (
-                        <button
-                            key={card_id}
-                            className="flex"
-                            style={{
-                                border: `1px solid ${selected ? "lime" : "grey"}`,
-                                color: `${selected ? "white" : "grey"}`
-                            }}
-                        >
-                            {card_desc}
-                        </button>
-                    );
-                }
-            )}
+                {!lobby.game_options.use_advanced_options && (
+                    <>
+                        <strong>Card types:</strong>
+
+                        <div className="flex flex-col gap-1">
+                            {Object.entries(lobby.game_options.card_objects).map(
+                                ([card_id, card_desc]) => {
+                                    const selected =
+                                        lobby.game_options.selected_card_objects.includes(card_id);
+
+                                    return (
+                                        <button
+                                            key={card_id}
+                                            className="flex"
+                                            style={{
+                                                border: `1px solid ${selected ? "lime" : "grey"}`,
+                                                color: selected ? "white" : "grey",
+                                            }}
+                                        >
+                                            {card_desc}
+                                        </button>
+                                    );
+                                }
+                            )}
+                        </div>
+                    </>
+                )}
+
+                {lobby.game_options.use_advanced_options && (
+                    <>
+                        <strong>Base colors:</strong>
+
+                        <div className="flex flex-col gap-2 card">
+                            {lobby.game_options.base_colors.map((color, i) => (
+                                <div
+                                    key={i}
+                                    className="flex flex-row gap-2"
+                                >
+                                    <div
+                                        style={{
+                                            width: "50px",
+                                            height: "50px",
+                                            backgroundColor: color,
+                                            border: "1px solid grey",
+                                        }}
+                                    />
+
+                                    <span>{color}</span>
+                                </div>
+                            ))}
+                        </div>
+
+
+                        <strong>Card objects:</strong>
+
+                        <div className="flex flex-col gap-2 card">
+                            {lobby.game_options.advanced_card_objects.map(
+                                (card_obj, i) => (
+                                    <div
+                                        key={i}
+                                        className="flex flex-col gap-2 card"
+                                    >
+                                        <div className="flex flex-row gap-2">
+                                            <strong>Type:</strong>
+
+                                            <span>
+                                                {
+                                                    lobby.game_options
+                                                        .allowed_advanced_card_objects[
+                                                        card_obj.id
+                                                    ]
+                                                }
+                                            </span>
+                                        </div>
+
+                                        <div className="flex flex-row gap-2">
+                                            <strong>Weight:</strong>
+                                            <span>{card_obj.weight}</span>
+                                        </div>
+
+                                        {card_obj.id === "norm-custom" && (
+                                            <div className="flex flex-col gap-1">
+                                                <strong>Numbers:</strong>
+
+                                                <span>
+                                                    {String(card_obj.nums)}
+                                                </span>
+                                            </div>
+                                        )}
+                                    </div>
+                                )
+                            )}
+                        </div>
+                    </>
+                )}
             </div>
+
 
             <div className="card">
                 <strong>Bots:</strong>

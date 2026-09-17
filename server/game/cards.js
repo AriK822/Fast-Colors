@@ -4,6 +4,10 @@ export const CardType = Object.freeze({
 })
 
 
+export const CARD_ID_TO_GENERATE_FUNC = {
+    "norm-custom": makeNormalCards,
+}
+
 
 export const REGISTERED_CARDS = {
     // Key: card or card group id,  Value: Array([card_object])
@@ -45,14 +49,14 @@ export function MakeCard({
 
 
 export function makeNormalCards(
-    nrom_nums = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
     norm_colors = ["#f76c57", "#58ed80", "#34a8eb", "#ede158"],
+    norm_nums = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
     weight = 1,
 ){
     const normal_cards = [];
 
     norm_colors.forEach((this_base_color) => {
-        nrom_nums.forEach((nn) => {
+        norm_nums.forEach((nn) => {
 
             const allowed_to_play_func = (game) => {
                 if (game.cards_to_take > 0){

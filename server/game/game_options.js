@@ -88,7 +88,6 @@ export function validateGameOptions(new_options) {
 
             if (card_obj.id === "norm-custom") {
                 if (!Array.isArray(card_obj.nums)) return false;
-
                 for (const num of card_obj.nums) {
                     if (
                         typeof num !== "number" ||
@@ -120,6 +119,15 @@ export function startGameValidation(lobby){
             return [false, "Please select at least one base color to continue"]
         if (lobby.game_options.advanced_card_objects.length == 0)
             return [false, "Please select at least one card object to continue"]
+        
+        for (const card_obj of lobby.game_options.advanced_card_objects) {
+            if (card_obj.id === "norm-custom") {
+                if (card_obj.nums.length == 0){
+                    return [false, 
+                        "Advanced card object of type Nomral Cards must contains at least on number"]
+                }
+            }
+        }
     }
     
     return [true, ""];

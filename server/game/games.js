@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
 import * as GameEngine from "./engine.js"
-import { REGISTERED_CARDS } from "./cards.js";
+import { CARD_ID_TO_GENERATE_FUNC, REGISTERED_CARDS } from "./cards.js";
 import * as Engine from "./engine.js"
 
 
@@ -24,14 +24,41 @@ export function createGameFromLobby(lobby){
     }
 
     const this_card_objects = []
-    lobby.game_options.selected_card_objects.forEach((c_id) => {
-        this_card_objects.push(...REGISTERED_CARDS[c_id]);
-    });
+    const this_base_colors = lobby.game_options.use_advanced_options
+        ? lobby.game_options.base_colors
+        : undefined
+
+    if (lobby.game_options.use_advanced_options){
+        lobby.game_options.advanced_card_objects.forEach(card_info => {
+            if (card_info.id == "norm-custom"){
+                const card_obj_arr = CARD_ID_TO_GENERATE_FUNC["norm-custom"](
+                    this_base_colors,
+                    card_info.nums,
+                    card_info.weight,
+                )
+                this_card_objects.push(...card_obj_arr);
+            }
+            else {
+                const card_obj_arr = CARD_ID_TO_GENERATE_FUNC[card_info.id](
+                    this_base_colors,
+                    card_info.weight,
+                )
+                this_card_objects.push(...card_obj_arr);
+            }
+        })
+    }
+    else{
+        lobby.game_options.selected_card_objects.forEach((c_id) => {
+            this_card_objects.push(...REGISTERED_CARDS[c_id]);
+        });
+    }
+
 
     const this_game = GameEngine.makeNewGame({
         id:lobby.id,
         players: this_players,
         card_objects:this_card_objects,
+        base_colors:this_base_colors,
         init_card_count:lobby.game_options.init_card_count,
         allowed_to_skip_move:lobby.game_options.allowed_to_skip_move,
         max_card_takes:lobby.game_options.max_card_takes,
