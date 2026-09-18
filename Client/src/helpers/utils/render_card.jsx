@@ -1,12 +1,18 @@
+import "./card.css"
+
 import defaultOverlay from "../../assets/dafault_overlay.png"
 import wildPlus2Colored from "../../assets/wild_plus2_colored.png"
 import chooseBaseColor from "../../assets/choose_base_color.png"
-import "./card.css"
+import skipNextPlaye from "../../assets/skip_next_player.png"
+import cardBackSide from "../../assets/card_back_side.png"
+
 
 const ovrelayMap = {
     "default_overlay.png": defaultOverlay,
     "wild_plus2_colored.png": wildPlus2Colored,
     "choose_base_color.png": chooseBaseColor,
+    "skip_next_player.png": skipNextPlaye,
+    "card_back_side.png": cardBackSide,
 }
 
 function card({

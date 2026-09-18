@@ -230,6 +230,18 @@ function Game(){
             <button onClick={skipMove}>Skip turn</button>
             </>}
 
+            {!player.deck &&
+              <div className="flex">
+                {Array.from({length:player.card_count}).map((i) => (
+                  <RenderCard 
+                    key={i}
+                    overlay_image={"card_back_side.png"} 
+                    width={80}
+                  />
+                ))}
+              </div>
+            }
+
           </div>
         ))}
       </div>

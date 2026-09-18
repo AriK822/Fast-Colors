@@ -8,6 +8,7 @@ export const CARD_ID_TO_GENERATE_FUNC = {
     "norm-custom": makeNormalCards,
     "wild_base_draw_2_colored": makeWildDraw2Colored,
     "wild_choose_base_color": makeWildChooseColor,
+    "wild_skip_next_player": makeWildSkipNextPlayer,
 }
 
 
@@ -16,6 +17,7 @@ export const REGISTERED_CARDS = {
     "norm_base_4_colors": makeNormalCards(),
     "wild_base_draw_2_colored": makeWildDraw2Colored(),
     "wild_choose_base_color": makeWildChooseColor(),
+    "wild_skip_next_player": makeWildSkipNextPlayer(),
 }
 
 
@@ -214,6 +216,39 @@ export function makeWildChooseColor(
     return [{card:this_card, weight}];
 }
 
+
+export function makeWildSkipNextPlayer(
+    base_colors = ["#f76c57", "#58ed80", "#34a8eb", "#ede158"],
+    weight = 16,
+){
+    const allowed_to_play_func = (game) => {
+        if (game.cards_to_take > 0) return false;
+        return true;
+    }
+
+    const place_func = (game, choice) => {
+        game.base_color = choice.base_color;
+        game.turn = (game.turn + game.direction*2) % game.players.length;
+    }
+
+    const choice = {
+        ui_id:"pick_color",
+        validate: (game, data)=>(game.base_colors.includes(data?.base_color ?? ""))
+    }
+
+    const this_card = MakeCard({
+        id:`${CardType.wild}-skipNextPlayer`,
+        type:CardType.wild,
+        rednered_text:null,
+        base_color:null,
+        overlay_image:"skip_next_player.png",
+        allowed_to_play_func,
+        place_func,
+        choice,
+    })
+
+    return [{card:this_card, weight}];
+}
 
 // To DO:
 // Wild: +2, +4

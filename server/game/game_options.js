@@ -4,6 +4,7 @@ export const game_options = {
         "norm_base_4_colors": "Default UNO 4 color cards",
         "wild_base_draw_2_colored": "Wild card: adds +2 cards to the next person",
         "wild_choose_base_color": "Wild card: Allows player to choose a new base color",
+        "wild_skip_next_player": "Wild card: skips the next person",
     },
     selected_card_objects:[
         "norm_base_4_colors",
@@ -23,6 +24,7 @@ export const game_options = {
         "norm-custom": "Normal type cards",
         "wild_base_draw_2_colored": "Wild card: adds +2 cards to the next person",
         "wild_choose_base_color": "Wild card: Allows player to choose a new base color",
+        "wild_skip_next_player": "Wild card: skips the next person",
     },
     advanced_card_objects: [
         {id:"norm-custom", weight:4, nums:Array.from({length:10}).map((_, i) => i+1)},
