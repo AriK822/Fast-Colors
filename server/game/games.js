@@ -123,12 +123,12 @@ export function gameCleanupAfterLeave(this_game){
 }
 
 
-export function mainPlayCardProcess(game, player_id, card_index){
+export function mainPlayCardProcess(game, player_id, card_index, choice_data=null){
     const player_index = game.players.findIndex(player => (player.id == player_id));
-    if (player_index == -1)
+    if (player_index === -1)
         return [false, "Player not found in active game."]
 
-    if (! game.turn == player_index)
+    if (game.turn !== player_index)
         return [false, "Not allowed. Wait for your turn to play a card."]
 
     const card_to_play = game.players[player_index].deck[card_index];
@@ -138,10 +138,15 @@ export function mainPlayCardProcess(game, player_id, card_index){
     if (!card_to_play.allowed_to_play_func(game))
         return [false, "Not allowed to play this card."]
 
+    if (card_to_play.choice) {
+        if (!card_to_play.choice.validate(game, choice_data))
+            return [false, "Invalid card choice."];
+    }
+
     game.players[game.turn].deck.splice(card_index, 1);
     game.current_card = card_to_play;
     Engine.updateHistoryCard(game, card_to_play)
-    card_to_play.place_func(game);
+    card_to_play.place_func(game, choice_data);
     game.cards_taken_in_this_turn = 0;
 
     return [true, "Card placed successfully."]
@@ -153,7 +158,7 @@ export function mainSkipMoveProcess(game, player_id){
     if (player_index == -1)
         return [false, "Player not found in active game."]
 
-    if (! game.turn == player_index)
+    if (game.turn !== player_index)
         return [false, "Not allowed. Wait for your turn to play a card."]
 
     return Engine.skip_turn(game);
@@ -165,7 +170,7 @@ export function mainTakeCardProcess(game, player_id){
     if (player_index == -1)
         return [false, "Player not found in active game."]
 
-    if (! game.turn == player_index)
+    if (game.turn !== player_index)
         return [false, "Not allowed. Wait for your turn to play a card."]
 
     return Engine.take_new_card(game);

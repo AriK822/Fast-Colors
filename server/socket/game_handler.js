@@ -155,6 +155,7 @@ socket.on("play_card", async (data, ack) => {
         active_game, 
         socket.request.session.player_id,
         data.card_index,
+        data.choice,
     )
 
     ack({

@@ -47,9 +47,9 @@ export async function leaveGame() {
 }
 
 
-export async function playCard(card_index) {
+export async function playCard(card_index, choice=undefined) {
     return new Promise((resolve, reject) => {
-        socket.emit("play_card", {card_index}, (response) => {
+        socket.emit("play_card", {card_index, choice}, (response) => {
             resolve(response);
         });
     });

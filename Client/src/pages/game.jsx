@@ -9,6 +9,8 @@ import RenderCard from "../helpers/utils/render_card"
 import SpinnerLoader from "../helpers/loaders/inside_spinner1"
 import FullScreenLoader from "../helpers/loaders/fullscreen1";
 import Skeleton from "react-loading-skeleton";
+import UiIdMapper from "../helpers/ui_choices/map_ui_id"
+import card from "../helpers/utils/render_card";
 
 
 function Game(){
@@ -22,6 +24,7 @@ function Game(){
   const [game_chat_sending, setGameChatSending] = useState(false);
   const chat_container = useRef(null);
   const [leave_game_loading, setLeaveGameLoading] = useState(false);
+  const [choiceComponent, setChoiceComponent] = useState(null);
 
 
 
@@ -108,8 +111,8 @@ function Game(){
   }
 
 
-  async function playCard(card_index) {
-    const result = await SocketAPI.playCard(card_index);
+  async function playCard(card_index, choice=undefined) {
+    const result = await SocketAPI.playCard(card_index, choice);
 
     showNotification({
         text: result.msg,
@@ -133,6 +136,15 @@ function Game(){
         text: result.msg,
         type: result.error ? "error" : "success",
     });
+  }
+
+  function openChoiceUI(choice_ui_id, card_index){
+    const ChoiceComponent = UiIdMapper[choice_ui_id];
+    const onSelect = (choice_data) => {
+      playCard(card_index, choice_data);
+      setChoiceComponent(null);
+    };
+    setChoiceComponent(<ChoiceComponent game={game} onSelect={onSelect} />)
   }
 
 
@@ -159,7 +171,7 @@ function Game(){
         <p>rednered_text: {game.current_card.rednered_text}</p>
         <p>base_color: {game.current_card.base_color}</p>
         <p>overlay_image: {game.current_card.overlay_image}</p>
-        <p>choice: {game.current_card.choice ?? "No choice"}</p>
+        <p>choice: {game.current_card.choice?.ui_id ?? "No choice"}</p>
 
         <RenderCard 
           base_color={game.current_card.base_color} 
@@ -193,6 +205,8 @@ function Game(){
             <p style={{color:"red"}}>Danger, cards to take: {game.cards_to_take}</p>
             }
 
+            {choiceComponent}
+
             <div className="flex">
               {player.deck.map((card, i) => (
                 <RenderCard 
@@ -203,7 +217,11 @@ function Game(){
                   width={80}
                   grayscale={card.allowed_to_play ? false : true}
                   onclick_enabled={true}
-                  onclikc_callback={() => playCard(i)}
+                  onclikc_callback={() => {
+                    card.choice?.ui_id 
+                      ? openChoiceUI(card.choice.ui_id, i)
+                      : playCard(i)
+                  }}
                 />
               ))}
             </div>

@@ -7,6 +7,7 @@ export const CardType = Object.freeze({
 export const CARD_ID_TO_GENERATE_FUNC = {
     "norm-custom": makeNormalCards,
     "wild_base_draw_2_colored": makeWildDraw2Colored,
+    "wild_choose_base_color": makeWildChooseColor,
 }
 
 
@@ -14,6 +15,7 @@ export const REGISTERED_CARDS = {
     // Key: card or card group id,  Value: Array([card_object])
     "norm_base_4_colors": makeNormalCards(),
     "wild_base_draw_2_colored": makeWildDraw2Colored(),
+    "wild_choose_base_color": makeWildChooseColor(),
 }
 
 
@@ -22,9 +24,9 @@ export function MakeCard({
     id, 
     type,
 
-    rednered_text, 
-    base_color, 
-    overlay_image, 
+    rednered_text=null, 
+    base_color=null, 
+    overlay_image=null, 
 
     allowed_to_play_func, 
     place_func,
@@ -43,7 +45,7 @@ export function MakeCard({
         allowed_to_play_func,
         place_func,
 
-        choice,
+        choice, // {ui_id:"pick_color/pick_player/...", validate:(game, data)=>(bool)}
     }
 
 }
@@ -176,6 +178,40 @@ export function makeWildDraw2Colored(
     })
 
     return result;
+}
+
+
+export function makeWildChooseColor(
+    base_colors = ["#f76c57", "#58ed80", "#34a8eb", "#ede158"],
+    weight = 16,
+){
+    const allowed_to_play_func = (game) => {
+        if (game.cards_to_take > 0) return false;
+        return true;
+    }
+
+    const place_func = (game, choice) => {
+        game.base_color = choice.base_color;
+        game.turn = (game.turn + game.direction) % game.players.length;
+    }
+
+    const choice = {
+        ui_id:"pick_color",
+        validate: (game, data)=>(game.base_colors.includes(data?.base_color ?? ""))
+    }
+
+    const this_card = MakeCard({
+        id:`${CardType.wild}-chooseBaseColor`,
+        type:CardType.wild,
+        rednered_text:null,
+        base_color:null,
+        overlay_image:"choose_base_color.png",
+        allowed_to_play_func,
+        place_func,
+        choice,
+    })
+
+    return [{card:this_card, weight}];
 }
 
 
