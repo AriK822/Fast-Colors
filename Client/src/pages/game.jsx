@@ -87,6 +87,14 @@ function Game(){
     }));
   })
 
+  SocketAPI.listenForGameEndedKick(() => {
+    showNotification({
+        text: "Game ended. Redirecting to Home page...",
+        type: "success",
+    });
+    navigate("/");
+  })
+
 
   useEffect(() => {
       if (chat_container.current) {

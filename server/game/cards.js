@@ -193,13 +193,16 @@ export function makeWildChooseColor(
     }
 
     const place_func = (game, choice) => {
+        if (choice.random)
+            choice.base_color = game.base_colors[Math.floor(Math.random() * game.base_colors.length)]
+        
         game.base_color = choice.base_color;
         game.turn = (game.turn + game.direction) % game.players.length;
     }
 
     const choice = {
         ui_id:"pick_color",
-        validate: (game, data)=>(game.base_colors.includes(data?.base_color ?? ""))
+        validate: (game, data)=>(data.random || game.base_colors.includes(data?.base_color ?? ""))
     }
 
     const this_card = MakeCard({
@@ -227,13 +230,16 @@ export function makeWildSkipNextPlayer(
     }
 
     const place_func = (game, choice) => {
+        if (choice.random)
+            choice.base_color = game.base_colors[Math.floor(Math.random() * game.base_colors.length)]
+        
         game.base_color = choice.base_color;
         game.turn = (game.turn + game.direction*2) % game.players.length;
     }
 
     const choice = {
         ui_id:"pick_color",
-        validate: (game, data)=>(game.base_colors.includes(data?.base_color ?? ""))
+        validate: (game, data)=>(data.random || game.base_colors.includes(data?.base_color ?? ""))
     }
 
     const this_card = MakeCard({

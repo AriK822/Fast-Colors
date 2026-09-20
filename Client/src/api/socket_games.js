@@ -74,3 +74,12 @@ export async function takeCard(card_index) {
 }
 
 
+export function listenForGameEndedKick(callback) {
+    socket.on("game_ended_kick", callback);
+
+    return () => {
+        socket.off("game_ended_kick", callback);
+    };
+}
+
+

@@ -30,6 +30,17 @@ async function broadCastHiddenGame(active_game, property = null) {
     }
 }
 
+async function gameEndedKick(active_game) {
+    io.in(active_game.id).emit("game_ended_kick");
+    io.in(active_game.id).socketsLeave(active_game.id);
+}
+
+const EngineServices = {
+    broadCastHiddenGame, 
+    deleteGame:GameHandler.deleteGame,
+    gameEndedKick,
+};
+
 
 
 // Run on connect
@@ -62,7 +73,17 @@ socket.on("load_game", async (data, ack) => {
     })
     socket.join(active_game.id)
 
-    // start game cycle here
+    if (active_game.state == Engine.GameStateModes.INITIALIZING ||
+        active_game.state == Engine.GameStateModes.PAUSED
+    ){
+        active_game.state = Engine.GameStateModes.ONGOING;
+        Engine.mainGameCycle(
+            active_game,
+            Engine.GameCycleReasonMode.START_CYCLE,
+            {},
+            EngineServices,
+        )
+    }
     
     return
 })
@@ -163,7 +184,7 @@ socket.on("play_card", async (data, ack) => {
             card_index:data.card_index,
             choice:data.choice,
         },
-        {broadCastHiddenGame},
+        EngineServices,
     )
 
     ack({
@@ -188,7 +209,7 @@ socket.on("game_skip_move", async (data, ack) => {
         active_game,
         Engine.GameCycleReasonMode.SKIP_TURN,
         {player_id:socket.request.session.player_id},
-        {broadCastHiddenGame},
+        EngineServices,
     )
 
     ack({
@@ -213,7 +234,7 @@ socket.on("game_take_card", async (data, ack) => {
         active_game,
         Engine.GameCycleReasonMode.TAKE_CARD,
         {player_id:socket.request.session.player_id},
-        {broadCastHiddenGame},
+        EngineServices,
     )
 
     ack({

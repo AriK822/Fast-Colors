@@ -6,6 +6,7 @@ export const GameStateModes = Object.freeze({
     ONGOING:"ongoing",
     PAUSED:"paused",
     ENDED:"ended",
+    INITIALIZING:"initializing",
 })
 
 
@@ -24,7 +25,8 @@ export function makeNewGame({
     turn_timer = 20, // seconds
     chat=["Game started"],
     history={played_cards:[]},
-    state=GameStateModes.ONGOING,
+    state=GameStateModes.INITIALIZING,
+    winner=null, // {id:..., name:...}
 }){
     const start_card = generate_random_card(card_objects);
     const start_base_color = get_start_base_color(start_card, base_colors);
@@ -42,6 +44,7 @@ export function makeNewGame({
         chat,
         history,
         state,
+        winner,
         
         // settings
         card_objects,
@@ -183,6 +186,7 @@ export function place_card(game, card, choice_data=null){
     updateHistoryCard(game, card)
     card.place_func(game, choice_data);
     game.cards_taken_in_this_turn = 0;
+    return [true, "Card placed successfully"]
 }
 
 
@@ -276,6 +280,43 @@ export function noTimeLeftProcess(game){
 }
 
 
+export function gameWinProcess(game, services){
+    game.players.forEach(p_info => {
+        if (p_info.deck.length == 0){
+            game.state = GameStateModes.ENDED;
+            game.winner = {id:p_info.id, name:p_info.name};
+            setTimeout(() => {
+                if (services.deleteGame) services.deleteGame(game);
+                if (services.gameEndedKick) services.gameEndedKick(game);
+            }, 30*1000);
+            return;
+        }
+    })
+}
+
+
+export function setGameNextCycleTimeout(game, services){
+    clearTimeout(GAME_CYCLE_TIMEOUTS[game.id]);
+    delete GAME_CYCLE_TIMEOUTS[game.id];
+
+    const this_player = game.players[game.turn];
+    if (this_player.type == "bot" || this_player.game_status == "left"){
+        const this_timeout = setTimeout(() => {
+            mainGameCycle(game, GameCycleReasonMode.BOT_PLAY, {}, services);
+        }, 1000);
+        GAME_CYCLE_TIMEOUTS[game.id] = this_timeout;
+    }
+    else{
+        if (game.turn_timer != "infinite"){
+            const this_timeout = setTimeout(() => {
+                mainGameCycle(game, GameCycleReasonMode.NO_TIME_LEFT_PLAY, {}, services);
+            }, game.turn_timer * 1000);
+            GAME_CYCLE_TIMEOUTS[game.id] = this_timeout;
+        }
+    }
+}
+
+
 
 export const GAME_CYCLE_TIMEOUTS = new Map();
 
@@ -294,7 +335,7 @@ export function mainGameCycle(game, reason, args={}, services={}){
 
     let result = [];
     if (reason == GameCycleReasonMode.PLACE_CARD)
-        result = placeCardProcess(game, args.player_id, args.card_index, args.choice_data);
+        result = placeCardProcess(game, args.player_id, args.card_index, args.choice);
     if (reason == GameCycleReasonMode.SKIP_TURN)
         result = skipTurnProcess(game, args.player_id);
     if (reason == GameCycleReasonMode.TAKE_CARD)
@@ -306,21 +347,22 @@ export function mainGameCycle(game, reason, args={}, services={}){
     if (reason == GameCycleReasonMode.START_CYCLE)
         result = [true, "Starting game cycle"];
 
+    console.log(result)
+
     const turn_changed = result[0];
     const msg = result[1];
     const success = result[2] ?? result[0];
 
     if (turn_changed){
-        clearTimeout(GAME_CYCLE_TIMEOUTS[game.id]);
-        delete GAME_CYCLE_TIMEOUTS[game.id];
-
-        // check if the game ended
-        // else
-        // run post effects
-        // set the new timer
+        gameWinProcess(game, services);
+        if (game.state == GameStateModes.ONGOING){
+            // run post effects
+            setGameNextCycleTimeout(game, services);
+        }
+        game.last_move_time = Date.now();
     }
 
-    if (success && services.broadCastHiddenGame)
+    if ((success || turn_changed) && services.broadCastHiddenGame)
         services.broadCastHiddenGame(game);
 
     return [success, msg];
