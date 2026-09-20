@@ -1,5 +1,6 @@
 import * as GameHandler from "../game/games.js"
 import * as PlayerstateHandler from "../game/player_states.js"
+import * as Engine from "../game/engine.js"
 
 
 
@@ -60,6 +61,8 @@ socket.on("load_game", async (data, ack) => {
         game: GameHandler.hiddenGameForClient(socket.request.session.player_id),
     })
     socket.join(active_game.id)
+
+    // start game cycle here
     
     return
 })
@@ -152,21 +155,21 @@ socket.on("play_card", async (data, ack) => {
         return;
     }
 
-    const [success, msg] = GameHandler.mainPlayCardProcess(
-        active_game, 
-        socket.request.session.player_id,
-        data.card_index,
-        data.choice,
+    const [success, msg] = Engine.mainGameCycle(
+        active_game,
+        Engine.GameCycleReasonMode.PLACE_CARD,
+        {
+            player_id:socket.request.session.player_id,
+            card_index:data.card_index,
+            choice:data.choice,
+        },
+        {broadCastHiddenGame},
     )
 
     ack({
         "error":!success,
         "msg": msg,
     })
-
-    if (success){
-        broadCastHiddenGame(active_game)
-    }
 })
 
 
@@ -181,19 +184,17 @@ socket.on("game_skip_move", async (data, ack) => {
         return;
     }
 
-    const [success, msg] = GameHandler.mainSkipMoveProcess(
-        active_game, 
-        socket.request.session.player_id,
+    const [success, msg] = Engine.mainGameCycle(
+        active_game,
+        Engine.GameCycleReasonMode.SKIP_TURN,
+        {player_id:socket.request.session.player_id},
+        {broadCastHiddenGame},
     )
 
     ack({
         "error":!success,
         "msg": msg,
     })
-
-    if (success){
-        broadCastHiddenGame(active_game)
-    }
 })
 
 
@@ -208,19 +209,17 @@ socket.on("game_take_card", async (data, ack) => {
         return;
     }
 
-    const [success, msg] = GameHandler.mainTakeCardProcess(
-        active_game, 
-        socket.request.session.player_id,
+    const [success, msg] = Engine.mainGameCycle(
+        active_game,
+        Engine.GameCycleReasonMode.TAKE_CARD,
+        {player_id:socket.request.session.player_id},
+        {broadCastHiddenGame},
     )
 
     ack({
         "error":!success,
         "msg": msg,
     })
-
-    if (success){
-        broadCastHiddenGame(active_game)
-    }
 })
 
 

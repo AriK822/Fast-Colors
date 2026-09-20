@@ -140,8 +140,7 @@ export function take_new_card(game){
     game.players[game.turn].deck.push(generate_random_card(game.card_objects));
     game.cards_taken_in_this_turn += 1;
 
-    return [true, "Took new card successfully."];
-
+    return [false, "Took new card successfully.", true];
 }
 
 
@@ -177,40 +176,13 @@ export function timeout_move(game){
 }
 
 
-export function random_move(game){
-    if (game.cards_to_take > 0){
-        for (let i = 0; i < game.cards_to_take; i++){
-            game.players[game.turn].deck.push(generate_random_card(game.card_objects));
-        }
-        game.cards_taken_in_this_turn = 0;
-        game.turn = (game.turn + game.direction) % game.players.length;
-        return true;
-    }
-    else{
-        const allowed_cards = possible_cards_to_play(game);
-        if (allowed_cards.length > 0){
-            const rand_card = allowed_cards[Math.floor(Math.random() * allowed_cards.length)]
-            return place_card(game, rand_card)
-        }
-        else{
-            return skip_turn(game);
-        }
-    }
-}
-
-
-export function place_card(game, card){
-    if (!card.allowed_to_play_func(game)){return false;}
-
+export function place_card(game, card, choice_data=null){
     const card_index = game.players[game.turn].deck.indexOf(card);
-    if (card_index == -1){return false;}
     game.players[game.turn].deck.splice(card_index, 1);
-
-    card.place_func(game)
-
     game.current_card = card;
-
-    return true;
+    updateHistoryCard(game, card)
+    card.place_func(game, choice_data);
+    game.cards_taken_in_this_turn = 0;
 }
 
 
@@ -222,28 +194,135 @@ export function updateHistoryCard(game, card_object){
 
 
 
+// ---  Game cycles  ---
+export function placeCardProcess(game, player_id, card_index, choice_data=null){
+    const player_index = game.players.findIndex(player => (player.id == player_id));
+    if (player_index === -1)
+        return [false, "Player not found in active game."]
 
-// const this_game = makeNewGame(1, [{id:1, type:"player"},{id:2, type:"bot", name:"ttv"}]);
+    if (game.turn !== player_index)
+        return [false, "Not allowed. Wait for your turn to play a card."]
 
-// console.log(this_game)
-// console.log(this_game.players[0].deck)
-// console.log(possible_cards_to_play(this_game))
+    const card_to_play = game.players[player_index].deck[card_index];
+    if (!card_to_play)
+        return [false, "Card not in deck, invalid card index."]
 
-// console.log(random_move(this_game))
-// console.log(random_move(this_game))
-// console.log(random_move(this_game))
+    if (!card_to_play.allowed_to_play_func(game))
+        return [false, "Not allowed to play this card."]
 
-// console.log(this_game)
-// console.log(this_game.players[0].deck)
+    if (card_to_play.choice) {
+        if (!card_to_play.choice.validate(game, choice_data))
+            return [false, "Invalid card choice."];
+    }
 
-// // console.log(engine.take_new_card());
+    game.players[game.turn].deck.splice(card_index, 1);
+    game.current_card = card_to_play;
+    updateHistoryCard(game, card_to_play)
+    card_to_play.place_func(game, choice_data);
+    game.cards_taken_in_this_turn = 0;
 
-// // console.log(engine.game)
-// // console.log(engine.game.players[0].deck)
+    return [true, "Card placed successfully."]
+}
 
-// // console.log(normal_cards[0].place_func(engine.game))
 
-// // console.log(engine.game)
-// // console.log(engine.game.players[0].deck)
+export function skipTurnProcess(game, player_id){
+    const player_index = game.players.findIndex(player => (player.id == player_id));
+    if (player_index == -1)
+        return [false, "Player not found in active game."]
 
+    if (game.turn !== player_index)
+        return [false, "Not allowed. Wait for your turn to play a card."]
+
+    return skip_turn(game);
+}
+
+
+export function takeCardProcess(game, player_id){
+    const player_index = game.players.findIndex(player => (player.id == player_id));
+    if (player_index == -1)
+        return [false, "Player not found in active game."]
+
+    if (game.turn !== player_index)
+        return [false, "Not allowed. Wait for your turn to play a card."]
+
+    return take_new_card(game);
+}
+
+
+export function randomMoveProcess(game){
+    const allowed_cards = possible_cards_to_play(game);
+    if (allowed_cards.length > 0){
+        const rand_card = allowed_cards[Math.floor(Math.random() * allowed_cards.length)]
+        return place_card(game, rand_card, {random:true})
+    }
+
+    if (game.cards_to_take > 0)
+        return take_new_card(game);
+    
+    take_new_card(game);
+    return skip_turn(game);
+}
+
+
+export function noTimeLeftProcess(game){
+    if (!game.can_draw_when_playable)
+        return randomMoveProcess(game)
+    
+    if (game.cards_to_take > 0)
+        return take_new_card(game);
+
+    take_new_card(game);
+    return skip_turn(game);
+}
+
+
+
+export const GAME_CYCLE_TIMEOUTS = new Map();
+
+export const GameCycleReasonMode = Object.freeze({
+    PLACE_CARD:0,
+    TAKE_CARD:1,
+    SKIP_TURN:2,
+    BOT_PLAY:3,
+    NO_TIME_LEFT_PLAY:4,
+    START_CYCLE:5,
+})
+
+
+export function mainGameCycle(game, reason, args={}, services={}){
+    if (game.state !== GameStateModes.ONGOING) return [false, "Game not active"]
+
+    let result = [];
+    if (reason == GameCycleReasonMode.PLACE_CARD)
+        result = placeCardProcess(game, args.player_id, args.card_index, args.choice_data);
+    if (reason == GameCycleReasonMode.SKIP_TURN)
+        result = skipTurnProcess(game, args.player_id);
+    if (reason == GameCycleReasonMode.TAKE_CARD)
+        result = takeCardProcess(game, args.player_id);
+    if (reason == GameCycleReasonMode.BOT_PLAY)
+        result = randomMoveProcess(game);
+    if (reason == GameCycleReasonMode.NO_TIME_LEFT_PLAY)
+        result = noTimeLeftProcess(game);
+    if (reason == GameCycleReasonMode.START_CYCLE)
+        result = [true, "Starting game cycle"];
+
+    const turn_changed = result[0];
+    const msg = result[1];
+    const success = result[2] ?? result[0];
+
+    if (turn_changed){
+        clearTimeout(GAME_CYCLE_TIMEOUTS[game.id]);
+        delete GAME_CYCLE_TIMEOUTS[game.id];
+
+        // check if the game ended
+        // else
+        // run post effects
+        // set the new timer
+    }
+
+    if (success && services.broadCastHiddenGame)
+        services.broadCastHiddenGame(game);
+
+    return [success, msg];
+}
 
