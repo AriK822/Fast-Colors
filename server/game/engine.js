@@ -254,7 +254,8 @@ export function takeCardProcess(game, player_id){
 
 
 export function randomMoveProcess(game){
-    const allowed_cards = possible_cards_to_play(game);
+    let allowed_cards;
+    allowed_cards = possible_cards_to_play(game);
     if (allowed_cards.length > 0){
         const rand_card = allowed_cards[Math.floor(Math.random() * allowed_cards.length)]
         return place_card(game, rand_card, {random:true})
@@ -264,6 +265,11 @@ export function randomMoveProcess(game){
         return take_new_card(game);
     
     take_new_card(game);
+    allowed_cards = possible_cards_to_play(game);
+    if (allowed_cards.length > 0){
+        const rand_card = allowed_cards[Math.floor(Math.random() * allowed_cards.length)]
+        return place_card(game, rand_card, {random:true})
+    }
     return skip_turn(game);
 }
 

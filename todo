@@ -1,0 +1,5 @@
+refactor hard-coded values into a global game settings dict
+add more cards
+make UI
+run tests and find bugs
+add docs

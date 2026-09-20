@@ -48,8 +48,16 @@ const EngineServices = {
 
 const this_game = GameHandler.Player_To_Game[socket.request.session.player_id];
 if (this_game){
-    GameHandler.handlePlayerConnection(this_game);
-    broadCastHiddenGame(this_game, "players")
+    const started_cycle = GameHandler.handlePlayerConnection(this_game);
+    if (started_cycle)
+        Engine.mainGameCycle(
+            this_game,
+            Engine.GameCycleReasonMode.START_CYCLE,
+            {},
+            EngineServices,
+        )
+    else
+        broadCastHiddenGame(this_game, "players")
 }
 
 }

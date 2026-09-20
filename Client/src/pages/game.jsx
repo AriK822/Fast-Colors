@@ -25,6 +25,7 @@ function Game(){
   const chat_container = useRef(null);
   const [leave_game_loading, setLeaveGameLoading] = useState(false);
   const [choiceComponent, setChoiceComponent] = useState(null);
+  const [remainingPercent, setRemainingPercent] = useState(100);
 
 
 
@@ -51,7 +52,6 @@ function Game(){
   useEffect(() => {
       loadGame();
   }, []);
-
 
 
   async function sendGameChatMassage() {
@@ -156,6 +156,36 @@ function Game(){
   }
 
 
+  useEffect(() => {
+    if (!game){return}
+      if (game.turn_timer === "infinite") {
+          setRemainingPercent(100);
+          return;
+      }
+
+      const totalTime = game.turn_timer * 1000;
+
+      function updateTimer() {
+          const elapsedTime = Date.now() - game.last_move_time;
+
+          const remainingTime = Math.max(
+              0,
+              totalTime - elapsedTime
+          );
+
+          const percent = (remainingTime / totalTime) * 100;
+
+          setRemainingPercent(percent);
+      }
+
+      updateTimer();
+
+      const interval = setInterval(updateTimer, 50);
+
+      return () => clearInterval(interval);
+  }, [game?.last_move_time, game?.turn_timer]);
+
+
 
   if (!game){
     return <FullScreenLoader />
@@ -170,6 +200,20 @@ function Game(){
       >
         {leave_game_loading ? <SpinnerLoader /> : "Leave game"}
       </button>
+
+      {game.state === "ended" &&
+      <div className="game-over-overlay">
+          <div className="game-over-content">
+              <h1>Game Over</h1>
+
+              <p>Winner:</p>
+
+              <h2>{game.winner?.name}</h2>
+
+              <p>ID: {game.winner?.id}</p>
+          </div>
+      </div>
+      }
 
 
       <div className="card">
@@ -186,6 +230,16 @@ function Game(){
           overlay_image={game.current_card.overlay_image} 
           rednered_text={game.current_card.rednered_text} 
         />
+      </div>
+
+
+      <div className="timer-container">
+          <div
+              className="timer-bar"
+              style={{
+                  width: `${remainingPercent}%`
+              }}
+          />
       </div>
 
 
@@ -240,7 +294,7 @@ function Game(){
 
             {!player.deck &&
               <div className="flex">
-                {Array.from({length:player.card_count}).map((i) => (
+                {Array.from({length:player.card_count}).map((_, i) => (
                   <RenderCard 
                     key={i}
                     overlay_image={"card_back_side.png"} 

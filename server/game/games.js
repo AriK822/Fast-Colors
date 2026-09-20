@@ -124,13 +124,17 @@ export function gameHasActivePlayer(game){
 
 export function deleteGame(game){
     console.log("GAME DELETED", `${Date.now()}`)
+    game.state = Engine.GameStateModes.ENDED;
     if (GAMES[game.id]){
         game.players.forEach(p_info => {
             delete Player_To_Game[p_info.id];
         })
         delete GAMES[game.id];
-        // stop game cycle here
     }
+    clearTimeout(Engine.GAME_CYCLE_TIMEOUTS[game.id]);
+    clearTimeout(DELETE_GAME_TIMEOUTS[game.id]);
+    delete Engine.GAME_CYCLE_TIMEOUTS[game.id];
+    delete DELETE_GAME_TIMEOUTS[game.id];
 }
 
 
@@ -157,7 +161,7 @@ export function handlePlayerDisconnection(game){
     const delete_timeout = setTimeout(() =>{
         if (!gameHasActivePlayer(game)) deleteGame(game);
         delete DELETE_GAME_TIMEOUTS[game.id];
-    }, 2000);
+    }, 20000);
     DELETE_GAME_TIMEOUTS[game.id] = delete_timeout;
 
     if(!gameHasActivePlayer(game))
@@ -166,12 +170,13 @@ export function handlePlayerDisconnection(game){
 
 
 export function handlePlayerConnection(game){
-    if (game.state == Engine.GameStateModes.ENDED)
-        return
-
+    if (game.state == Engine.GameStateModes.ENDED) return
     clearTimeout(DELETE_GAME_TIMEOUTS[game.id]);
     delete DELETE_GAME_TIMEOUTS[game.id];
-    game.state = Engine.GameStateModes.ONGOING;
-    // start game cycle
+    if (game.state !== Engine.GameStateModes.ONGOING){
+        game.state = Engine.GameStateModes.ONGOING;
+        return true;
+    }
+    return
 }
 
