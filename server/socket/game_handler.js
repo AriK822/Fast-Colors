@@ -36,6 +36,7 @@ async function broadCastHiddenGame(active_game, property = null) {
 
 const this_game = GameHandler.Player_To_Game[socket.request.session.player_id];
 if (this_game){
+    GameHandler.handlePlayerConnection(this_game);
     broadCastHiddenGame(this_game, "players")
 }
 
@@ -227,6 +228,7 @@ socket.on("game_take_card", async (data, ack) => {
 socket.on("disconnecting", () => {
     const active_game = GameHandler.Player_To_Game[socket.request.session.player_id]
     if (active_game){
+        active_game.state = GameHandler.handlePlayerDisconnection(active_game);
         broadCastHiddenGame(active_game, "players")
     }
 });

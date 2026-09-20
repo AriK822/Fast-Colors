@@ -7,6 +7,7 @@ import * as Engine from "./engine.js"
 export const GAMES = new Map();
 export const Player_To_Game = new Map();
 
+export const DELETE_GAME_TIMEOUTS = new Map();
 
 
 export function createGameFromLobby(lobby){
@@ -111,15 +112,36 @@ export function leavePlayerFromGame(player_id){
 }
 
 
-export function gameCleanupAfterLeave(this_game){
-    if (this_game.players.filter(p_info => (
-        p_info.type === "player" && p_info.game_status !== "left"
-    )).length == 0){
-        delete GAMES[this_game.id]
-        // console.log("Game deleted")
-        return true
-    }
+export function gameHasActivePlayer(game){
+    if (game.players.filter(p_info => (
+        p_info.type === "player" 
+        && p_info.game_status === "playing"
+        && p_info.connection_status === "online"
+    )).length > 0) return true
     return false
+}
+
+
+export function deleteGame(game){
+    console.log("GAME DELETED", `${Date.now()}`)
+    if (GAMES[game.id]){
+        game.players.forEach(p_info => {
+            delete Player_To_Game[p_info.id];
+        })
+        delete GAMES[game.id];
+        // stop game cycle here
+    }
+}
+
+
+export function gameCleanupAfterLeave(this_game){
+    if (!gameHasActivePlayer(this_game) && !DELETE_GAME_TIMEOUTS[this_game.id]){
+        deleteGame(this_game);
+        return true;
+    }
+    if(!gameHasActivePlayer(this_game))
+        this_game.state = Engine.GameStateModes.PAUSED;
+    return false;
 }
 
 
@@ -174,5 +196,27 @@ export function mainTakeCardProcess(game, player_id){
         return [false, "Not allowed. Wait for your turn to play a card."]
 
     return Engine.take_new_card(game);
+}
+
+
+export function handlePlayerDisconnection(game){
+    clearTimeout(DELETE_GAME_TIMEOUTS[game.id]);
+
+    const delete_timeout = setTimeout(() =>{
+        if (!gameHasActivePlayer(game)) deleteGame(game);
+        delete DELETE_GAME_TIMEOUTS[game.id];
+    }, 2000);
+    DELETE_GAME_TIMEOUTS[game.id] = delete_timeout;
+
+    if(!gameHasActivePlayer(game))
+        game.state = Engine.GameStateModes.PAUSED;
+}
+
+
+export function handlePlayerConnection(game){
+    clearTimeout(DELETE_GAME_TIMEOUTS[game.id]);
+    delete DELETE_GAME_TIMEOUTS[game.id];
+    game.state = Engine.GameStateModes.ONGOING;
+    // start game cycle
 }
 

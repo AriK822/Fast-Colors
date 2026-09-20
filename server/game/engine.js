@@ -2,6 +2,12 @@ import { REGISTERED_CARDS, CardType } from "./cards.js";
 import * as PlayerstateHandler from "../game/player_states.js"
 
 
+export const GameStateModes = Object.freeze({
+    ONGOING:"ongoing",
+    PAUSED:"paused",
+    ENDED:"ended",
+})
+
 
 export function makeNewGame({
     id,
@@ -18,6 +24,7 @@ export function makeNewGame({
     turn_timer = 20, // seconds
     chat=["Game started"],
     history={played_cards:[]},
+    state=GameStateModes.ONGOING,
 }){
     const start_card = generate_random_card(card_objects);
     const start_base_color = get_start_base_color(start_card, base_colors);
@@ -34,6 +41,7 @@ export function makeNewGame({
         cards_taken_in_this_turn:0,
         chat,
         history,
+        state,
         
         // settings
         card_objects,
