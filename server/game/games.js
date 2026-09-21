@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 import * as GameEngine from "./engine.js"
 import { CARD_ID_TO_GENERATE_FUNC, REGISTERED_CARDS } from "./cards.js";
 import * as Engine from "./engine.js"
+import config from "../config/config.js";
 
 
 export const GAMES = new Map();
@@ -31,8 +32,8 @@ export function createGameFromLobby(lobby){
 
     if (lobby.game_options.use_advanced_options){
         lobby.game_options.advanced_card_objects.forEach(card_info => {
-            if (card_info.id == "norm-custom"){
-                const card_obj_arr = CARD_ID_TO_GENERATE_FUNC["norm-custom"](
+            if (card_info.id == "norm_base_cards"){
+                const card_obj_arr = CARD_ID_TO_GENERATE_FUNC["norm_base_cards"](
                     this_base_colors,
                     card_info.nums,
                     card_info.weight,
@@ -161,7 +162,7 @@ export function handlePlayerDisconnection(game){
     const delete_timeout = setTimeout(() =>{
         if (!gameHasActivePlayer(game)) deleteGame(game);
         delete DELETE_GAME_TIMEOUTS[game.id];
-    }, 20000);
+    }, config.game.game_end_kick_delay);
     DELETE_GAME_TIMEOUTS[game.id] = delete_timeout;
 
     if(!gameHasActivePlayer(game))

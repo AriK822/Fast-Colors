@@ -1,9 +1,13 @@
 import { game_options } from "./game_options.js"
 import { randomUUID } from "node:crypto";
+import config from "../config/config.js";
 import * as PlayerstateHandler from "./player_states.js"
+
 
 export const LOBBIES = new Map();
 export const Player_To_Lobby = new Map();
+
+const KICK_FROM_LOBBY_TIMEOUTS = new Map();
 
 
 let io = null;
@@ -18,7 +22,7 @@ export function joinPlayerToLobby(player_id, lobby_id){
         LOBBIES[lobby_id].players[player_id] = {
             get connection_status() {return PlayerstateHandler.getPlayerState(player_id);}, 
             get name() {return PlayerstateHandler.getPlayerName(player_id);},
-            get disconnect_expires_at() {return PlayerstateHandler.getPlayerTimeout(player_id);},
+            get disconnect_expires_at() {return getKickFromLobbyTimeout(player_id);},
         };
         Player_To_Lobby[player_id] = LOBBIES[lobby_id];
 
@@ -164,4 +168,43 @@ export function deleteLobby(lobby){
 
     return true;
 }
+
+
+
+export function setKickFromLobbyTimeout(
+    player_id, 
+    callback, 
+    timeout=config.lobby.disconnected_lobby_kick_timeout,
+){
+    clearKickFromLobbyTimeout(player_id);
+
+    const start_time = Date.now();
+
+    const this_timeout = setTimeout(() => {
+        KICK_FROM_LOBBY_TIMEOUTS.delete(player_id);
+        callback();
+    }, timeout);
+
+    KICK_FROM_LOBBY_TIMEOUTS.set(player_id, {
+        timeout: this_timeout,
+        start_time,
+        duration: timeout
+    });
+}
+
+export function clearKickFromLobbyTimeout(player_id) {
+    const player_timeout = KICK_FROM_LOBBY_TIMEOUTS.get(player_id);
+    if (player_timeout) {
+        clearTimeout(player_timeout.timeout);
+        KICK_FROM_LOBBY_TIMEOUTS.delete(player_id);
+    }
+}
+
+export function getKickFromLobbyTimeout(player_id) {
+    const player_timeout = KICK_FROM_LOBBY_TIMEOUTS.get(player_id);
+    if (!player_timeout) return null;
+    return player_timeout.start_time + player_timeout.duration;
+}
+
+
 

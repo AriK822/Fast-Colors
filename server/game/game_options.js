@@ -1,13 +1,15 @@
-// Quick start settings:
+import config from "../config/config.js";
+import {
+    card_objects_with_desc,
+    extended_advanced_card_objects_with_desc,
+} from "./cards.js"
+
+
+
 export const game_options = {
-    card_objects: {
-        "norm_base_4_colors": "Default UNO 4 color cards",
-        "wild_base_draw_2_colored": "Wild card: adds +2 cards to the next person",
-        "wild_choose_base_color": "Wild card: Allows player to choose a new base color",
-        "wild_skip_next_player": "Wild card: skips the next person",
-    },
+    card_objects: card_objects_with_desc,
     selected_card_objects:[
-        "norm_base_4_colors",
+        "norm_base_cards",
     ],
     bots: [],
     init_deck_size:7, 
@@ -19,36 +21,39 @@ export const game_options = {
 
     // advanced_options
     use_advanced_options: false,
-    base_colors: ["#f76c57", "#58ed80", "#34a8eb", "#ede158"],
+    base_colors: config.cards.default_base_colors,
     allowed_advanced_card_objects: {
-        "norm-custom": "Normal type cards",
-        "wild_base_draw_2_colored": "Wild card: adds +2 cards to the next person",
-        "wild_choose_base_color": "Wild card: Allows player to choose a new base color",
-        "wild_skip_next_player": "Wild card: skips the next person",
+        ...card_objects_with_desc,
+        ...extended_advanced_card_objects_with_desc,
     },
     advanced_card_objects: [
-        {id:"norm-custom", weight:4, nums:Array.from({length:10}).map((_, i) => i+1)},
+        {id:"norm_base_cards", weight:4, nums:Array.from({length:10}).map((_, i) => i+1)},
     ],
     
+    // limits (for UI)
+    limits: config.game_options_validation,
 }
 
 
 
 export function validateGameOptions(new_options) {
+    const limits = config.game_options_validation;
+
     if (!new_options) return false;
 
-    if (new_options.init_deck_size < 3 || new_options.init_deck_size > 15)
-        return false;
+    if (new_options.init_deck_size < limits.min_init_deck_size || 
+        new_options.init_deck_size > limits.max_init_deck_size
+    ) return false;
 
     if (
         new_options.max_draws_per_turn !== "infinite" &&
-        new_options.max_draws_per_turn < 1 || 
-        new_options.max_draws_per_turn > 10
+        new_options.max_draws_per_turn < limits.min_max_draws_per_turn || 
+        new_options.max_draws_per_turn > limits.max_max_draws_per_turn
     ) return false;
 
     if (
         new_options.turn_timer !== "infinite" &&
-        ![5, 10, 15, 20, 25, 30, 45, 60].includes(new_options.turn_timer)
+        !limits.turn_timers.includes(new_options.turn_timer)
     ) return false;
 
     if (
@@ -60,7 +65,7 @@ export function validateGameOptions(new_options) {
     if (!Array.isArray(new_options.selected_card_objects)) return false;
     if (!Array.isArray(new_options.bots)) return false;
     
-    if (new_options.bots.length > 10) return false;
+    if (new_options.bots.length > limits.max_bots) return false;
 
     for (const card_id of new_options.selected_card_objects) {
         if (!(card_id in game_options.card_objects)) return false;
@@ -91,17 +96,17 @@ export function validateGameOptions(new_options) {
 
             if (
                 typeof card_obj.weight !== "number" ||
-                card_obj.weight < 1 ||
-                card_obj.weight > 100
+                card_obj.weight < limits.min_weight ||
+                card_obj.weight > limits.max_weight
             ) return false;
 
-            if (card_obj.id === "norm-custom") {
+            if (card_obj.id === "norm_base_cards") {
                 if (!Array.isArray(card_obj.nums)) return false;
                 for (const num of card_obj.nums) {
                     if (
                         typeof num !== "number" ||
-                        num < 1 ||
-                        num > 100
+                        num < limits.min_norm_num ||
+                        num > limits.max_norm_num
                     ) return false;
                 }
             }
@@ -113,11 +118,15 @@ export function validateGameOptions(new_options) {
 
 
 export function startGameValidation(lobby){
-    if (Object.entries(lobby.players).length + lobby.game_options.bots.length < 2)
-        return [false, "At least 2 players in required to start the game."]
+    const limits = config.game_options_validation;
 
-    if (Object.entries(lobby.players).length + lobby.game_options.bots.length > 10)
-        return [false, "Maximum 10 players and bots are allowed"]
+    if (Object.entries(lobby.players).length + lobby.game_options.bots.length < limits.min_total_game_players)
+        return [false, 
+            `At least ${limits.min_total_game_players} players in required to start the game.`]
+
+    if (Object.entries(lobby.players).length + lobby.game_options.bots.length > limits.max_total_game_players)
+        return [false, 
+            `Maximum ${limits.max_total_game_players} players and bots are allowed`]
 
     if (!lobby.game_options.use_advanced_options &&
          lobby.game_options.selected_card_objects.length == 0)
@@ -131,7 +140,7 @@ export function startGameValidation(lobby){
         
         let norm_custom_exists = false;
         for (const card_obj of lobby.game_options.advanced_card_objects) {
-            if (card_obj.id === "norm-custom") {
+            if (card_obj.id === "norm_base_cards") {
                 norm_custom_exists = true;
                 if (card_obj.nums.length == 0){
                     return [false, 

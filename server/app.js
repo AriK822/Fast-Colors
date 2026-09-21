@@ -1,6 +1,7 @@
 import express from 'express';
 import { createServer } from "http";
 import { attachSocketIO, getIO } from './socket/socket_init.js';
+import config from "./config/config.js"
 import dotenv from 'dotenv';
 dotenv.config();
 
@@ -16,7 +17,7 @@ const app = express();
 const HttpServer = createServer(app)
 attachSocketIO(HttpServer)
 const io = getIO();
-const port = 8080;
+const port = config.app.port;
 
 const sessionMiddleware = session({
     secret: process.env.SESSION_SECRET,

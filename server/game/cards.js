@@ -1,3 +1,6 @@
+import config from "../config/config.js"
+
+
 export const CardType = Object.freeze({
     norm: "norm",
     wild: "wild",
@@ -5,19 +8,29 @@ export const CardType = Object.freeze({
 
 
 export const CARD_ID_TO_GENERATE_FUNC = {
-    "norm-custom": makeNormalCards,
+    "norm_base_cards": makeNormalCards,
     "wild_base_draw_2_colored": makeWildDraw2Colored,
     "wild_choose_base_color": makeWildChooseColor,
     "wild_skip_next_player": makeWildSkipNextPlayer,
 }
 
-
 export const REGISTERED_CARDS = {
     // Key: card or card group id,  Value: Array([card_object])
-    "norm_base_4_colors": makeNormalCards(),
+    "norm_base_cards": makeNormalCards(),
     "wild_base_draw_2_colored": makeWildDraw2Colored(),
     "wild_choose_base_color": makeWildChooseColor(),
     "wild_skip_next_player": makeWildSkipNextPlayer(),
+}
+
+
+export const card_objects_with_desc = {
+        "norm_base_cards": "Default UNO 4 color cards",
+        "wild_base_draw_2_colored": "Wild card: adds +2 cards to the next person",
+        "wild_choose_base_color": "Wild card: Allows player to choose a new base color",
+        "wild_skip_next_player": "Wild card: skips the next person",
+}
+
+export const extended_advanced_card_objects_with_desc = {
 }
 
 
@@ -88,7 +101,7 @@ function add_cards_to_player(game, player_index, count=1){
 
 // ---   Card generating funcitons   ---
 export function makeNormalCards(
-    norm_colors = ["#f76c57", "#58ed80", "#34a8eb", "#ede158"],
+    norm_colors = config.cards.default_base_colors,
     norm_nums = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
     weight = 4,
 ){
@@ -143,7 +156,7 @@ export function makeNormalCards(
 
 
 export function makeWildDraw2Colored(
-    base_colors = ["#f76c57", "#58ed80", "#34a8eb", "#ede158"],
+    base_colors = config.cards.default_base_colors,
     weight = 4,
 ){
     const result = [];
@@ -184,7 +197,7 @@ export function makeWildDraw2Colored(
 
 
 export function makeWildChooseColor(
-    base_colors = ["#f76c57", "#58ed80", "#34a8eb", "#ede158"],
+    base_colors = config.cards.default_base_colors,
     weight = 16,
 ){
     const allowed_to_play_func = (game) => {
@@ -221,7 +234,7 @@ export function makeWildChooseColor(
 
 
 export function makeWildSkipNextPlayer(
-    base_colors = ["#f76c57", "#58ed80", "#34a8eb", "#ede158"],
+    base_colors = config.cards.default_base_colors,
     weight = 16,
 ){
     const allowed_to_play_func = (game) => {

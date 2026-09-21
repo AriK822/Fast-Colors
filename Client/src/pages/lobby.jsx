@@ -184,11 +184,15 @@ function Lobby() {
 
 
     function startGameValidation(){
-        if (Object.entries(lobby.players).length + lobby.game_options.bots.length < 2)
-            return [false, "At least 2 players in required to start the game."]
+        const limits = lobby.game_options.limits;
 
-        if (Object.entries(lobby.players).length + lobby.game_options.bots.length > 10)
-            return [false, "Maximum 10 players and bots are allowed"]
+        if (Object.entries(lobby.players).length + lobby.game_options.bots.length < limits.min_total_game_players)
+            return [false, 
+                `At least ${limits.min_total_game_players} players in required to start the game.`]
+
+        if (Object.entries(lobby.players).length + lobby.game_options.bots.length > limits.max_total_game_players)
+            return [false, 
+                `Maximum ${limits.max_total_game_players} players and bots are allowed`]
 
         if (!lobby.game_options.use_advanced_options &&
             lobby.game_options.selected_card_objects.length == 0)
@@ -199,10 +203,10 @@ function Lobby() {
                 return [false, "Please select at least one base color to continue"]
             if (lobby.game_options.advanced_card_objects.length == 0)
                 return [false, "Please select at least one card object to continue"]
-
+            
             let norm_custom_exists = false;
             for (const card_obj of lobby.game_options.advanced_card_objects) {
-                if (card_obj.id === "norm-custom") {
+                if (card_obj.id === "norm_base_cards") {
                     norm_custom_exists = true;
                     if (card_obj.nums.length == 0){
                         return [false, 
@@ -256,6 +260,10 @@ function Lobby() {
       <Skeleton />
     )
   }
+
+
+  const limits = lobby.game_options.limits;
+
 
   return (
     <div className="card">
@@ -457,8 +465,8 @@ function Lobby() {
 
                                 <input
                                     type="range"
-                                    min="1"
-                                    max="100"
+                                    min={`${limits.min_weight}`}
+                                    max={`${limits.max_weight}`}
                                     value={card_obj.weight}
                                     onChange={(e) => {
                                         const new_objects = [
@@ -488,7 +496,7 @@ function Lobby() {
                             </div>
 
 
-                            {card_obj.id === "norm-custom" && (
+                            {card_obj.id === "norm_base_cards" && (
                                 <div className="flex flex-col gap-2">
                                     <p>Numbers: {String(card_obj.nums)}</p>
                                     <button
@@ -507,7 +515,7 @@ function Lobby() {
                                             <button
                                                 onClick={() => {
                                                     const allSelected =
-                                                        card_obj.nums.length === 30;
+                                                        card_obj.nums.length===limits.max_norm_num-limits.min_norm_num+1;
 
                                                     const new_objects = [
                                                         ...lobby.game_options.advanced_card_objects
@@ -518,8 +526,8 @@ function Lobby() {
                                                         nums: allSelected
                                                             ? []
                                                             : Array.from(
-                                                                { length: 30 },
-                                                                (_, index) => index + 1
+                                                                { length: limits.max_norm_num - limits.min_norm_num + 1 },
+                                                                (_, index) => index + limits.min_norm_num
                                                             ),
                                                     };
 
@@ -529,7 +537,7 @@ function Lobby() {
                                                     );
                                                 }}
                                             >
-                                                {card_obj.nums.length === 30
+                                                {card_obj.nums.length===limits.max_norm_num-limits.min_norm_num+1
                                                     ? "Deselect all"
                                                     : "Select all"}
                                             </button>
@@ -537,8 +545,8 @@ function Lobby() {
 
                                             <div className="flex flex-row flex-wrap gap-2">
                                                 {Array.from(
-                                                    { length: 30 },
-                                                    (_, index) => index + 1
+                                                    { length: limits.max_norm_num-limits.min_norm_num+1 },
+                                                    (_, index) => index + limits.min_norm_num
                                                 ).map((num) => {
 
                                                     const isSelected =
@@ -611,14 +619,17 @@ function Lobby() {
 
                     <button
                     onClick={() => {
-                        const firstAllowedId = Object.keys(
+                        const to_add_index = 
+                            lobby.game_options.advanced_card_objects.length %
+                            Object.entries(lobby.game_options.allowed_advanced_card_objects).length;
+                        const toAddCardObjID = Object.keys(
                         lobby.game_options.allowed_advanced_card_objects
-                        )[0];
+                        )[to_add_index];
 
                         const new_object = {
-                        id: firstAllowedId,
+                        id: toAddCardObjID,
                         weight: 4,
-                        ...(firstAllowedId === "norm-custom" && {
+                        ...(toAddCardObjID === "norm_base_cards" && {
                             nums: Array.from({ length: 10 }, (_, i) => i + 1),
                         }),
                         };
@@ -679,7 +690,7 @@ function Lobby() {
                     disabled={
                         lobby.game_options.bots.length + 
                         Object.entries(lobby.players).length 
-                        >= 10
+                        >= limits.max_total_game_players
                     }
                 >
                     Add new bot
@@ -703,11 +714,13 @@ function Lobby() {
                             )
                         }
                     >
-                        {Array.from({ length: 13 }, (_, i) => i + 3).map(count => (
-                            <option key={count} value={count}>
-                                {count}
-                            </option>
-                        ))}
+                        {Array.from({ length: limits.max_init_deck_size - limits.min_init_deck_size + 1}, 
+                            (_, i) => i + limits.min_init_deck_size).map(count => (
+                                <option key={count} value={count}>
+                                    {count}
+                                </option>
+                            ))
+                        }
                     </select>
                 </div>
 
@@ -746,11 +759,16 @@ function Lobby() {
                         }}
                     >
                         <option value={"infinite"}>Infinite</option>
-                        {Array.from({ length: 10 }, (_, i) => i+1).map(count => (
-                            <option key={count} value={count}>
-                                {count}
-                            </option>
-                        ))}
+                        {Array.from(
+                            { length: 
+                                limits.max_max_draws_per_turn - limits.min_max_draws_per_turn + 1
+                            }, 
+                            (_, i) => i+limits.min_max_draws_per_turn).map(count => (
+                                <option key={count} value={count}>
+                                    {count}
+                                </option>
+                            ))
+                        }
                     </select>
                 </div>
 
@@ -808,7 +826,7 @@ function Lobby() {
                         }}
                     >
                         <option value="infinite">Infinite</option>
-                        {[5, 10, 15, 20, 25, 30, 45, 60].map(seconds => (
+                        {limits.turn_timers.map(seconds => (
                             <option key={seconds} value={seconds}>
                                 {seconds} seconds
                             </option>
@@ -937,7 +955,7 @@ function Lobby() {
                                             <span>{card_obj.weight}</span>
                                         </div>
 
-                                        {card_obj.id === "norm-custom" && (
+                                        {card_obj.id === "norm_base_cards" && (
                                             <div className="flex flex-col gap-1">
                                                 <strong>Numbers:</strong>
 

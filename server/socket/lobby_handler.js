@@ -1,4 +1,5 @@
 import {  game_options,  validateGameOptions, startGameValidation  } from "../game/game_options.js";
+import config from "../config/config.js";
 import * as LobbyHandler from "../game/lobbies.js"
 import * as GameHandler from "../game/games.js"
 import * as PlayerstateHandler from "../game/player_states.js"
@@ -15,6 +16,7 @@ function hookSocket(io, socket){
 
 const this_lobby = LobbyHandler.Player_To_Lobby[socket.request.session.player_id];
 if (this_lobby){
+    LobbyHandler.clearKickFromLobbyTimeout(socket.request.session.player_id);
     socket.to(this_lobby.id).emit("sync_lobby", this_lobby)
 }
 
@@ -254,7 +256,7 @@ socket.on("kick_player_from_lobby", async (data, ack) => {
 
 
 socket.on("set_player_name", async (data, ack) => {
-    if (String(data.name ?? "").trim().length < 4){
+    if (String(data.name ?? "").trim().length < config.player.min_name_length){
         ack({
             "error":true,
             "msg": "Name cannot be less than 4 characters",
@@ -352,7 +354,7 @@ socket.on("add_lobby_chat_message", async (data, ack) => {
 socket.on("disconnecting", () => {
     const active_lobby = LobbyHandler.Player_To_Lobby[socket.request.session.player_id];
     if (active_lobby){
-        PlayerstateHandler.setPlayerTimeout(socket.request.session.player_id, () => {
+        LobbyHandler.setKickFromLobbyTimeout(socket.request.session.player_id, () => {
             LobbyHandler.leaveLobby(socket.request.session.player_id);
             LobbyHandler.lobbyCleanup(socket.request.session.player_id);
             io.to(active_lobby.id).emit("sync_lobby", active_lobby)

@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import config from "../config/config.js";
 import * as LobbyHandler from "../game/lobbies.js"
 import * as PlayerstateHandler from "../game/player_states.js"
 import * as GameHandler from "../game/games.js"
@@ -21,18 +22,6 @@ function saveSession(session) {
 }
 
 
-// function withSession(socket, handler) {
-//     return async (...args) => {
-//         try {
-//             const result = await handler(...args);
-//             await saveSession(socket.request.session);
-//             return result;
-//         } catch (err) {
-//             throw err;
-//         }
-//     };
-// }
-
 
 
 function attachIOHandlers(io){
@@ -41,13 +30,17 @@ LobbyHandler.hookIO(io);
 
 
 
-io.on("connection", async (socket) => {   
-    // TEST DELAY ⚠️
-    socket.use(async ([event, ...args], next) => {
-        await new Promise(resolve => setTimeout(resolve, 500))
-        next()
-    })
+io.on("connection", async (socket) => {
 
+    // TEST DELAY ⚠️
+    if (config.app.debug){
+        socket.use(async ([event, ...args], next) => {
+            await new Promise(resolve => setTimeout(resolve, 500))
+            next()
+        })
+    }
+
+    // ON CONNECT
     {
 
     if (!socket.request.session.player_id){
@@ -56,11 +49,9 @@ io.on("connection", async (socket) => {
     }
 
     PlayerstateHandler.initPlayerName(socket.request.session.player_id);
+    PlayerstateHandler.setPlayerState(socket.request.session.player_id, true)
 
     socket.join(`player-${socket.request.session.player_id}`)
-
-    PlayerstateHandler.setPlayerState(socket.request.session.player_id, true)
-    PlayerstateHandler.clearPlayerTimeout(socket.request.session.player_id);
 
     }
 

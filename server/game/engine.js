@@ -1,5 +1,6 @@
 import { REGISTERED_CARDS, CardType } from "./cards.js";
 import * as PlayerstateHandler from "../game/player_states.js"
+import config from "../config/config.js"
 
 
 export const GameStateModes = Object.freeze({
@@ -192,7 +193,7 @@ export function place_card(game, card, choice_data=null){
 
 export function updateHistoryCard(game, card_object){
     game.history.played_cards.push(card_object);
-    if (game.history.played_cards.length > 5)
+    if (game.history.played_cards.length > config.game.max_history_cards)
         game.history.played_cards.splice(0, 1);
 }
 
@@ -309,7 +310,7 @@ export function setGameNextCycleTimeout(game, services){
     if (this_player.type == "bot" || this_player.game_status == "left"){
         const this_timeout = setTimeout(() => {
             mainGameCycle(game, GameCycleReasonMode.BOT_PLAY, {}, services);
-        }, 1000);
+        }, config.game.bot_play_delay);
         GAME_CYCLE_TIMEOUTS[game.id] = this_timeout;
     }
     else{
