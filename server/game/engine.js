@@ -140,9 +140,9 @@ export function take_new_card(game){
         for (let i = 0; i < game.cards_to_take; i++){
             game.players[game.turn].deck.push(generate_random_card(game.card_objects));
         }
-        game.cards_taken_in_this_turn += game.cards_to_take;
-        game.cards_to_take = 0;
         game.turn = (game.turn + game.direction) % game.players.length;
+        game.cards_taken_in_this_turn = 0;
+        game.cards_to_take = 0;
         return [true, "Took new cards successfully."];
     }
 
