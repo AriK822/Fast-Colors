@@ -852,7 +852,7 @@ function Lobby() {
             }
 
             {
-            Object.entries(lobby.players).some(([p_id, p_info]) => p_info.status == "offline") &&
+            Object.entries(lobby.players).some(([p_id, p_info]) => p_info.connection_status == "offline") &&
             <p style={{color:"orange"}}>
                 Warning: some players appear to be offline. 
                 You wont be able to kick them after starting the game

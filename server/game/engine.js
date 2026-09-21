@@ -1,4 +1,4 @@
-import { REGISTERED_CARDS, CardType } from "./cards.js";
+import { REGISTERED_CARDS, EFFECTS } from "./cards.js";
 import * as PlayerstateHandler from "../game/player_states.js"
 import config from "../config/config.js"
 
@@ -14,16 +14,15 @@ export const GameStateModes = Object.freeze({
 export function makeNewGame({
     id,
     players=[], // [ {id:uuid4 (seesioID), type:player/bot, name:(if bot)} ]
-    card_objects= [
-        ...REGISTERED_CARDS.norm_base_4_colors,
-    ],
+    card_objects=[...REGISTERED_CARDS.norm_base_cards],
     init_deck_size=7, 
     base_colors=["#f76c57", "#58ed80", "#34a8eb", "#ede158"],
     can_draw_when_playable=true, // Allows players to take cards even if they have a card to play
     max_draws_per_turn=1, // How many crads is a player allowed to take in their turn
     allow_wild_card_stacking=true,
-    wild_cards_must_match = false,
-    turn_timer = 20, // seconds
+    wild_cards_must_match=false,
+    turn_timer=20, // seconds
+    effects_data={},
     chat=["Game started"],
     history={played_cards:[]},
     state=GameStateModes.INITIALIZING,
@@ -32,6 +31,7 @@ export function makeNewGame({
     const start_card = generate_random_card(card_objects);
     const start_base_color = get_start_base_color(start_card, base_colors);
     const players_initiated = init_players(players, init_deck_size, card_objects);
+    const effects = generateGameEffects(card_objects);
 
     return {
         id,
@@ -49,6 +49,8 @@ export function makeNewGame({
         
         // settings
         card_objects,
+        effects,
+        effects_data,
         base_colors,
         can_draw_when_playable,
         max_draws_per_turn,
@@ -110,6 +112,15 @@ function init_players(player_init_info, init_deck_size, card_objects) {
         }
     }
     return players;
+}
+
+
+export function generateGameEffects(card_objects){
+    const all_effects = [];
+    card_objects.forEach(({card}) => {
+        all_effects.push(...card.effects)
+    })
+    return [...new Set(all_effects)]
 }
 
 
@@ -324,6 +335,14 @@ export function setGameNextCycleTimeout(game, services){
 }
 
 
+export function runEffectsProcess(game){
+    game.effects.forEach(effect_id => {
+        const effect = EFFECTS[effect_id];
+        if (effect) effect(game);
+    })
+}
+
+
 
 export const GAME_CYCLE_TIMEOUTS = new Map();
 
@@ -363,7 +382,7 @@ export function mainGameCycle(game, reason, args={}, services={}){
     if (turn_changed){
         gameWinProcess(game, services);
         if (game.state == GameStateModes.ONGOING){
-            // run post effects
+            runEffectsProcess(game);
             setGameNextCycleTimeout(game, services);
         }
         game.last_move_time = Date.now();

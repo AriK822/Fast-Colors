@@ -12,6 +12,7 @@ export const CARD_ID_TO_GENERATE_FUNC = {
     "wild_base_draw_2_colored": makeWildDraw2Colored,
     "wild_choose_base_color": makeWildChooseColor,
     "wild_skip_next_player": makeWildSkipNextPlayer,
+    "wild_block_selected_player": makeWildBlockSelectedPlayer,
 }
 
 export const REGISTERED_CARDS = {
@@ -20,17 +21,24 @@ export const REGISTERED_CARDS = {
     "wild_base_draw_2_colored": makeWildDraw2Colored(),
     "wild_choose_base_color": makeWildChooseColor(),
     "wild_skip_next_player": makeWildSkipNextPlayer(),
+    "wild_block_selected_player": makeWildBlockSelectedPlayer(),
 }
 
 
 export const card_objects_with_desc = {
-        "norm_base_cards": "Default UNO 4 color cards",
-        "wild_base_draw_2_colored": "Wild card: adds +2 cards to the next person",
-        "wild_choose_base_color": "Wild card: Allows player to choose a new base color",
-        "wild_skip_next_player": "Wild card: skips the next person",
+    "norm_base_cards": "Default UNO 4 color cards",
+    "wild_base_draw_2_colored": "Wild card: adds +2 cards to the next person",
+    "wild_choose_base_color": "Wild card: Allows player to choose a new base color",
+    "wild_skip_next_player": "Wild card: skips the next person",
+    "wild_block_selected_player": "Wild card: Select a player to bloxk them in their turn",
 }
 
 export const extended_advanced_card_objects_with_desc = {
+}
+
+
+export const EFFECTS = {
+    "skip_blocked_players": effectSkipBlockedTurns,
 }
 
 
@@ -47,6 +55,7 @@ export function MakeCard({
     place_func,
 
     choice=null,
+    effects=[],
 }){
     return {
         id, // Ids should follow: type-uniqueID, For CardType.norm: norm-{color}&{number}
@@ -61,6 +70,7 @@ export function MakeCard({
         place_func,
 
         choice, // {ui_id:"pick_color/pick_player/...", validate:(game, data)=>(bool)}
+        effects, // Array([string...]) of ids of effects
     }
 
 }
@@ -93,6 +103,22 @@ function add_cards_to_player(game, player_index, count=1){
         target_player.deck.push(generate_random_card(game.card_objects));
     }
     return true;
+}
+
+
+
+
+
+// ---   EFFECTS   ---
+export function effectSkipBlockedTurns(game){
+    if (!game.effects_data.skip_blocked_players) return;
+
+    if ((game.effects_data.skip_blocked_players[game.turn] ?? 0) > 0){
+        game.effects_data.skip_blocked_players[game.turn] -= 1;
+        game.turn = (game.turn + game.direction) % game.players.length;
+        game.cards_taken_in_this_turn = 0;
+        return true;
+    }
 }
 
 
@@ -264,6 +290,55 @@ export function makeWildSkipNextPlayer(
         allowed_to_play_func,
         place_func,
         choice,
+    })
+
+    return [{card:this_card, weight}];
+}
+
+
+export function makeWildBlockSelectedPlayer(
+    base_colors = config.cards.default_base_colors,
+    weight = 4,
+){
+    const allowed_to_play_func = (game) => {
+        if (game.cards_to_take > 0) return false;
+        return true;
+    }
+
+    const place_func = (game, choice) => {
+        if (choice.random){
+            let i = Math.floor(Math.random() * (game.players.length - 1));
+            if (i >= game.turn) i += 1;
+            choice.player_index = i;
+        }
+
+        game.effects_data.skip_blocked_players ??= {};
+        game.effects_data.skip_blocked_players[choice.player_index] ??= 0;
+        game.effects_data.skip_blocked_players[choice.player_index] += 1;
+        
+        game.turn = (game.turn + game.direction*2) % game.players.length;
+    }
+
+    const choice = {
+        ui_id:"pick_player",
+        validate: (game, data)=>(
+            data.random || 
+            (game.players[data?.player_index] && game.turn !== data?.player_index)
+        )
+    }
+
+    const effects = ["skip_blocked_players"]
+
+    const this_card = MakeCard({
+        id:`${CardType.wild}-blockSelectedPlayer`,
+        type:CardType.wild,
+        rednered_text:null,
+        base_color:null,
+        overlay_image:"block_selected_player.png",
+        allowed_to_play_func,
+        place_func,
+        choice,
+        effects,
     })
 
     return [{card:this_card, weight}];

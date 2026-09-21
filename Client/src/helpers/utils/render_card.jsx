@@ -5,6 +5,7 @@ import wildPlus2Colored from "../../assets/wild_plus2_colored.png"
 import chooseBaseColor from "../../assets/choose_base_color.png"
 import skipNextPlaye from "../../assets/skip_next_player.png"
 import cardBackSide from "../../assets/card_back_side.png"
+import blockSelectedPlayer from "../../assets/block_selected_player.png"
 
 
 const ovrelayMap = {
@@ -13,6 +14,7 @@ const ovrelayMap = {
     "choose_base_color.png": chooseBaseColor,
     "skip_next_player.png": skipNextPlaye,
     "card_back_side.png": cardBackSide,
+    "block_selected_player.png": blockSelectedPlayer,
 }
 
 function card({
