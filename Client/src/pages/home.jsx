@@ -1,14 +1,14 @@
 import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-import mainUnoImage from "../assets/main-uno-image.png";
-import "./css/Home.css";
-
-import Skeleton from "react-loading-skeleton";
-
 import * as SocketAPI from "../api/socket_handler"
 import { useApp, AppProvider } from "../helpers/context/app_provider"
 import { useNotification } from "../helpers/context/notification";
+
+import mainUnoImage from "../assets/main-uno-image.png";
+import Skeleton from "react-loading-skeleton";
+import SpinnerLoader from "../helpers/loaders/inside_spinner1"
+import "./css/Home.css";
 
 
 
@@ -20,15 +20,10 @@ function Home() {
   const [nameInputValue, setNameInputValue] = useState(session.player_name);
   const isNameInputInitLoad = useRef(true);
   const [nameInputLoading, setNameInputLoading] = useState(false);
+  const [leaveGameLoading, setLeaveGameLoading] = useState(false);
+  const [leaveLobbyLoading, setLeaveLobbyLoading] = useState(false);
 
-  async function createLobbyBtn(){
-    navigate("/lobby");
-  }
-  async function joinLobbyBtn(){
-    navigate("/joinlobby");
-  }
 
-    
   useEffect(() => {
     if (isNameInputInitLoad.current){
         isNameInputInitLoad.current = false;
@@ -61,6 +56,45 @@ function Home() {
     }, [nameInputValue]);
 
 
+  async function leaveGameBtn() {
+    setLeaveGameLoading(true);
+    const result = await SocketAPI.leaveGame();
+    setLeaveGameLoading(false);
+
+    showNotification({
+        text: result.msg,
+        type: result.error ? "error" : "success",
+    });
+
+    if (!result.error){
+      setSession({
+          ...session,
+          active_position: null,
+      });
+    }
+  }
+
+  async function leaveLobbyBtn() {
+    setLeaveLobbyLoading(true);
+    const result = await SocketAPI.leaveLobby();
+    setLeaveLobbyLoading(false);
+
+    if (result.msg) {
+        showNotification({
+            text: result.msg,
+            type: result.error ? "error" : "success"
+        });
+    }
+
+    if (!result.error){
+      setSession({
+          ...session,
+          active_position: null,
+      });
+    }
+  }
+
+
   return (
     <div className="game-container">
 
@@ -87,18 +121,51 @@ function Home() {
         </div>
 
         <div className="button-group">
+          {!session.active_position && <>
           <button 
             className="btn btn-create" 
-            onClick={createLobbyBtn} 
+            onClick={() => navigate("/lobby")} 
           >
             Create Lobby
           </button>
           <button 
             className="btn btn-create" 
-            onClick={joinLobbyBtn} 
+            onClick={() => navigate("/joinlobby")} 
           >
             Join Lobby
           </button>
+          </>}
+
+          {session.active_position == "lobby" && <>
+          <button 
+            className="btn btn-create" 
+            onClick={() => navigate("/lobby")} 
+          >
+            Continue To Lobby
+          </button>
+          <button 
+            className="btn btn-create" 
+            onClick={leaveLobbyBtn} 
+          >
+            {leaveLobbyLoading ? <SpinnerLoader /> : "Leave Lobby"}
+          </button>
+          </>}
+
+          {session.active_position == "game" && <>
+          <button 
+            className="btn btn-create" 
+            onClick={() => navigate("/game")} 
+          >
+            Continue To Game
+          </button>
+          <button 
+            className="btn btn-create" 
+            onClick={leaveGameBtn} 
+          >
+            {leaveGameLoading ? <SpinnerLoader /> : "Leave Game"}
+          </button>
+          </>}
+
         </div>
       </div>
       

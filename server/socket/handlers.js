@@ -57,9 +57,15 @@ io.on("connection", async (socket) => {
 
 
     socket.on("sync_session", async (data, ack) => {
+        const player_id = socket.request.session.player_id;
+        let active_position = null;
+        if (LobbyHandler.Player_To_Lobby[player_id]) active_position = "lobby";
+        if (GameHandler.Player_To_Game[player_id]) active_position = "game";
+
         ack({
-            player_id: socket.request.session.player_id,
-            player_name: PlayerstateHandler.getPlayerName(socket.request.session.player_id),
+            player_id,
+            player_name: PlayerstateHandler.getPlayerName(player_id),
+            active_position,
         });
     });
 

@@ -1,6 +1,7 @@
 <!-- refactor hard-coded values into a global game settings dict -->
+<!-- post effects -->
 
-post effects
+refactor client UI
 make UI
 add more cards
 run tests and find bugs

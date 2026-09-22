@@ -41,6 +41,13 @@ function Lobby() {
             });
         }
 
+        if (!result.error){
+            setSession({
+                ...session,
+                active_position: "lobby",
+            });
+        }
+
         if (result.redirect) {
             navigate(result.redirect, {replace:true});
             return;
@@ -80,6 +87,13 @@ function Lobby() {
             text: result.msg,
             type: result.error ? "error" : "success"
         });
+    }
+
+    if (!result.error){
+      setSession({
+          ...session,
+          active_position: null,
+      });
     }
 
     if (result.redirect) {
