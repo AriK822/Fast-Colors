@@ -2,14 +2,12 @@ import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 import * as SocketAPI from "../api/socket_handler"
-import { useApp, AppProvider } from "../helpers/context/app_provider"
-import { useNotification } from "../helpers/context/notification";
+import { useApp, AppProvider } from "../utils/context/app_provider"
+import { useNotification } from "../utils/context/notification";
 
 import mainUnoImage from "../assets/main-uno-image.png";
 import Skeleton from "react-loading-skeleton";
-import SpinnerLoader from "../helpers/loaders/inside_spinner1"
-import "./css/Home.css";
-
+import SpinnerLoader from "../components/loaders/inside_spinner1"
 
 
 function Home() {

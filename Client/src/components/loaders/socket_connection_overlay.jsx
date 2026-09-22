@@ -1,4 +1,3 @@
-import { useApp } from "../context/app_provider";
 import "./css/socket_connection_overlay.css";
 
 

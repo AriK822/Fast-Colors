@@ -9,12 +9,11 @@ import JoinLobby from "./pages/join_lobby"
 import Game from "./pages/game"
 
 // CSS
-import "./helpers/base.css";
-import "react-loading-skeleton/dist/skeleton.css";
+import "./components/app.css";
 
 // Context
-import { AppProvider } from "./helpers/context/app_provider"
-import { NotificationProvider } from "./helpers/context/notification"
+import { AppProvider } from "./utils/context/app_provider"
+import { NotificationProvider } from "./utils/context/notification"
 
 import { SkeletonTheme } from "react-loading-skeleton";
 

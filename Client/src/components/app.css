@@ -1,0 +1,7 @@
+@import "react-loading-skeleton/dist/skeleton.css";
+
+@import "./home/css/home.css";
+@import "../utils/base.css"
+
+
+/* variables and imports here */

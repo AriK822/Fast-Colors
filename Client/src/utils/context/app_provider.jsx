@@ -8,8 +8,8 @@ import React, {
 import socket from "../../api/socket_init";
 import * as SocketAPI from "../../api/socket_handler"
 
-import SocketConnectionOverlay from "../loaders/socket_connection_overlay"
-import FullScreenLoader from "../../helpers/loaders/fullscreen1"
+import SocketConnectionOverlay from "../../components/loaders/socket_connection_overlay"
+import FullScreenLoader from "../../components/loaders/fullscreen1"
 
 
 const AppContext = createContext(null);

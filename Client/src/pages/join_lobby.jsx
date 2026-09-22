@@ -2,9 +2,9 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 import * as SocketAPI from "../api/socket_handler"
-import { useNotification } from "../helpers/context/notification";
+import { useNotification } from "../utils/context/notification";
 
-import SpinnerLoader from "../helpers/loaders/inside_spinner1"
+import SpinnerLoader from "../components/loaders/inside_spinner1"
 import Skeleton from "react-loading-skeleton";
 
 

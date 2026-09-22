@@ -2,15 +2,14 @@ import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 
 import * as SocketAPI from "../api/socket_handler"
-import { useNotification } from "../helpers/context/notification";
-import { useApp } from "../helpers/context/app_provider"
+import { useNotification } from "../utils/context/notification";
+import { useApp } from "../utils/context/app_provider"
 
-import RenderCard from "../helpers/utils/render_card"
-import SpinnerLoader from "../helpers/loaders/inside_spinner1"
-import FullScreenLoader from "../helpers/loaders/fullscreen1";
+import RenderCard from "../components/game/render_card"
+import SpinnerLoader from "../components/loaders/inside_spinner1"
+import FullScreenLoader from "../components/loaders/fullscreen1";
 import Skeleton from "react-loading-skeleton";
-import UiIdMapper from "../helpers/ui_choices/map_ui_id"
-import card from "../helpers/utils/render_card";
+import UiIdMapper from "../components/game/ui_choices/map_ui_id"
 
 
 function Game(){
