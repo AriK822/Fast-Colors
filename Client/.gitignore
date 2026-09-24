@@ -31,5 +31,5 @@ dist-ssr
 /test.js
 
 # Temporary avoid commiting large size assets until official release
-/src/assets
+/src/assets_staging
 

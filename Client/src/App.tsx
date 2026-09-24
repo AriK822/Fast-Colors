@@ -7,6 +7,7 @@ import Home from "./pages/Home"
 import Lobby from "./pages/lobby"
 import JoinLobby from "./pages/join_lobby"
 import Game from "./pages/game"
+import Test from "./pages/test"
 
 // CSS
 import "./components/app.css";
@@ -38,6 +39,8 @@ function App() {
         <Route path="/joinlobby" element={<JoinLobby />} />
 
         <Route path="/game" element={<Game />} />
+
+        <Route path="/test" element={<Test />} />
 
         <Route path="*" element={<Navigate to="/" replace />} />
 

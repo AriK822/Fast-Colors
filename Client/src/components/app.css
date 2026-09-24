@@ -1,7 +1,31 @@
 @import "react-loading-skeleton/dist/skeleton.css";
+@import "tailwindcss";
 
-@import "./home/css/home.css";
-@import "../utils/base.css"
+@import "./style/global.css";
+
+/* @import "./home/css/home.css"; */
+/* @import "../utils/base.css"; */
 
 
-/* variables and imports here */
+:root {
+    --color-background: #111318;
+    --color-text: #d6d5e9;
+
+    --color-half-opacity: #01010147;
+
+    --color-btn-hover: #ffffff20;
+
+    --radius-btn: 1rem;
+}
+
+
+@theme {
+    --color-background: var(--color-background);
+    --color-text: var(--color-text);
+
+    --color-half-opacity: var(--color-half-opacity);
+
+    --color-btn-hover: var(--color-btn-hover);
+
+    --radius-btn: var(--radius-btn);
+}

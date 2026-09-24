@@ -5,7 +5,7 @@ import * as SocketAPI from "../api/socket_handler"
 import { useApp, AppProvider } from "../utils/context/app_provider"
 import { useNotification } from "../utils/context/notification";
 
-import mainUnoImage from "../assets/main-uno-image.png";
+import mainUnoImage from "../assets_staging/main-uno-image.png";
 import Skeleton from "react-loading-skeleton";
 import SpinnerLoader from "../components/loaders/inside_spinner1"
 
