@@ -1,71 +1,83 @@
 import * as ui from "../components/global"
-import bgHome from "../assets_staging/bg-home-landscape.png"
-import mainLogo from "../assets_staging/t1.png"
+import bgLandscape from "../assets_staging/bg1.png"
+import bgMobile from "../assets_staging/bg2.png"
+import mainLogo from "../assets_staging/logo1.1.png"
+import paintTexture from "../assets_staging/t1.jpg"
 
 function Test(){
     return (
-        <ui.FullScreen
-            // style={{
-            //     backgroundImage: `url(${bgHome})`,
-            //     backgroundSize: "cover",
-            //     backgroundPosition: "center",
-            // }}
-            className="flex"
-        >
+        <ui.FullScreen className="flex">
 
-        <ui.SideBar 
-            className="border"
-        >
-            <h1>Some text</h1>
-        </ui.SideBar>
+            <ui.SideBar 
+                className="game-side-bar"
+                style={{"--bg-paint-texture": `url(${paintTexture})`,}}
+            >
+                <h1 className="game-default-text text-3xl">
+                    Play as: {"AriK"}
+                </h1>
+                <ui.Input 
+                    className="mt-3"
+                    placeholder="Your name" 
+                />
+                <ui.Divider />
 
-        <div className="flex w-full h-full items-center justify-center border">
+                <ui.Button variant="sidebar">Home</ui.Button>
+                <ui.Button variant="sidebar">Settings</ui.Button>
 
-            <div className={`
-                flex flex-wrap
-                justify-center gap-8
-            `}>
-                <div className={`
-                    flex flex-col border 
-                    justify-center items-center p-10
-                    min-w-150 mx-6
-                `}>
-                    <h1 className="p-3 m-0 font-bold text-6xl">Fast colors</h1>
-                    <h5 className="p-2 m-0 font-semibold text-2xl">
-                        <span>Think Fast! </span>
-                        <span>Play Together.</span>
-                    </h5>
-                </div>
+            </ui.SideBar>
 
-                <div className={`
-                    flex flex-col md:flex-row justify-center items-center
-                    border gap-3 min-w-100 p-10 mx-6
-                `}>
-                    <ui.Button
-                        className="w-full"
-                    >Create Room</ui.Button>
-                    <ui.Button
-                        className="w-full"
-                    >Join Room</ui.Button>
-                </div>
-            </div>
-
-        </div>
-
-        <div className="
-            hidden [@media(min-width:1600px)]:flex
-            w-[38%] min-w-[20%]
-            h-full items-center justify-center
-        ">
-            <img
+            <main
                 className="
-                    select-none pointer-events-none
-                    w-full scale-130
+                    relative flex min-w-0 flex-1
+                    items-center justify-center
+                    overflow-hidden
+                    bg-cover bg-center
+                    bg-[image:var(--bg-mobile)]
+                    xl:bg-[image:var(--bg-desktop)]
                 "
-                src={mainLogo}
-                alt="fast colors"
-            />
-        </div>
+                style={{
+                    "--bg-mobile": `url(${bgMobile})`,
+                    "--bg-desktop": `url(${bgLandscape})`,
+                }}
+            >
+                <div className="
+                    relative z-10
+                    flex flex-col
+                    items-center
+                    gap-6
+                    px-6
+                ">
+                    <div className="flex flex-col items-center">
+                        <img
+                            src={mainLogo}
+                            alt="Fast Colors"
+                            className="w-100 img-shadow"
+                        />
+
+                        <h5 className="game-default-text text-3xl">
+                            <span>Think Fast! </span>
+                            <span className="text-[#a3ffe8]">
+                                Play Together.
+                            </span>
+                        </h5>
+                    </div>
+
+                    <div className="
+                        flex w-full max-w-md
+                        flex-col gap-3
+                        sm:flex-row
+                    ">
+                        <ui.Button className="w-full p-3">
+                            Create Room
+                        </ui.Button>
+
+                        <ui.Button className="w-full p-3">
+                            Join Room
+                        </ui.Button>
+                    </div>
+                </div>
+
+            </main>
 
         </ui.FullScreen>
     )
