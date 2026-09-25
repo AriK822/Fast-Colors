@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useRef } from "react";
+import { createContext, useContext, useRef, useState } from "react";
 
 
 const NotificationContext = createContext(null);
@@ -7,6 +7,7 @@ const NotificationContext = createContext(null);
 export function NotificationProvider({ children }) {
     const [notification, setNotification] = useState(null);
     const timeoutRef = useRef(null);
+    const notificationId = useRef(0);
 
     function showNotification({
         text,
@@ -14,15 +15,18 @@ export function NotificationProvider({ children }) {
         color,
         timeout = 3000,
     }) {
-        // Cancel previous timeout
         if (timeoutRef.current) {
             clearTimeout(timeoutRef.current);
         }
 
+        const id = ++notificationId.current;
+
         setNotification({
+            id,
             text,
             type,
             color,
+            timeout,
         });
 
         timeoutRef.current = setTimeout(() => {
@@ -49,6 +53,7 @@ export function NotificationProvider({ children }) {
 
             {notification && (
                 <Notification
+                    key={notification.id}
                     {...notification}
                 />
             )}
@@ -56,40 +61,35 @@ export function NotificationProvider({ children }) {
     );
 }
 
+
 export function useNotification() {
     return useContext(NotificationContext);
 }
 
 
-
-function Notification({ text, type, color }) {
+function Notification({ text, type, color, timeout }) {
     const typeColors = {
-        warning: "orange",
-        success: "green",
-        error: "red",
+        warning: "var(--notification-warning)",
+        success: "var(--notification-success)",
+        error: "var(--notification-error)",
     };
 
     const backgroundColor =
-        typeColors[type] ?? color ?? "#333";
+        typeColors[type] ?? color ?? "var(--game-sidebar-border)";
 
     return (
         <div
+            className="game-notification"
             style={{
-                position: "fixed",
-                top: "20px",
-                right: "20px",
-                zIndex: 9999,
-
-                padding: "12px 20px",
-                borderRadius: "8px",
-
-                backgroundColor,
-                color: "white",
-
-                boxShadow: "0 4px 12px rgba(0,0,0,0.25)",
+                "--notification-color": backgroundColor,
+                "--notification-duration": `${timeout}ms`,
             }}
         >
-            {text}
+            <div className="game-notification-text">
+                {text}
+            </div>
+
+            <div className="game-notification-timer" />
         </div>
     );
 }
