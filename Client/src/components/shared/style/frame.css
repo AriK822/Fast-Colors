@@ -1,0 +1,116 @@
+.game-frame-btn {
+    padding: 0.55rem 0.8rem;
+
+    border: 2px solid rgb(255 255 255 / 12%);
+    border-radius: var(--radius-ui-sm);
+
+    background: var(--theme-accent);
+
+    box-shadow:
+        inset 4px 2px 0
+            color-mix(
+                in srgb,
+                var(--theme-accent) 80%,
+                white
+            ),
+        2px 7px 0
+            color-mix(
+                in srgb,
+                var(--theme-surface-bottom) 50%,
+                var(--theme-accent)
+            ),
+        3px 7px 5px rgb(0 0 0 / 45%);
+
+    transition: var(--transition-duration-hover);
+}
+
+.game-frame-btn:hover {
+    filter: brightness(1.08);
+    transform: translateY(-1px);
+}
+
+.game-frame-btn:active {
+    transform: translateY(2px);
+
+    box-shadow:
+        inset 4px 2px 0
+            color-mix(
+                in srgb,
+                var(--theme-accent) 80%,
+                white
+            ),
+        2px 3px 0
+            color-mix(
+                in srgb,
+                var(--theme-surface-bottom) 50%,
+                var(--theme-accent)
+            ),
+        3px 7px 5px rgb(0 0 0 / 45%);
+}
+
+
+.game-frame {
+    border: 2px solid var(--theme-accent);
+    border-radius: var(--radius-ui-sm);
+    padding: var(--spacing-ui-md);
+
+    background: color-mix(
+        in srgb,
+        var(--theme-surface-bottom) 96%,
+        black
+    );
+
+    box-shadow:
+        5px 5px 5px rgb(0 0 0 / 46%);
+}
+
+
+.frame-box {
+    background: var(--theme-accent-deep);
+    border-radius: var(--radius-ui-sm);
+    padding: 2px;
+
+    box-shadow:
+        inset 0 2px 0 var(--theme-accent),
+        0 0 15px rgb(0 0 0 / 56%);
+}
+
+
+.frame-box-inside {
+    background: var(--theme-surface-bottom);
+
+    border: 1px solid var(--theme-accent-dark);
+    border-radius: var(--radius-ui-sm);
+    padding: var(--spacing-ui-md);
+
+    box-shadow:
+        inset 3px 0 0 var(--theme-highlight-strong),
+        inset 0 2px 0 var(--theme-highlight);
+}
+
+
+.frame-join-lobby-option {
+    padding: var(--spacing-ui-md);
+
+    border: 2px solid
+        color-mix(
+            in srgb,
+            var(--theme-accent) 80%,
+            white
+        );
+
+    border-radius: var(--radius-ui-lg);
+
+    background: var(--theme-accent);
+
+    transition: var(--transition-duration-hover);
+}
+
+.frame-join-lobby-option:hover {
+    background: color-mix(
+        in srgb,
+        var(--theme-accent) 70%,
+        var(--theme-surface-top)
+    );
+}
+

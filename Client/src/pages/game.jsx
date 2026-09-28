@@ -6,8 +6,7 @@ import { useNotification } from "../utils/context/notification";
 import { useApp } from "../utils/context/app_provider"
 
 import RenderCard from "../components/game/render_card"
-import SpinnerLoader from "../components/loaders/inside_spinner1"
-import FullScreenLoader from "../components/loaders/fullscreen1";
+import Loader from "../components/loaders/_loaders"
 import Skeleton from "react-loading-skeleton";
 import UiIdMapper from "../components/game/ui_choices/map_ui_id"
 
@@ -201,7 +200,7 @@ function Game(){
 
 
   if (!game){
-    return <FullScreenLoader />
+    return <Loader.FullScreen />
   }
 
   return (
@@ -211,7 +210,7 @@ function Game(){
         onClick={leaveGame}
         disabled={leave_game_loading}
       >
-        {leave_game_loading ? <SpinnerLoader /> : "Leave game"}
+        {leave_game_loading ? <Loader.Spinner /> : "Leave game"}
       </button>
 
       {game.state === "ended" &&
@@ -375,7 +374,7 @@ function Game(){
                   onClick={sendGameChatMassage} 
                   disabled={game_chat_sending || game_chat_input.trim() == ""}
               >
-                  {game_chat_sending ? <SpinnerLoader/> : "Send"}
+                  {game_chat_sending ? <Loader.Spinner/> : "Send"}
               </button>
           </div>
       </div>

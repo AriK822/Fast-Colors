@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import * as SocketAPI from "../api/socket_handler"
 import { useNotification } from "../utils/context/notification";
 
-import SpinnerLoader from "../components/loaders/inside_spinner1"
+import Loaders from "../components/loaders/_loaders";
 import Skeleton from "react-loading-skeleton";
 
 
@@ -75,7 +75,7 @@ function JoinLobby() {
       onClick={loadJoinLobby}
       disabled={refresh_lobbies_loading}  
     >
-      {refresh_lobbies_loading ? <SpinnerLoader /> : "Refresh"}
+      {refresh_lobbies_loading ? <Loader.Spinner /> : "Refresh"}
     </button>
 
     <div className="join-lobby-container">

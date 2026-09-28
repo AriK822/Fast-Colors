@@ -1,72 +1,16 @@
 import { useEffect, useRef, useState } from "react";
 
-import topLeftLeaves from "../assets_staging/s4.1.png";
-import bottomLeftLeaves from "../assets_staging/s3.png";
+import { useApp } from "../../utils/context/app_provider"
+import interactive from "./interactive"
+import frame from "./frame";
+
+import "./style/sidebar.css"
+import topLeftLeaves from "../../assets_staging/s4.1.png";
+import bottomLeftLeaves from "../../assets_staging/s3.png";
 
 
-export function FullScreen({ children, className = "", ...props }) {
-    return (
-        <div
-            className={`fixed inset-0 size-full bg-background text-text ${className}`}
-            {...props}
-        >
-            {children}
-        </div>
-    );
-}
 
-
-export function Button({
-    children,
-    className = "",
-    variant = "default",
-    onClick,
-    ...props
-}) {
-    return (
-        <button
-            className={`
-                h-fit
-                cursor-pointer
-                font-game text-xl text-text
-                transition
-                ${variant === "sidebar" ? "sidebar-btn" : "default-btn"}
-                ${className}
-            `}
-            onClick={onClick}
-            {...props}
-        >
-            {children}
-        </button>
-    );
-}
-
-
-export function Input({
-    className = "",
-    onChange,
-    placeholder = "",
-    ...props
-}) {
-    return (
-        <input
-            className={`
-                default-input
-                h-fit w-full
-                p-3
-                font-game text-xl text-text
-                placeholder:text-white/60
-                ${className}
-            `}
-            onChange={onChange}
-            placeholder={placeholder}
-            {...props}
-        />
-    );
-}
-
-
-export function SideBar({
+function SideBar({
     children,
     className = "",
     style = {},
@@ -75,11 +19,13 @@ export function SideBar({
     maxWidth = 500,
     ...props
 }) {
+    const { width, setWidth } = useApp();
     const [open, setOpen] = useState(false);
-    const [width, setWidth] = useState(defaultWidth);
     const resizing = useRef(false);
 
     useEffect(() => {
+        if (!width) setWidth(defaultWidth);
+        
         function handlePointerMove(event) {
             if (!resizing.current) return;
 
@@ -116,8 +62,8 @@ export function SideBar({
         <>
             <aside
                 className={`
-                    relative hidden h-full shrink-0 md:block
-                    ${className}
+                    hidden relative md:flex flex-col shrink-0
+                    h-full game-sidebar ${className}
                 `}
                 style={{...style, width  }}
                 {...props}
@@ -138,7 +84,7 @@ export function SideBar({
                     className="
                         pointer-events-none
                         absolute -top-15 -left-10
-                        scale-80 img-shadow-subtle
+                        scale-80 drop-shadow-img-soft
                     "
                 />
 
@@ -148,31 +94,32 @@ export function SideBar({
                     className="
                         pointer-events-none
                         absolute -bottom-15 -left-10
-                        scale-80 img-shadow-subtle
+                        scale-80 drop-shadow-img-soft
                     "
                 />
             </aside>
 
-            <Button
+            <interactive.Button
                 className={`
-                    fixed top-3 left-3 z-10
-                    p-3 md:hidden
+                    fixed top-3 left-3 z-10 md:hidden
                     ${open ? "hidden" : ""}
                 `}
                 onClick={() => setOpen(true)}
             >
                 Open
-            </Button>
+            </interactive.Button>
 
             {open && (
-                <FullScreen className="z-100 flex bg-half-opacity md:hidden">
+                <frame.FullScreen className="z-100 flex bg-overlay md:hidden">
                     <aside
                         className={`
-                            relative flex w-[65%] shrink-0 flex-col
-                            bg-background
+                            relative flex flex-col
+                            min-w-[70%] max-w-[70%] shrink-0
+                            bg-background game-sidebar
                             ${className}
                         `}
                         style={{...style, width  }}
+                        {...props}
                     >
                         {children}
 
@@ -182,7 +129,7 @@ export function SideBar({
                             className="
                                 pointer-events-none
                                 absolute -top-15 -left-10
-                                scale-80 img-shadow-subtle
+                                scale-80 drop-shadow-img-soft
                             "
                         />
 
@@ -192,7 +139,7 @@ export function SideBar({
                             className="
                                 pointer-events-none
                                 absolute -bottom-15 -left-10
-                                scale-80 img-shadow-subtle
+                                scale-80 drop-shadow-img-soft
                             "
                         />
                     </aside>
@@ -201,13 +148,71 @@ export function SideBar({
                         className="h-full w-full"
                         onClick={() => setOpen(false)}
                     />
-                </FullScreen>
+                </frame.FullScreen>
             )}
         </>
     );
 }
 
 
-export function Divider(){
-    return (<div className="divider"></div>)
+function Divider(){
+    return (<div className="sidebar-divider"></div>)
 }
+
+
+function SideBarButton({
+    children,
+    className = "",
+    onClick,
+    ...props
+}) {
+    return (
+        <button
+            className={`
+                h-fit
+                cursor-pointer
+                ui-text text-xl
+                transition transition-duration-hover
+                sidebar-btn
+                truncate
+                ${className}
+            `}
+            onClick={onClick}
+            {...props}
+        >
+            {children}
+        </button>
+    );
+}
+
+
+
+function SideBarInput({
+    className = "",
+    onChange,
+    placeholder = "",
+    ...props
+}) {
+    return (
+        <input
+            className={`
+                sidebar-input p-ui-md
+                font-game text-xl text-text
+                placeholder:text-white/60
+                ${className}
+            `}
+            onChange={onChange}
+            placeholder={placeholder}
+            {...props}
+        />
+    );
+}
+
+
+Object.assign(SideBar, {
+    Divider, 
+    Btn: SideBarButton, 
+    Input: SideBarInput
+})
+export default {SideBar}
+

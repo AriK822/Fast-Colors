@@ -1,0 +1,97 @@
+.game-notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+
+    min-width: 240px;
+    max-width: 420px;
+
+    padding: 13px 22px 16px;
+
+    color: var(--game-text);
+    font-family: var(--game-font);
+    font-size: 1.05rem;
+    font-weight: 700;
+    text-shadow:
+        -2px 2px 0 rgb(0 0 0 / 35%);
+
+    background:
+        linear-gradient(
+            to bottom,
+            color-mix(
+                in srgb,
+                var(--notification-color) 85%,
+                white
+            ),
+            var(--notification-color)
+        );
+
+    border: 2px solid rgb(255 255 255 / 16%);
+
+    box-shadow:
+        0 5px 0 color-mix(
+            in srgb,
+            var(--notification-color) 40%,
+            black
+        ),
+        10px 10px 3px rgb(0 0 0 / 45%),
+        inset 0 1px 0 rgb(255 255 255 / 20%);
+
+    clip-path: polygon(
+        0 50%,
+        5% 0,
+        95% 0,
+        100% 50%,
+        95% 100%,
+        5% 100%
+    );
+
+    animation: notification-enter 180ms ease-out;
+}
+
+
+.game-notification-text {
+    line-height: 1.35;
+}
+
+
+.game-notification-timer {
+    position: absolute;
+    left: 6px;
+    right: 6px;
+    bottom: 4px;
+
+    height: 3px;
+
+    background: rgb(255 255 255 / 45%);
+
+    transform-origin: left;
+    animation: notification-timer var(--notification-duration) linear forwards;
+}
+
+
+@keyframes notification-timer {
+    from {
+        transform: scaleX(1);
+    }
+
+    to {
+        transform: scaleX(0);
+    }
+}
+
+
+@keyframes notification-enter {
+    from {
+        opacity: 0;
+        transform: translateX(20px) scale(0.96);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0) scale(1);
+    }
+}
+
+

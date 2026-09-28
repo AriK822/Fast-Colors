@@ -9,7 +9,7 @@ import socket from "../../api/socket_init";
 import * as SocketAPI from "../../api/socket_handler"
 
 import SocketConnectionOverlay from "../../components/loaders/socket_connection_overlay"
-import FullScreenLoader from "../../components/loaders/fullscreen1"
+import Loader from "../../components/loaders/_loaders"
 
 
 const AppContext = createContext(null);
@@ -41,6 +41,8 @@ export const AppProvider = ({ children }) => {
     const [socketStatus, setSocketStatus] = useState(
         socket.connected ? SocketStatusModes.CONNECTED : SocketStatusModes.CONNECTING
     );
+
+    const [width, setWidth] = useState(null);
 
 
     useEffect(() => {
@@ -109,11 +111,13 @@ export const AppProvider = ({ children }) => {
         socketStatus,
         SocketStatusModes,
 
+        width,
+        setWidth,
     };
 
 
     if (!session){
-        return <FullScreenLoader text={"Loading..."} />
+        return <Loader.FullScreen text={"Loading..."} />
     }
 
     return (

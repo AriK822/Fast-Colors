@@ -1,0 +1,36 @@
+.default-btn {
+    border: 2px solid rgb(255 255 255 / 18%);
+    border-radius: var(--radius-ui-lg);
+
+    background: linear-gradient(
+        to bottom,
+        var(--theme-button-top) 0%,
+        var(--theme-button-mid) 70%,
+        var(--theme-button-bottom) 100%
+    );
+
+    box-shadow:
+        0 5px 0 var(--theme-button-shadow),
+        0 8px 14px rgb(0 0 0 / 25%),
+        inset -2px 0 0 var(--theme-button-highlight);
+
+    font-weight: 800;
+}
+
+.default-btn:hover {
+    transform: translateY(-2px);
+}
+
+.default-btn:active {
+    transform: translateY(3px);
+
+    box-shadow:
+        0 2px 0 var(--theme-button-shadow),
+        0 2px 8px rgb(0 0 0 / 25%),
+        inset -2px 0 0 var(--theme-button-highlight);
+}
+
+.default-btn:disabled {
+    cursor: not-allowed;
+}
+

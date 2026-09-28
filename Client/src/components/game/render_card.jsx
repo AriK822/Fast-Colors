@@ -1,4 +1,4 @@
-import "./css/card.css"
+import "./style/card.css"
 
 import defaultOverlay from "../../assets_staging/dafault_overlay.png"
 import wildPlus2Colored from "../../assets_staging/wild_plus2_colored.png"

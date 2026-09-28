@@ -1,4 +1,4 @@
-import "./css/socket_connection_overlay.css";
+import "./style/socket_connection_overlay.css";
 
 
 const SocketConnectionOverlay = ({ socketStatus, SocketStatusModes, display = true }) => {

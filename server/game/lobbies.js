@@ -127,7 +127,7 @@ export function makeClientJoinLobbyList(){
             owner:lobby.owner,
             players: Object.entries(lobby.players).length,
             bots: lobby.game_options.bots.length,
-            selected_card_objects: lobby.game_options.selected_card_objects,
+            // selected_card_objects: lobby.game_options.selected_card_objects,
         }
     })
     return result

@@ -1,0 +1,130 @@
+.game-sidebar {
+    border-right: 2px solid var(--theme-accent);
+
+    padding-right: var(--spacing-ui-lg);
+    padding-left: var(--spacing-ui-lg);
+    padding-top: 7.5rem;
+    padding-bottom: 7.5rem;
+
+    background: linear-gradient(
+        220deg,
+        var(--theme-surface-top),
+        var(--theme-surface-bottom)
+    );
+
+    background-color: var(--theme-surface-top);
+    background-image: var(--bg-paint-texture);
+    background-repeat: repeat;
+    background-blend-mode: multiply;
+
+    box-shadow:
+        inset 5px 0 15px rgb(0 0 0 / 36%),
+        5px 0 15px rgb(0 0 0 / 36%);
+}
+
+
+.sidebar-divider {
+    height: 3px;
+
+    margin-top: 20px;
+    margin-bottom: 20px;
+
+    background: radial-gradient(
+        150px,
+        var(--theme-accent),
+        var(--theme-surface-top)
+    );
+}
+
+
+.sidebar-btn {
+    padding: 0.55rem 0.8rem;
+
+    margin-top: 5px;
+    margin-bottom: 5px;
+
+    border: 2px solid rgb(255 255 255 / 12%);
+    border-radius: 15%;
+
+    background: linear-gradient(
+        to bottom,
+        color-mix(
+            in srgb,
+            var(--theme-accent) 75%,
+            transparent
+        ),
+        var(--theme-accent)
+    );
+
+    box-shadow:
+        inset 4px 2px 0
+            color-mix(
+                in srgb,
+                var(--theme-accent) 80%,
+                white
+            ),
+        2px 7px 0
+            color-mix(
+                in srgb,
+                var(--theme-surface-bottom) 50%,
+                var(--theme-accent)
+            ),
+        3px 7px 5px rgb(0 0 0 / 45%);
+
+    font-family: var(--theme-font);
+    font-weight: 800;
+
+    text-shadow:
+        -2px 2px 0 rgb(0 0 0 / 35%);
+
+    transition: var(--transition-duration-hover);
+}
+
+.sidebar-btn:hover {
+    filter: brightness(1.08);
+    transform: translateY(-1px);
+}
+
+.sidebar-btn:active {
+    transform: translateY(2px);
+
+    box-shadow:
+        inset 4px 2px 0
+            color-mix(
+                in srgb,
+                var(--theme-accent) 80%,
+                white
+            ),
+        2px 3px 0
+            color-mix(
+                in srgb,
+                var(--theme-surface-bottom) 50%,
+                var(--theme-accent)
+            ),
+        3px 7px 5px rgb(0 0 0 / 45%);
+}
+
+
+.sidebar-input {
+    border: 2px solid rgb(255 255 255 / 18%);
+    border-radius: var(--radius-ui-lg);
+
+    background: linear-gradient(
+        to bottom,
+        var(--theme-input-top) 0%,
+        var(--theme-input-mid) 70%,
+        var(--theme-input-bottom) 100%
+    );
+
+    box-shadow:
+        0 5px 0 var(--theme-input-top),
+        0 8px 14px rgb(0 0 0 / 25%),
+        inset -2px 0 0 var(--theme-input-highlight);
+
+    outline: none;
+}
+
+.sidebar-input:focus {
+    border-color: rgb(255 255 255 / 45%);
+}
+

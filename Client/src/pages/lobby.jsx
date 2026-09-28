@@ -5,7 +5,7 @@ import * as SocketAPI from "../api/socket_handler"
 import { useNotification } from "../utils/context/notification";
 import { useApp } from "../utils/context/app_provider"
 
-import SpinnerLoader from "../components/loaders/inside_spinner1"
+import Loaders from "../components/loaders/_loaders";
 import Skeleton from "react-loading-skeleton";
 import { useCountdown } from "../utils/hooks/timer_hooks";
 
@@ -298,7 +298,7 @@ function Lobby() {
         </p>
 
         <button onClick={leaveLobbyBtn}>
-            {leave_lobby_loading ? <SpinnerLoader /> : "Leave Lobby"}
+            {leave_lobby_loading ? <Loader.Spinner /> : "Leave Lobby"}
         </button>
 
 
@@ -309,7 +309,7 @@ function Lobby() {
         <div className="card">
             <strong>Players:</strong>
             {Object.entries(lobby.players).map(([id, desc]) => (
-                <div key={id} className="flex gap-3">
+                <div key={id} className="flex gap-ui-md">
 
                     <p>Name: {desc.name}</p>
                     <p>Status: {desc.connection_status}</p>
@@ -323,7 +323,7 @@ function Lobby() {
                         onClick={() => kickPlayer(id)}
                         disabled={kick_player_loading!=null}
                         >
-                            {kick_player_loading == id ? <SpinnerLoader /> : "Kick"}
+                            {kick_player_loading == id ? <Loader.Spinner /> : "Kick"}
                         </button>
                     ) : <></>}
 
@@ -391,9 +391,9 @@ function Lobby() {
                 {lobby.game_options.use_advanced_options && <>
 
                 <strong>Base colors:</strong>
-                  <div className="flex flex-col card gap-2">
+                  <div className="flex flex-col card gap-ui-xs">
                     {lobby.game_options.base_colors.map((b_color, i) => (
-                        <div className="flex flex-row gap-2" key={i} >
+                        <div className="flex flex-row gap-ui-xs" key={i} >
                             <input 
                                 type={"color"} 
                                 value={b_color} 
@@ -442,8 +442,8 @@ function Lobby() {
                   <div className="card">
 
                     {lobby.game_options.advanced_card_objects.map((card_obj, i) => (
-                        <div key={i} className="flex flex-col gap-2 card">
-                            <div className="flex flex-row gap-2">
+                        <div key={i} className="flex flex-col gap-ui-xs card">
+                            <div className="flex flex-row gap-ui-xs">
                                 <label>Type:</label>
                                 <select
                                     value={card_obj.id}
@@ -472,7 +472,7 @@ function Lobby() {
                             </div>
 
 
-                            <div className="flex flex-row gap-2">
+                            <div className="flex flex-row gap-ui-xs">
                                 <label>
                                     Weight: {card_obj.weight}
                                 </label>
@@ -511,7 +511,7 @@ function Lobby() {
 
 
                             {card_obj.id === "norm_base_cards" && (
-                                <div className="flex flex-col gap-2">
+                                <div className="flex flex-col gap-ui-xs">
                                     <p>Numbers: {String(card_obj.nums)}</p>
                                     <button
                                         onClick={() => {
@@ -524,7 +524,7 @@ function Lobby() {
                                     </button>
 
                                     {openNumsIndex === i && (
-                                        <div className="flex flex-col gap-2 card">
+                                        <div className="flex flex-col gap-ui-xs card">
 
                                             <button
                                                 onClick={() => {
@@ -557,7 +557,7 @@ function Lobby() {
                                             </button>
 
 
-                                            <div className="flex flex-row flex-wrap gap-2">
+                                            <div className="flex flex-row flex-wrap gap-ui-xs">
                                                 {Array.from(
                                                     { length: limits.max_norm_num-limits.min_norm_num+1 },
                                                     (_, index) => index + limits.min_norm_num
@@ -666,7 +666,7 @@ function Lobby() {
             <div className="card">
                 <strong>Bots:</strong>
                 {lobby.game_options.bots.map((bot_name, i) => (
-                <div className="flex gap-3" key={i}>
+                <div className="flex gap-ui-md" key={i}>
                     <p>{bot_name}</p>
                     <button 
                         style={{color:"orange"}}
@@ -714,7 +714,7 @@ function Lobby() {
             <div className="card">
                 <strong>Other options:</strong>
 
-                <div className="flex gap-3">
+                <div className="flex gap-ui-md">
                     <label>
                         Initial deck size:
                     </label>
@@ -739,7 +739,7 @@ function Lobby() {
                 </div>
 
 
-                <div className="flex gap-3">
+                <div className="flex gap-ui-md">
                     <label>
                         Can draw when playable:
                     </label>
@@ -757,7 +757,7 @@ function Lobby() {
                 </div>
 
 
-                <div className="flex gap-3">
+                <div className="flex gap-ui-md">
                     <label>
                         Max draw per turn:
                     </label>
@@ -787,7 +787,7 @@ function Lobby() {
                 </div>
 
 
-                <div className="flex gap-3">
+                <div className="flex gap-ui-md">
                     <label>
                         Allow wild card stacking:
                     </label>
@@ -805,7 +805,7 @@ function Lobby() {
                 </div>
 
 
-                <div className="flex gap-3">
+                <div className="flex gap-ui-md">
                     <label>
                         Wild cards must match:
                     </label>
@@ -823,7 +823,7 @@ function Lobby() {
                 </div>
 
 
-                <div className="flex gap-3">
+                <div className="flex gap-ui-md">
                     <label>
                         Turn timer:
                     </label>
@@ -857,7 +857,7 @@ function Lobby() {
             onClick={startGame}
             disabled={!startGameValidation()[0] || start_game_btn_loading}
           >
-            {start_game_btn_loading ? <SpinnerLoader/> : "Start Game"}
+            {start_game_btn_loading ? <Loader.Spinner/> : "Start Game"}
           </button>
 
             {
@@ -886,7 +886,7 @@ function Lobby() {
           <div className="card">
             <strong>Game settings:</strong>
 
-            <div className="card gap-2">
+            <div className="card gap-ui-xs">
                 <strong>Game settings:</strong>
 
                 {!lobby.game_options.use_advanced_options && (
@@ -921,11 +921,11 @@ function Lobby() {
                     <>
                         <strong>Base colors:</strong>
 
-                        <div className="flex flex-col gap-2 card">
+                        <div className="flex flex-col gap-ui-xs card">
                             {lobby.game_options.base_colors.map((color, i) => (
                                 <div
                                     key={i}
-                                    className="flex flex-row gap-2"
+                                    className="flex flex-row gap-ui-xs"
                                 >
                                     <div
                                         style={{
@@ -944,14 +944,14 @@ function Lobby() {
 
                         <strong>Card objects:</strong>
 
-                        <div className="flex flex-col gap-2 card">
+                        <div className="flex flex-col gap-ui-xs card">
                             {lobby.game_options.advanced_card_objects.map(
                                 (card_obj, i) => (
                                     <div
                                         key={i}
-                                        className="flex flex-col gap-2 card"
+                                        className="flex flex-col gap-ui-xs card"
                                     >
-                                        <div className="flex flex-row gap-2">
+                                        <div className="flex flex-row gap-ui-xs">
                                             <strong>Type:</strong>
 
                                             <span>
@@ -964,7 +964,7 @@ function Lobby() {
                                             </span>
                                         </div>
 
-                                        <div className="flex flex-row gap-2">
+                                        <div className="flex flex-row gap-ui-xs">
                                             <strong>Weight:</strong>
                                             <span>{card_obj.weight}</span>
                                         </div>
@@ -1037,7 +1037,7 @@ function Lobby() {
                     onClick={addLobbyMsg} 
                     disabled={lobby_chat_sending || lobby_chat_input.trim() == ""}
                 >
-                    {lobby_chat_sending ? <SpinnerLoader/> : "Send"}
+                    {lobby_chat_sending ? <Loader.Spinner/> : "Send"}
                 </button>
             </div>
         </div>

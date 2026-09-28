@@ -1,4 +1,5 @@
 import { createContext, useContext, useRef, useState } from "react";
+import "./style/notification.css"
 
 
 const NotificationContext = createContext(null);

@@ -1,7 +1,7 @@
-import "./css/loading_animation_1.css";
+import "./style/fullscreen_loader.css";
 
 
-function LoadingFullScreen1({ text, transparent = false }) {
+function FullScreen({ text, transparent = false }) {
   return (
     <div className={`loading-overlay ${transparent ? 'transparent' : ''}`}>
       <div className="loading-container">
@@ -18,4 +18,4 @@ function LoadingFullScreen1({ text, transparent = false }) {
 }
 
 
-export default LoadingFullScreen1
+export default FullScreen

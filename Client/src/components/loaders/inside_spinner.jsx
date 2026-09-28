@@ -1,5 +1,4 @@
-// components/Spinner.jsx
-import "./css/inside_spinner1.css";
+import "./style/inside_spinner.css";
 
 function Spinner({ size = "1em", color = "currentColor" }) {
   return (
@@ -12,3 +11,4 @@ function Spinner({ size = "1em", color = "currentColor" }) {
 }
 
 export default Spinner;
+
