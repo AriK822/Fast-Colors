@@ -12,7 +12,7 @@ function Test(){
             <ui.SideBar 
                 style={{"--bg-paint-texture": `url(${paintTexture})`,}}
             >
-                <h1 className="ui-text text-3xl">
+                <h1 className="ui-text text-2xl">
                     Play as: {"AriK"}
                 </h1>
                 <ui.SideBar.Input 
@@ -58,10 +58,10 @@ function Test(){
                         `}
                         insideBoxClassName={`
                             flex flex-col gap-ui-md
-                            game-theme-scrollbar
+                            game-theme-scrollbar h-full
                         `}
                     >
-                        {Array.from({length:30}).map((_, i) =>
+                        {Array.from({length:3}).map((_, i) =>
                         <ui.Frame.JoinLobbyInfo
                             key={i}
                             className={`w-full`}
@@ -74,13 +74,6 @@ function Test(){
                         />
                         )}
                     </ui.Frame.Box>
-                    
-                    <ui.Frame
-                        className="w-full min-h-[20%]"
-                    >
-                        Some text
-                    </ui.Frame>
-
                 </div>
             </main>
 

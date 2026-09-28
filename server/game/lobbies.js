@@ -124,10 +124,9 @@ export function makeClientJoinLobbyList(){
     Object.entries(LOBBIES).forEach(([lobby_id, lobby]) => {
         result[lobby_id] = {
             id: lobby.id,
-            owner:lobby.owner,
+            owner: PlayerstateHandler.getPlayerName(lobby.owner) ?? "Guest",
             players: Object.entries(lobby.players).length,
             bots: lobby.game_options.bots.length,
-            // selected_card_objects: lobby.game_options.selected_card_objects,
         }
     })
     return result

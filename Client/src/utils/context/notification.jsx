@@ -70,13 +70,13 @@ export function useNotification() {
 
 function Notification({ text, type, color, timeout }) {
     const typeColors = {
-        warning: "var(--notification-warning)",
-        success: "var(--notification-success)",
-        error: "var(--notification-error)",
+        warning: "var(--theme-warning)",
+        success: "var(--theme-success)",
+        error: "var(--theme-error)",
     };
 
     const backgroundColor =
-        typeColors[type] ?? color ?? "var(--game-sidebar-border)";
+        typeColors[type] ?? color ?? "var(--theme-accent)";
 
     return (
         <div
@@ -86,7 +86,7 @@ function Notification({ text, type, color, timeout }) {
                 "--notification-duration": `${timeout}ms`,
             }}
         >
-            <div className="game-notification-text">
+            <div className="ui-text text-xl game-notification-text">
                 {text}
             </div>
 

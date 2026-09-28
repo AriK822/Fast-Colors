@@ -48,6 +48,10 @@
         3px 7px 5px rgb(0 0 0 / 45%);
 }
 
+.game-frame-btn:disabled{
+    cursor: not-allowed;
+}
+
 
 .game-frame {
     border: 2px solid var(--theme-accent);
@@ -89,7 +93,7 @@
 }
 
 
-.frame-join-lobby-option {
+.frame-join-lobby-holder {
     padding: var(--spacing-ui-md);
 
     border: 2px solid
@@ -103,14 +107,28 @@
 
     background: var(--theme-accent);
 
-    transition: var(--transition-duration-hover);
+    /* transition: var(--transition-duration-hover); */
 }
 
-.frame-join-lobby-option:hover {
-    background: color-mix(
-        in srgb,
-        var(--theme-accent) 70%,
-        var(--theme-surface-top)
+.frame-join-lobby-holder:hover {
+    background: linear-gradient(
+        var(--theme-accent),
+        color-mix(
+            in srgb,
+            var(--theme-accent) 90%,
+            white
+        )
     );
 }
 
+
+.frame-label{
+    background: var(--theme-accent-deep);
+    border: 1px solid var(--theme-accent-dark);
+    border-radius: var(--radius-ui-lg);
+    padding-left: var(--spacing-ui-xs);
+    padding-right: var(--spacing-ui-xs);
+    box-shadow: 
+        inset 1px 1px 0px var(--theme-accent-dark),
+        inset 0px 0px 4px var(--theme-accent-dark);
+}

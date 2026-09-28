@@ -16,6 +16,7 @@
     --theme-text: #ffffff;
     --theme-overlay: #01010147;
     --theme-font: "Fredoka", sans-serif;
+    --theme-font-thin: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
 
 
     --theme-surface-top: #503215;
@@ -51,8 +52,10 @@
     --radius-ui-sm: 10px;
     --radius-ui-md: 12px;
     --radius-ui-lg: 15px;
+    --radius-ui-max: 100px;
 
 
+    --spacing-ui-xxs: 0.25rem;
     --spacing-ui-xs: 0.5rem;
     --spacing-ui-sm: 0.625rem;
     --spacing-ui-md: 0.75rem;
@@ -73,7 +76,9 @@
     --color-overlay: var(--theme-overlay);
 
     --font-game: var(--theme-font);
+    --font-game-thin: var(--theme-font-thin);
 
+    --spacing-ui-xxs: var(--spacing-ui-xxs);
     --spacing-ui-xs: var(--spacing-ui-xs);
     --spacing-ui-sm: var(--spacing-ui-sm);
     --spacing-ui-md: var(--spacing-ui-md);

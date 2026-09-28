@@ -35,7 +35,7 @@ io.on("connection", async (socket) => {
     // TEST DELAY ⚠️
     if (config.app.debug){
         socket.use(async ([event, ...args], next) => {
-            await new Promise(resolve => setTimeout(resolve, 500))
+            await new Promise(resolve => setTimeout(resolve, config.app.test_delay))
             next()
         })
     }

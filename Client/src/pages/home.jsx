@@ -28,36 +28,36 @@ function Home() {
 
   useEffect(() => {
     if (isNameInputInitLoad.current){
-        isNameInputInitLoad.current = false;
-        return;
+      isNameInputInitLoad.current = false;
+      return;
     }
 
-    const timeout = setTimeout(async () => {
-      if (nameInputValue.trim().length < 4) return
+  const timeout = setTimeout(async () => {
+    if (nameInputValue.trim().length < 4) return
 
-      setNameInputLoading(true);
-      const result = await SocketAPI.setPlayerName(nameInputValue);
-      setNameInputLoading(false);
+    setNameInputLoading(true);
+    const result = await SocketAPI.setPlayerName(nameInputValue);
+    setNameInputLoading(false);
 
-      showNotification({
-          text: result.msg,
-          type: result.error ? "error" : "success"
+    showNotification({
+      text: result.msg,
+      type: result.error ? "error" : "success"
+    });
+
+    if (!result.error){
+      setSession({
+        ...session,
+        player_name: nameInputValue,
       });
+    }
 
-      if (!result.error){
-          setSession({
-              ...session,
-              player_name: nameInputValue,
-          });
-      }
+  }, 700);
 
-    }, 700);
+  return () => {
+      clearTimeout(timeout);
+  };
 
-    return () => {
-        clearTimeout(timeout);
-    };
-
-    }, [nameInputValue]);
+  }, [nameInputValue]);
 
 
   async function leaveGameBtn() {
@@ -66,14 +66,14 @@ function Home() {
     setLeaveGameLoading(false);
 
     showNotification({
-        text: result.msg,
-        type: result.error ? "error" : "success",
+      text: result.msg,
+      type: result.error ? "error" : "success",
     });
 
     if (!result.error){
       setSession({
-          ...session,
-          active_position: null,
+        ...session,
+        active_position: null,
       });
     }
   }
@@ -84,20 +84,20 @@ function Home() {
     setLeaveLobbyLoading(false);
 
     if (result.msg) {
-        showNotification({
-            text: result.msg,
-            type: result.error ? "error" : "success"
-        });
+      showNotification({
+        text: result.msg,
+        type: result.error ? "error" : "success"
+      });
     }
 
     if (!result.error){
       setSession({
-          ...session,
-          active_position: null,
+        ...session,
+        active_position: null,
       });
     }
   }
-
+  
 
 
   return (
@@ -177,7 +177,7 @@ function Home() {
               </ui.Button>
               <ui.Button 
                 className="w-full" 
-                onClick={() => navigate("/test")} 
+                onClick={() => navigate("/joinlobby")} 
               >
                 Join Lobby
               </ui.Button>

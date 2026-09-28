@@ -27,7 +27,7 @@ function App() {
     <NotificationProvider>
     <SkeletonTheme
         baseColor="#2a2a2a00"
-        highlightColor="#d1d1d1"
+        highlightColor="#d1d1d180"
     >
 
       <Routes>

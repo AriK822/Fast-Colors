@@ -53,16 +53,31 @@ function FrameJoinLobbyInfo({lobby, onClick, className, ...props}){
     if (!lobby) return
     return (
         <div
-            className={`frame-join-lobby-option cursor-pointer
+            className={`frame-join-lobby-holder cursor-pointer
                 ui-text ${className}`}
             onClick={onClick}
             {...props}
         >
-            <div className="flex flex-row flex-wrap gap-ui-md justify-between">
-                <p>Owner: {lobby.owner}</p>
-                <p>Players: {lobby.players}</p>
-                <p>Bots: {lobby.bots}</p>
-                <p>ID: {lobby.id}</p>
+            <div className="flex flex-col gap-ui-xs">
+                <div className="flex flex-row justify-between gap-ui-md">
+                    <p className="frame-label text-sm truncate w-[60%] md:w-fit">
+                        <span className="opacity-[85%] font-game-thin">
+                            {lobby.id}
+                        </span>
+                    </p>
+                    <div className="flex flex-row gap-ui-xxs truncate">
+                        <p className="frame-label">👤{lobby.players}</p>
+                        <p className="frame-label">🤖{lobby.bots}</p>
+                    </div>
+                </div>
+                <div>
+                    <span className="opacity-[60%] tracking-widest text-xs ">
+                        OWNER
+                    </span>
+                    <span className="text-xl">
+                        {" "}{lobby.owner}
+                    </span>    
+                </div>
             </div>
         </div>
     )
