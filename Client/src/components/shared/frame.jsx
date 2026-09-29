@@ -167,7 +167,7 @@ function FrameAvatar({
     return (
         <div
             className={`
-                frame-player-avatar
+                frame-player-avatar shrink-0
                 ${className}
             `}
             style={{background:`var(${bg_token})`}}

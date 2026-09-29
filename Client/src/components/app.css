@@ -90,6 +90,10 @@
     --color-text: var(--theme-text);
     --color-overlay: var(--theme-overlay);
 
+    --color-theme-warning: var(--theme-warning);
+    --color-theme-success: var(--theme-success);
+    --color-theme-error: var(--theme-error);
+
     --font-game: var(--theme-font);
     --font-game-thin: var(--theme-font-thin);
 

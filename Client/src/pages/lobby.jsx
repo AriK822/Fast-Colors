@@ -1058,7 +1058,7 @@ function Lobby() {
       <ui.SideBar 
         style={{"--bg-paint-texture": `url(${paintTexture})`,}}
       >
-        <h1 className="ui-text text-2xl truncate">
+        <h1 className="ui-text text-2xl truncate shrink-0">
           Play as: &nbsp;
             {nameInputLoading
               ? <Skeleton inline width={90} />
@@ -1072,21 +1072,68 @@ function Lobby() {
           value={nameInputValue}
         />
 
-        <div className="hidden md:flex flex-col">
-          <ui.SideBar.Divider />
+        <div className="hidden md:flex flex-col gap-ui-xs">
+          <ui.SideBar.Divider className="!mb-ui-xxs" />
 
-          <ui.Frame.Btn>
-            Start Game
-          </ui.Frame.Btn>
+          <div className="flex flex-col 
+          game-theme-scrollbar max-h-80">
+          {Object.entries(lobby.players).map(([id, p_info]) => (
+              <ui.Lobby.PlayerLabel 
+                key={id}
+                player={p_info}
+                owner={id == lobby.owner}
+                hasKick={session.player_id == lobby.owner && id != lobby.owner}
+                kickFunc={() => kickPlayer(id)}
+                kickContent={kick_player_loading == id ? <Loader.Spinner /> : "Kick"}
+                kickDisabled={kick_player_loading == id}
+              />
+          ))}
+          </div>
+
+          {lobby.owner == session.player_id && <>
+          <ui.Lobby.Start
+            className="!mt-ui-sm"
+            onClick={startGame}
+            disabled={!startGameValidation()[0] || start_game_btn_loading}
+          >
+            {start_game_btn_loading ? <Loader.Spinner/> : "Start Game"}
+          </ui.Lobby.Start>
+  
+          {
+            !startGameValidation()[0] &&
+            <p className="ui-text !text-theme-error">
+              {startGameValidation()[1]}
+            </p>
+          }
+
+          {
+          Object.entries(lobby.players).some(([p_id, p_info]) => p_info.connection_status == "offline") &&
+            <p className="ui-text !text-theme-warning">
+              Warning: some players appear to be offline. 
+              You wont be able to kick them after starting the game
+            </p>
+          }
+          </>}
+
         </div>
 
         <ui.SideBar.Divider />
 
-        <ui.SideBar.Btn onClick={() => {navigate("/")}}>Home</ui.SideBar.Btn>
-        <ui.SideBar.Btn>Settings</ui.SideBar.Btn>
+        <ui.SideBar.Btn 
+          onClick={() => {navigate("/")}}
+          className="shrink-0"
+        >
+          Home
+        </ui.SideBar.Btn>
+        <ui.SideBar.Btn
+          className="shrink-0"
+        >
+          Settings
+        </ui.SideBar.Btn>
         <ui.SideBar.Btn 
           onClick={leaveLobbyBtn}
           disabled={leave_lobby_loading}
+          className="shrink-0"
         >
           {leave_lobby_loading ? <Loader.Spinner /> : "Leave Lobby"}
         </ui.SideBar.Btn>
@@ -1122,15 +1169,17 @@ function Lobby() {
             <div className="flex flex-col 
             flex-2 lg:flex-1 gap-ui-sm min-w-0"
             >
+
             <ui.Frame.Box
               header="Players"
-              className="flex-1 min-h-auto lg:min-h-0
+              className="md:flex-1 min-h-auto lg:min-h-0
                 md:hidden"
               insideBoxClassName="h-full game-theme-scrollbar 
-              grid-2"
+              grid grid-cols-1 sm:grid-cols-2 gap-ui-sm"
             >
-            {Object.entries(lobby.players).map(([id, p_info]) => (<>
+            {Object.entries(lobby.players).map(([id, p_info]) => (
                 <ui.Lobby.PlayerLabel 
+                  key={id}
                   player={p_info}
                   owner={id == lobby.owner}
                   hasKick={session.player_id == lobby.owner && id != lobby.owner}
@@ -1138,9 +1187,9 @@ function Lobby() {
                   kickContent={kick_player_loading == id ? <Loader.Spinner /> : "Kick"}
                   kickDisabled={kick_player_loading == id}
                 />
-            </>))}
-
+            ))}
             </ui.Frame.Box>
+
             <ui.Frame.Box
               header="Chat"
               className="flex-1 min-h-auto lg:min-h-0
@@ -1177,22 +1226,42 @@ function Lobby() {
 
             </ui.Frame.Box>
             </div>
+
             <ui.Frame.Box
               header="Settings"
               className="flex-2 min-h-auto lg:min-h-0"
               insideBoxClassName="h-full game-theme-scrollbar"
             >
-              {Array.from({length:100}).map((_, i) => <p>
-                  settings settings settings settings
-              </p>)}
+              settings
             </ui.Frame.Box>
             
+            {lobby.owner == session.player_id &&
             <div className="w-full flex flex-col pb-ui-lg
               md:hidden">
-              <ui.Frame.Btn className="m-ui-sm">
-                Start Game
-              </ui.Frame.Btn>
+              <ui.Lobby.Start 
+                className="m-ui-sm"
+                onClick={startGame}
+                disabled={!startGameValidation()[0] || start_game_btn_loading}
+              >
+                {start_game_btn_loading ? <Loader.Spinner/> : "Start Game"}
+              </ui.Lobby.Start>
+
+              {
+                !startGameValidation()[0] &&
+                <p className="ui-text !text-theme-error m-ui-sm">
+                  {startGameValidation()[1]}
+                </p>
+              }
+              {
+              Object.entries(lobby.players).some(([p_id, p_info]) => p_info.connection_status == "offline") &&
+                <p className="ui-text !text-theme-warning m-ui-sm">
+                  Warning: some players appear to be offline. 
+                  You wont be able to kick them after starting the game
+                </p>
+              }
+              
             </div>
+            }
             
           </div>
 

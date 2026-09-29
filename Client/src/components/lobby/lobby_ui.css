@@ -27,3 +27,113 @@
 .player-kick-btn:disabled{
     cursor: not-allowed;
 }
+
+
+
+@property --start-btn-angle {
+    syntax: "<angle>";
+    initial-value: 0deg;
+    inherits: false;
+}
+
+.start-game-btn {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+
+    padding: 0.65rem 0.9rem;
+    margin-top: var(--spacing-ui-sm);
+    margin-bottom: var(--spacing-ui-sm);
+
+    border: 2px solid var(--theme-highlight);
+    border-radius: var(--radius-ui-sm);
+
+    background:
+        linear-gradient(
+            to bottom,
+            var(--theme-button-top),
+            var(--theme-button-mid) 65%,
+            var(--theme-button-bottom)
+        );
+
+    color: var(--theme-text);
+    font-family: var(--theme-font);
+    font-weight: 900;
+    font-size: 1.15rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+
+    text-shadow:
+        -2px 2px 0 rgb(0 0 0 / 25%),
+        2px 3px 3px rgb(0 0 0 / 25%);
+
+    box-shadow:
+        inset 4px 2px 0 var(--theme-button-highlight),
+        inset 0 -2px 0 rgb(0 0 0 / 12%),
+        2px 7px 0 var(--theme-button-shadow),
+        3px 7px 5px rgb(0 0 0 / 45%);
+
+    cursor: pointer;
+
+    transition:
+        var(--transition-duration-hover),
+        box-shadow 120ms ease;
+}
+
+.start-game-btn::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+
+    background:
+        linear-gradient(
+            110deg,
+            transparent 35%,
+            rgb(255 255 255 / 12%) 45%,
+            rgb(255 255 255 / 32%) 50%,
+            rgb(255 255 255 / 12%) 55%,
+            transparent 65%
+        );
+
+    background-size: 200% 100%;
+    background-position: 200% 0;
+
+    pointer-events: none;
+    opacity: 0;
+}
+
+.start-game-btn:hover {
+    filter: brightness(1.08);
+    transform: translateY(-1px);
+}
+
+.start-game-btn:hover::before {
+    opacity: 1;
+    animation: start-btn-shimmer 1200ms ease-out forwards infinite;
+}
+
+.start-game-btn:active {
+    transform: translateY(2px);
+
+    box-shadow:
+        inset 4px 2px 0 var(--theme-button-highlight),
+        inset 0 -2px 0 rgb(0 0 0 / 12%),
+        2px 3px 0 var(--theme-button-shadow),
+        3px 5px 5px rgb(0 0 0 / 45%);
+}
+
+.start-game-btn:disabled {
+    cursor: not-allowed;
+    filter: grayscale(0.6) brightness(0.7);
+}
+
+.start-game-btn:disabled::before {
+    animation: none;
+    opacity: 0;
+}
+
+@keyframes start-btn-shimmer {
+    0% {background-position: 110% 0;}
+    100% {background-position: -10% 0;}
+}

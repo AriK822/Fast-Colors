@@ -48,14 +48,17 @@ function PlayerLabel({player,
     return (
         <ui.Frame.Label 
             className={`relative flex flex-row gap-ui-xs !px-ui-lg w-full
-                 items-center ${className}`}
+                 items-center ui-text ${className}`}
             {...props}
         >
             <ui.Frame.Avatar 
                 letter={first_letter} 
             />
-            <div>
-                <div className="text-lg">{player.name}{owner && "👑"}</div>
+            <div className="truncate">
+                <div className="text-lg truncate">
+                    {player.name}
+                    {owner && "👑"}
+                </div>
                 <div 
                     className="text-xs opacity-80 "
                     style={{color:`var(${connection_status_token})`}}
@@ -68,8 +71,8 @@ function PlayerLabel({player,
 
             {hasKick && 
                 <button
-                    className="player-kick-btn absolute 
-                    right-ui-lg p-ui-xxs text-sm"
+                    className="player-kick-btn 
+                    p-ui-xxs text-sm"
                     onClick={kickFunc}
                     disabled={kickDisabled}
                 >
@@ -81,4 +84,28 @@ function PlayerLabel({player,
 }
 
 
-export default {ChatMsg, PlayerLabel}
+function StartGameButton({
+    children = "Start Game",
+    className = "",
+    onClick,
+    disabled,
+    ...props
+}) {
+    return (
+        <button
+            className={`start-game-btn ${className}`}
+            onClick={onClick}
+            disabled={disabled}
+            {...props}
+        >
+            {children}
+        </button>
+    );
+}
+
+
+export default {
+    ChatMsg, 
+    PlayerLabel, 
+    Start:StartGameButton,
+}

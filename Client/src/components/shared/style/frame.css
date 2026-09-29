@@ -156,14 +156,16 @@
 
 .frame-label-dark{
     background: color-mix(in srgb, 
-        var(--theme-background) 60%, 
+        var(--theme-background) 30%, 
         var(--theme-surface-bottom)
     );
     border: 1px solid var(--theme-accent-dark);
     border-radius: var(--radius-ui-max);
     box-shadow: 
-        inset 1px 1px 0px var(--theme-accent-dark),
-        inset 0px 0px 4px var(--theme-accent-dark);
+        inset 3px 3px 0px color-mix(in srgb, 
+            var(--theme-background) 60%, 
+            var(--theme-surface-bottom)
+        );
 }
 
 

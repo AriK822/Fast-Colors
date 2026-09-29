@@ -63,7 +63,7 @@ function SideBar({
             <aside
                 className={`
                     hidden relative md:flex flex-col shrink-0
-                    h-full game-sidebar ${className}
+                    h-full game-sidebar game-theme-scrollbar ${className}
                 `}
                 style={{...style, width  }}
                 {...props}
@@ -83,7 +83,7 @@ function SideBar({
                     alt=""
                     className="
                         pointer-events-none
-                        absolute -top-15 -left-10
+                        fixed -top-15 -left-10
                         scale-80 drop-shadow-img-soft
                     "
                 />
@@ -93,7 +93,7 @@ function SideBar({
                     alt=""
                     className="
                         pointer-events-none
-                        absolute -bottom-15 -left-10
+                        fixed -bottom-15 -left-10
                         scale-80 drop-shadow-img-soft
                     "
                 />
@@ -155,8 +155,8 @@ function SideBar({
 }
 
 
-function Divider(){
-    return (<div className="sidebar-divider"></div>)
+function Divider({className=""}){
+    return (<div className={`sidebar-divider shrink-0 ${className}`}></div>)
 }
 
 
@@ -169,7 +169,7 @@ function SideBarButton({
     return (
         <button
             className={`
-                h-fit
+                h-fit shrink-0
                 cursor-pointer
                 ui-text text-xl
                 transition transition-duration-hover
@@ -196,7 +196,7 @@ function SideBarInput({
     return (
         <input
             className={`
-                sidebar-input p-ui-md
+                sidebar-input p-ui-md shrink-0
                 font-game text-xl text-text
                 placeholder:text-white/60
                 ${className}
@@ -209,10 +209,11 @@ function SideBarInput({
 }
 
 
+
 Object.assign(SideBar, {
     Divider, 
     Btn: SideBarButton, 
-    Input: SideBarInput
+    Input: SideBarInput,
 })
 export default {SideBar}
 
