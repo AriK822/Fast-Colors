@@ -338,7 +338,7 @@ socket.on("add_lobby_chat_message", async (data, ack) => {
     }
 
     this_lobby.chat.push(["player-msg", 
-        `${PlayerstateHandler.getPlayerName(socket.request.session.player_id)}: ` +
+        `${PlayerstateHandler.getPlayerName(socket.request.session.player_id)}`,
         `${data.msg}`
     ])
 

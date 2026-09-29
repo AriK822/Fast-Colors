@@ -107,7 +107,7 @@ function Home() {
         style={{"--bg-paint-texture": `url(${paintTexture})`,}}
       >
         <h1 className="ui-text text-2xl truncate">
-          Play as: {" "}
+          Play as: &nbsp;
             {nameInputLoading
               ? <Skeleton inline width={90} />
               : session.player_name

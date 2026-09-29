@@ -29,13 +29,15 @@
     --theme-highlight: #eba871c2;
     --theme-highlight-strong: #da833c7b;
 
-    --theme-button-highlight: #bbf7b0;
+    --theme-contrast-top: #872e15;
+    --theme-contrast-bottom: #621e0b;
 
 
     --theme-button-top: #69d83d;
     --theme-button-mid: #4fbd2c;
     --theme-button-bottom: #3d9c24;
     --theme-button-shadow: #28751a;
+    --theme-button-highlight: #bbf7b0;
 
 
     --theme-input-top: #a95b1a;
@@ -44,11 +46,23 @@
     --theme-input-highlight: #de9357;
 
 
+    --theme-avatar-1: #d77f8f;
+    --theme-avatar-2: #d3a85c;
+    --theme-avatar-3: #78ad82;
+    --theme-avatar-4: #6e9fba;
+    --theme-avatar-5: #9a7db5;
+
+
+    --theme-online-text: rgb(136, 214, 136);
+    --theme-offline-text: rgb(231, 152, 62);
+
+
     --theme-warning: #c87927;
     --theme-success: #579c35;
     --theme-error: #b94b3e;
 
 
+    --radius-ui-xs: 5px;
     --radius-ui-sm: 10px;
     --radius-ui-md: 12px;
     --radius-ui-lg: 15px;
@@ -60,6 +74,7 @@
     --spacing-ui-sm: 0.625rem;
     --spacing-ui-md: 0.75rem;
     --spacing-ui-lg: 1.25rem;
+    --spacing-ui-xl: 1.75rem;
 
 
     --shadow-image: 8px 8px 2px rgb(0 0 0 / 45%);
@@ -83,6 +98,7 @@
     --spacing-ui-sm: var(--spacing-ui-sm);
     --spacing-ui-md: var(--spacing-ui-md);
     --spacing-ui-lg: var(--spacing-ui-lg);
+    --spacing-ui-xl: var(--spacing-ui-xl);
 
     --drop-shadow-img: var(--shadow-image);
     --drop-shadow-img-soft: var(--shadow-image-soft);

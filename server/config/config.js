@@ -2,7 +2,7 @@ const config = {
     app:{
         port:8080,
         debug:true,
-        test_delay:1000,
+        test_delay:500,
     },
 
     game:{

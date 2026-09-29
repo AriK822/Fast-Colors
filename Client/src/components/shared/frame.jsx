@@ -29,6 +29,7 @@ function FrameBox({
     header, 
     className,
     insideBoxClassName,
+    insideBoxProps,
     children, 
     ...props
 }){
@@ -41,7 +42,7 @@ function FrameBox({
                 {header}
             </div>
 
-            <div className={`frame-box-inside ${insideBoxClassName}`}>
+            <div className={`frame-box-inside ${insideBoxClassName}`} {...insideBoxProps}>
                 {children}
             </div>
         </div>
@@ -66,8 +67,8 @@ function FrameJoinLobbyInfo({lobby, onClick, className, ...props}){
                         </span>
                     </p>
                     <div className="flex flex-row gap-ui-xxs truncate">
-                        <p className="frame-label">👤{lobby.players}</p>
-                        <p className="frame-label">🤖{lobby.bots}</p>
+                        <p className="frame-label-soft">👤{lobby.players}</p>
+                        <p className="frame-label-soft">🤖{lobby.bots}</p>
                     </div>
                 </div>
                 <div>
@@ -108,9 +109,82 @@ function FrameButton({
 }
 
 
+function FrameInput({
+    className = "",
+    onChange,
+    placeholder = "",
+    ...props
+}) {
+    return (
+        <input
+            className={`
+                frame-input p-ui-md
+                font-game text-md text-text
+                placeholder:text-white/60
+                ${className}
+            `}
+            onChange={onChange}
+            placeholder={placeholder}
+            {...props}
+        />
+    );
+}
+
+
+function FrameLabel({
+    children,
+    className = "",
+    ...props
+}) {
+    return (
+        <div
+            className={`
+                frame-label-dark px-ui-md py-ui-xxs
+                ${className}
+            `}
+            {...props}
+        >
+            {children}
+        </div>
+    );
+}
+
+
+function FrameAvatar({
+    letter=undefined,
+    className = "",
+    ...props
+}) {
+    let bg_token = "--theme-avatar-1"
+    if (String(letter)?.[0]){
+        let i ="abcdefghijklmnopqrstuvwxyz".indexOf(
+            String(letter)[0]?.toLowerCase()
+        )
+        i = i%5 + 1
+        bg_token = `--theme-avatar-${i}`
+    }
+
+    return (
+        <div
+            className={`
+                frame-player-avatar
+                ${className}
+            `}
+            style={{background:`var(${bg_token})`}}
+            {...props}
+        >
+            {letter}
+        </div>
+    );
+}
+
+
 Object.assign(Frame, {
     Box: FrameBox, 
     Btn: FrameButton, 
+    Input: FrameInput,
+    Label: FrameLabel,
+    Avatar: FrameAvatar,
     JoinLobbyInfo: FrameJoinLobbyInfo,
 })
 export default {FullScreen, Frame}

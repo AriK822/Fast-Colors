@@ -1,0 +1,29 @@
+.lobby-chat-player-name{
+    color: color-mix(in srgb,
+        var(--theme-highlight) 80%,
+        white)
+    ;
+}
+
+
+.player-kick-btn{
+    background: color-mix(in srgb, 
+    var(--theme-contrast-bottom) 70%, 
+    transparent
+    );
+    border: 1px solid var(--theme-accent);
+    border-radius: var(--radius-ui-sm);
+    cursor: pointer;
+    transition: var(--transition-duration-hover);
+}
+
+.player-kick-btn:hover{
+    background: color-mix(in srgb, 
+    var(--theme-contrast-top) 70%, 
+    transparent
+    );
+}
+
+.player-kick-btn:disabled{
+    cursor: not-allowed;
+}

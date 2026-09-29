@@ -104,6 +104,10 @@
         3px 7px 5px rgb(0 0 0 / 45%);
 }
 
+.sidebar-btn:disabled{
+    cursor: not-allowed;
+}
+
 
 .sidebar-input {
     border: 2px solid rgb(255 255 255 / 18%);
@@ -125,6 +129,6 @@
 }
 
 .sidebar-input:focus {
-    border-color: rgb(255 255 255 / 45%);
+    border-color: var(--theme-highlight);
 }
 
