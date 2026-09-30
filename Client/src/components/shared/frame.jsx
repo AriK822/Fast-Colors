@@ -1,4 +1,5 @@
 import "./style/frame.css"
+import { Children, useEffect, useLayoutEffect, useRef, useState } from "react";
 
 
 function FullScreen({ children, className = "", ...props }) {
@@ -138,11 +139,13 @@ function FrameAvatar({
 }) {
     let bg_token = "--theme-avatar-1"
     if (String(letter)?.[0]){
-        let i ="abcdefghijklmnopqrstuvwxyz".indexOf(
+        let i ="abcdefghijklmnopqrstuvwxyz1234567890".indexOf(
             String(letter)[0]?.toLowerCase()
         )
-        i = i%5 + 1
-        bg_token = `--theme-avatar-${i}`
+        if (i!=-1){
+            i = i%5 + 1
+            bg_token = `--theme-avatar-${i}`
+        }
     }
 
     return (
@@ -221,6 +224,287 @@ function hr({className}){
 }
 
 
+function FrameSelect({
+    children,
+    className = "",
+    disabled = false,
+    value,
+    defaultValue,
+    onChange,
+    onClick,
+    ...props
+}) {
+    const selectRef = useRef(null);
+    const triggerRef = useRef(null);
+    const menuRef = useRef(null);
+
+    const [open, setOpen] = useState(false);
+    const [menuStyle, setMenuStyle] = useState({});
+
+    const options = Children.toArray(children);
+
+    const selectedOption = options.find(
+        option => String(option.props.value) === String(value)
+    );
+
+    const displayValue =
+        selectedOption?.props.children ??
+        options.find(
+            option =>
+                String(option.props.value) === String(defaultValue)
+        )?.props.children ??
+        "";
+
+    function close() {
+        setOpen(false);
+    }
+
+    function updateMenuPosition() {
+        const trigger = triggerRef.current;
+
+        if (!trigger) return;
+
+        const rect = trigger.getBoundingClientRect();
+
+        const padding = 8;
+        const gap = 4;
+
+        const maxHeight = Math.min(
+            280,
+            window.innerHeight - padding * 2
+        );
+
+        let top = rect.bottom + gap;
+
+        // Open upward if there isn't enough room below.
+        if (top + maxHeight > window.innerHeight - padding) {
+            top = rect.top - gap - maxHeight;
+        }
+
+        top = Math.max(
+            padding,
+            Math.min(
+                top,
+                window.innerHeight - padding - maxHeight
+            )
+        );
+
+        // At least as wide as the trigger, but never wider than the viewport.
+        const width = Math.min(
+            Math.max(rect.width, 160),
+            window.innerWidth - padding * 2
+        );
+
+        let left = rect.left;
+
+        // Keep the menu inside the viewport horizontally.
+        left = Math.max(
+            padding,
+            Math.min(
+                left,
+                window.innerWidth - padding - width
+            )
+        );
+
+        setMenuStyle({
+            top,
+            left,
+            width,
+            maxHeight
+        });
+    }
+
+    function openMenu() {
+        if (disabled) return;
+
+        setOpen(true);
+        onClick?.();
+    }
+
+    function selectOption(option) {
+        if (!selectRef.current) return;
+
+        selectRef.current.value = option.props.value;
+
+        selectRef.current.dispatchEvent(
+            new Event("change", { bubbles: true })
+        );
+
+        close();
+    }
+
+    useLayoutEffect(() => {
+        if (!open) return;
+
+        updateMenuPosition();
+    }, [open]);
+
+    useEffect(() => {
+        if (!open) return;
+
+        function handlePointerDown(event) {
+            const target = event.target;
+
+            if (
+                triggerRef.current?.contains(target) ||
+                menuRef.current?.contains(target)
+            ) {
+                return;
+            }
+
+            close();
+        }
+
+        function handleViewportChange() {
+            updateMenuPosition();
+        }
+
+        function handleKeyDown(event) {
+            if (event.key === "Escape") {
+                close();
+                triggerRef.current?.focus();
+            }
+        }
+
+        document.addEventListener(
+            "pointerdown",
+            handlePointerDown
+        );
+
+        window.addEventListener(
+            "resize",
+            handleViewportChange
+        );
+
+        window.addEventListener(
+            "scroll",
+            handleViewportChange,
+            true
+        );
+
+        document.addEventListener(
+            "keydown",
+            handleKeyDown
+        );
+
+        return () => {
+            document.removeEventListener(
+                "pointerdown",
+                handlePointerDown
+            );
+
+            window.removeEventListener(
+                "resize",
+                handleViewportChange
+            );
+
+            window.removeEventListener(
+                "scroll",
+                handleViewportChange,
+                true
+            );
+
+            document.removeEventListener(
+                "keydown",
+                handleKeyDown
+            );
+        };
+    }, [open]);
+
+    return (
+        <>
+            <div
+                className={`
+                    relative min-w-0
+                    ${className}
+                `}
+            >
+                <button
+                    ref={triggerRef}
+                    type="button"
+                    disabled={disabled}
+                    className="game-frame-select-trigger"
+                    onClick={open ? close : openMenu}
+                    aria-haspopup="listbox"
+                    aria-expanded={open}
+                >
+                    <span className="truncate">
+                        {displayValue}
+                    </span>
+
+                    <span
+                        className={`
+                            game-frame-select-arrow
+                            ${open ? "is-open" : ""}
+                        `}
+                        aria-hidden="true"
+                    >
+                        ▾
+                    </span>
+                </button>
+
+                <select
+                    ref={selectRef}
+                    className="game-frame-select-native"
+                    value={value}
+                    defaultValue={defaultValue}
+                    onChange={onChange}
+                    disabled={disabled}
+                    {...props}
+                >
+                    {children}
+                </select>
+            </div>
+
+            {open && (
+                <div
+                    ref={menuRef}
+                    className="game-frame-select-menu game-theme-scrollbar"
+                    style={menuStyle}
+                    role="listbox"
+                >
+                    <div className="game-frame-select-options">
+                        {options.map((option, index) => {
+                            const optionValue = option.props.value;
+
+                            const selected =
+                                String(optionValue) ===
+                                String(value);
+
+                            return (
+                                <button
+                                    key={
+                                        option.key ??
+                                        String(optionValue) ??
+                                        index
+                                    }
+                                    type="button"
+                                    role="option"
+                                    aria-selected={selected}
+                                    className={`
+                                        game-frame-select-option
+                                        ${
+                                            selected
+                                                ? "is-selected"
+                                                : ""
+                                        }
+                                    `}
+                                    onClick={() =>
+                                        selectOption(option)
+                                    }
+                                >
+                                    {option.props.children}
+                                </button>
+                            );
+                        })}
+                    </div>
+                </div>
+            )}
+        </>
+    );
+}
+
+
 
 Object.assign(Frame, {
     Box: FrameBox, 
@@ -231,6 +515,7 @@ Object.assign(Frame, {
     Btn: FrameButton, 
     Input: FrameInput,
     CheckBox: FrameCheckBox,
+    Select: FrameSelect,
     ContrastBtn: FrameContrastButton,
     ContrastInput: FrameContrastInput,
 })

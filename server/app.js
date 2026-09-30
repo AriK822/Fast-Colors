@@ -38,6 +38,7 @@ io.engine.use(sessionMiddleware)
 Lobbyhandlers(io)
 
 
-HttpServer.listen(port, () => {
-  console.log(`Fast colors listening at http://localhost:${port}`);
+const host = config.app.expose_host ? "0.0.0.0" : "localhost";
+HttpServer.listen(port, host, () => {
+    console.log(`Fast Colors listening at http://${host}:${port}`);
 });

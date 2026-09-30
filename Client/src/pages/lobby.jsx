@@ -279,7 +279,6 @@ function Lobby() {
     )
   }
 
-
   const limits = lobby.game_options.limits;
   Object.assign(ui, {Lobby:lobby_ui})
 
@@ -1132,6 +1131,14 @@ function Lobby() {
             </p>
           }
           </>}
+          {lobby.owner !== session.player_id &&
+          <p
+            className="ui-text text-center
+              text-lg opacity-70 hidden md:block truncate"
+          >
+            Waiting for owner to start the game
+          </p>
+          }
 
         </div>
 
@@ -1172,7 +1179,6 @@ function Lobby() {
         }}
       >
         <ui.Frame
-          header={"Available Lobbies:"}
           className={`
             flex flex-col w-[92%] h-[92%]
             lg:w-[85%] lg:h-[85%]
@@ -1229,8 +1235,9 @@ function Lobby() {
             <ui.Frame.Box
               header="Chat"
               className="flex-1 min-h-auto lg:min-h-0
-                lg:max-h-[100%] max-h-100"
-              insideBoxClassName="h-full game-theme-scrollbar"
+                lg:max-h-[100%] max-h-100 relative"
+              insideBoxClassName="h-full game-theme-scrollbar
+                !pb-18"
               insideBoxProps={{
                 ref:chat_container
               }}
@@ -1240,7 +1247,8 @@ function Lobby() {
               ))}
 
               <div className="flex flex-row
-                gap-ui-xs items-center sticky bottom-0">
+                gap-ui-xs items-center absolute bottom-ui-md
+                left-0 right-0 px-ui-md">
                 <ui.Frame.Input 
                   className="w-full mt-ui-xs"
                   placeholder="Say something..." 
@@ -1266,7 +1274,8 @@ function Lobby() {
             <ui.Frame.Box
               header="Settings"
               className="flex-2 min-h-auto lg:min-h-0"
-              insideBoxClassName="h-full game-theme-scrollbar"
+              insideBoxClassName="h-full game-theme-scrollbar
+                flex flex-col gap-ui-xs"
             >
               <ui.Frame.SubBox>
                 <h1 className="text-lg p-ui-xxs">Bots:</h1>
@@ -1348,8 +1357,247 @@ function Lobby() {
                
               </ui.Frame.SubBox>
 
+              {/* <ui.Frame.SubBox>
+                Cards
+              </ui.Frame.SubBox> */}
+
+              <ui.Frame.SubBox 
+                className="!p-ui-xs"
+              >
+                <h1 className="text-lg">Game Rules:</h1>
+                <ui.Frame.hr className="mb-ui-xs" />
+
+
+                {/* -----------   OWNER  ------------- */}
+
+                {lobby.owner == session.player_id && <>
+
+
+                <div className="flex flex-col gap-ui-xxs truncate">
+                  <ui.Frame.Label 
+                    className="w-full flex flex-row 
+                      justify-between !p-ui-xs !px-ui-lg"
+                  >
+                    Initial deck size:
+                  
+                    <ui.Frame.Select
+                      value={lobby.game_options.init_deck_size}
+                      onChange={(e) =>
+                        setGameOptions(
+                          "init_deck_size",
+                          Number(e.target.value)
+                        )
+                      }
+                    >
+                      {Array.from({ length: limits.max_init_deck_size - limits.min_init_deck_size + 1}, 
+                        (_, i) => i + limits.min_init_deck_size).map(count => (
+                          <option key={count} value={count}>
+                            {count} Cards
+                          </option>
+                        ))
+                      }
+                    </ui.Frame.Select>
+                  </ui.Frame.Label>
+
+
+                  <ui.Frame.Label 
+                    className="w-full flex flex-row 
+                      justify-between !p-ui-xs !px-ui-lg"
+                  >
+                    Can draw when playable:
+
+                    <ui.Frame.CheckBox
+                      checked={lobby.game_options.can_draw_when_playable}
+                      onChange={(e) =>
+                        setGameOptions(
+                          "can_draw_when_playable",
+                          e.target.checked
+                        )
+                      }
+                    />
+                  </ui.Frame.Label>
+
+
+                  <ui.Frame.Label 
+                    className="w-full flex flex-row 
+                      justify-between !p-ui-xs !px-ui-lg"
+                  >
+                    Max draw per turn:
+
+                    <ui.Frame.Select
+                      value={lobby.game_options.max_draws_per_turn}
+                      onChange={(e) =>{
+                        const value = e.target.value;
+                        setGameOptions(
+                          "max_draws_per_turn",
+                          value === "infinite" ? "infinite" : Number(value)
+                        )
+                      }}
+                    >
+                      <option value={"infinite"}>Infinite</option>
+                      {Array.from(
+                        { length: 
+                          limits.max_max_draws_per_turn - limits.min_max_draws_per_turn + 1
+                        }, 
+                        (_, i) => i+limits.min_max_draws_per_turn).map(count => (
+                          <option key={count} value={count}>
+                            {count} Draws
+                          </option>
+                        ))
+                      }
+                    </ui.Frame.Select>
+                  </ui.Frame.Label>
+
+
+                  <ui.Frame.Label 
+                    className="w-full flex flex-row 
+                      justify-between !p-ui-xs !px-ui-lg"
+                  >
+                    Allow wild card stacking:
+
+                    <ui.Frame.CheckBox
+                      checked={lobby.game_options.allow_wild_card_stacking}
+                      onChange={(e) =>
+                        setGameOptions(
+                          "allow_wild_card_stacking",
+                          e.target.checked
+                        )
+                      }
+                    />
+                  </ui.Frame.Label>
+
+
+                  <ui.Frame.Label 
+                    className="w-full flex flex-row 
+                      justify-between !p-ui-xs !px-ui-lg"
+                  >
+                    Wild cards must match:
+
+                    <ui.Frame.CheckBox
+                      checked={lobby.game_options.wild_cards_must_match}
+                      onChange={(e) =>
+                        setGameOptions(
+                          "wild_cards_must_match",
+                          e.target.checked
+                        )
+                      }
+                    />
+                  </ui.Frame.Label>
+
+
+                  <ui.Frame.Label 
+                    className="w-full flex flex-row 
+                      justify-between !p-ui-xs !px-ui-lg"
+                  >
+                    Turn timer:
+
+                    <ui.Frame.Select
+                      value={lobby.game_options.turn_timer}
+                      onChange={(e) => {
+                        const value = e.target.value;
+
+                        setGameOptions(
+                          "turn_timer",
+                          value === "infinite" ? "infinite" : Number(value)
+                        );
+                      }}
+                    >
+                      <option value="infinite">Infinite</option>
+                      {limits.turn_timers.map(seconds => (
+                        <option key={seconds} value={seconds}>
+                          {seconds} Seconds
+                        </option>
+                      ))}
+                    </ui.Frame.Select>
+                  </ui.Frame.Label>
+
+                </div>
+                
+                </>}
+
+                {/* -----------   END OWNER  ------------- */}
+
+
+
+                {/* -----------   NON-OWNER  ------------- */}
+
+                {lobby.owner !== session.player_id && <>
+
+
+                <div className="flex flex-col gap-ui-xxs">
+                  <ui.Frame.Label 
+                    className="w-full flex flex-row 
+                      justify-between !p-ui-xs !px-ui-lg"
+                  >
+                    <p>Initial deck size:</p>
+                    <p>{lobby.game_options.init_deck_size} Cards</p>
+                  </ui.Frame.Label>
+
+
+                  <ui.Frame.Label 
+                    className="w-full flex flex-row 
+                      justify-between !p-ui-xs !px-ui-lg"
+                  >
+                    Can draw when playable:
+                    <ui.Frame.CheckBox
+                      checked={lobby.game_options.can_draw_when_playable}
+                      disabled={true}
+                    />
+                  </ui.Frame.Label>
+
+
+                  <ui.Frame.Label 
+                    className="w-full flex flex-row 
+                      justify-between !p-ui-xs !px-ui-lg"
+                  >
+                    <p>Max draw per turn:</p>
+                    <p>{lobby.game_options.max_draws_per_turn} Draws</p>
+                  </ui.Frame.Label>
+
+
+                  <ui.Frame.Label 
+                    className="w-full flex flex-row 
+                      justify-between !p-ui-xs !px-ui-lg"
+                  >
+                    Allow wild card stacking:
+                    <ui.Frame.CheckBox
+                      checked={lobby.game_options.allow_wild_card_stacking}
+                      disabled={true}
+                    />
+                  </ui.Frame.Label>
+
+
+                  <ui.Frame.Label 
+                    className="w-full flex flex-row 
+                      justify-between !p-ui-xs !px-ui-lg"
+                  >
+                    Wild cards must match:
+                    <ui.Frame.CheckBox
+                      checked={lobby.game_options.wild_cards_must_match}
+                      disabled={true}
+                    />
+                  </ui.Frame.Label>
+
+
+                  <ui.Frame.Label 
+                    className="w-full flex flex-row 
+                      justify-between !p-ui-xs !px-ui-lg"
+                  >
+                    <p>Turn timer:</p>
+                    <p>{lobby.game_options.turn_timer} Seconds</p>
+                  </ui.Frame.Label>
+
+                </div>
+                
+                </>}
+
+                {/* -----------   END NON-OWNER  ------------- */}
+
+              </ui.Frame.SubBox>
+
             </ui.Frame.Box>
             
+
             {lobby.owner == session.player_id &&
             <div className="w-full flex flex-col pb-ui-lg
               md:hidden">
@@ -1377,9 +1625,17 @@ function Lobby() {
               
             </div>
             }
+            {lobby.owner !== session.player_id &&
+            <p
+              className="ui-text text-center
+               text-lg opacity-70 md:hidden"
+            >
+              Waiting for owner to start the game
+            </p>
+            }
             
-          </div>
 
+          </div>
         </ui.Frame>
 
       </main>
