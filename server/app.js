@@ -18,6 +18,7 @@ const HttpServer = createServer(app)
 attachSocketIO(HttpServer)
 const io = getIO();
 const port = config.app.port;
+const host = config.app.expose_host ? "0.0.0.0" : "localhost";
 
 const sessionMiddleware = session({
     secret: process.env.SESSION_SECRET,
@@ -38,7 +39,6 @@ io.engine.use(sessionMiddleware)
 Lobbyhandlers(io)
 
 
-const host = config.app.expose_host ? "0.0.0.0" : "localhost";
 HttpServer.listen(port, host, () => {
     console.log(`Fast Colors listening at http://${host}:${port}`);
 });

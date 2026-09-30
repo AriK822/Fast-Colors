@@ -167,3 +167,101 @@
         )
     );
 }
+
+
+.lobby-basic-card-obj{
+    background: 
+        color-mix(in srgb,
+            var(--theme-accent-deep) 100%,
+            transparent
+        );
+    border: 1px solid var(--theme-highlight-strong);
+    border-radius: var(--radius-ui-max);
+    cursor: pointer;
+    box-shadow: 
+        inset 2px 2px 2px var(--theme-surface-bottom);
+    transition: var(--transition-duration-hover);
+}
+
+.lobby-basic-card-obj:hover{
+    background: 
+        color-mix(in srgb,
+            var(--theme-accent-deep) 85%,
+            black
+        );
+}
+
+.lobby-basic-card-obj-selected{
+    border: 2px solid var(--theme-button-top);
+    box-sizing: border-box;
+}
+
+.lobby-show-card-desc{
+    border: 1px solid white;
+    border-radius: var(--radius-ui-max);
+    width: 1.5rem;
+    height: 1.5rem;
+
+    cursor: pointer;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition-duration-hover);
+}
+
+.lobby-show-card-desc:hover{
+    background: color-mix(in srgb, 
+        white 20%, 
+        transparent
+    );
+}
+
+
+.card-desc-overlay {
+    background: var(--theme-overlay);
+}
+
+.card-desc-box {
+    background: linear-gradient(
+        to bottom,
+        var(--theme-surface-top),
+        var(--theme-surface-bottom)
+    );
+    border-radius: var(--radius-ui-lg);
+    box-shadow: var(--shadow-image);
+    border: 2px solid var(--theme-accent-deep);
+    color: var(--theme-text);
+}
+
+.card-desc-title {
+    font-family: var(--theme-font);
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--theme-highlight);
+}
+
+.card-desc-divider {
+    height: 2px;
+    background: var(--theme-accent-deep);
+    border-radius: var(--radius-ui-max);
+}
+
+.card-desc-text {
+    font-family: var(--theme-font);
+    font-size: 1rem;
+    line-height: 1.5;
+    color: var(--theme-text);
+    opacity: 0.95;
+}
+
+.card-desc-close {
+    width: 2rem;
+    height: 2rem;
+    border-radius: var(--radius-ui-max);
+    background: var(--theme-contrast-top);
+    color: var(--theme-text);
+    font-family: var(--theme-font);
+    font-weight: 700;
+    cursor: pointer;
+}

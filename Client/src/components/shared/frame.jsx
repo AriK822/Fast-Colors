@@ -505,6 +505,26 @@ function FrameSelect({
 }
 
 
+function FrameShimmer({
+    children,
+    className = "",
+    ...props
+}) {
+    return (
+        <button
+            className={`
+                game-frame-shimmer
+                p-ui-xxs
+                ${className}
+            `}
+            {...props}
+        >
+            {children}
+        </button>
+    );
+}
+
+
 
 Object.assign(Frame, {
     Box: FrameBox, 
@@ -518,6 +538,7 @@ Object.assign(Frame, {
     Select: FrameSelect,
     ContrastBtn: FrameContrastButton,
     ContrastInput: FrameContrastInput,
+    Shimmer: FrameShimmer,
 })
 export default {FullScreen, Frame}
 

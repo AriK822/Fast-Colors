@@ -1,5 +1,6 @@
 import "./lobby_ui.css"
 import ui from "../shared/_ui"
+import { useState } from "react"
 import { useCountdown } from "../../utils/hooks/timer_hooks"
 
 
@@ -177,9 +178,82 @@ function FrameJoinLobbyInfo({lobby, onClick, className, ...props}){
 }
 
 
+function BasicCardObj({
+    card_title, card_desc, selected, onClick,
+    className, ...props
+}){
+    const [descComponent, setDescComponent] = useState(null);
+
+    return (<>
+        {descComponent}
+        <div className={`flex flex-row p-ui-xs px-ui-md
+            lobby-basic-card-obj truncate 
+            ${selected && "lobby-basic-card-obj-selected"}
+            ${!selected && "opacity-50"}
+            ${className}`}
+            onClick={onClick}
+            {...props}    
+        >
+            <button className="w-full cursor-pointer" >
+                {card_title}
+            </button>
+            <button
+                className="lobby-show-card-desc shrink-0"
+                onClick={(e) => {
+                    e.stopPropagation();
+                    setDescComponent(
+                        <CardDescriptionViewer
+                            title={card_title}
+                            description={card_desc}
+                            onClose={() => setDescComponent(null)}
+                        />
+                    ) 
+                }}
+            >
+                ?
+            </button>
+        </div>
+    </>)
+}
+
+
+function CardDescriptionViewer({ title, description, onClose }) {
+    return (
+        <div
+            className="card-desc-overlay fixed inset-0 z-20 flex items-center justify-center p-ui-md"
+            onClick={onClose}
+        >
+            <div
+                className="card-desc-box relative w-full max-w-md p-ui-lg"
+                onClick={(e) => e.stopPropagation()}
+            >
+                <h2 className="card-desc-title mb-ui-sm">
+                    {title}
+                </h2>
+
+                <div className="card-desc-divider mb-ui-md" />
+
+                <p className="card-desc-text">
+                    {description}
+                </p>
+
+                <button
+                    className="card-desc-close absolute top-ui-xs right-ui-xs flex items-center justify-center"
+                    onClick={onClose}
+                    aria-label="Close"
+                >
+                    ✕
+                </button>
+            </div>
+        </div>
+    );
+}
+
 export default {
     ChatMsg, 
     PlayerLabel, 
     Start:StartGameButton,
     JoinLobbyInfo: FrameJoinLobbyInfo,
+    BasicCardObj,
+    CardDescriptionViewer,
 }

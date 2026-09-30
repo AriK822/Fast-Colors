@@ -26,12 +26,27 @@ export const REGISTERED_CARDS = {
 
 
 export const card_objects_with_desc = {
-    "norm_base_cards": "Default UNO 4 color cards",
-    "wild_base_draw_2_colored": "Wild card: adds +2 cards to the next person",
-    "wild_choose_base_color": "Wild card: Allows player to choose a new base color",
-    "wild_skip_next_player": "Wild card: skips the next person",
-    "wild_block_selected_player": "Wild card: Select a player to bloxk them in their turn",
-}
+    "norm_base_cards": [
+        "Base Cards",
+        "Default UNO 4 color cards (Red, Green, Blue, Yellow) numbered 0-9 plus action cards"
+    ],
+    "wild_base_draw_2_colored": [
+        "Draw Two",
+        "Wild card, adds +2 cards to the next person's hand"
+    ],
+    "wild_choose_base_color": [
+        "Color Picker",
+        "Wild card, Allows the player to choose a new base color for the game"
+    ],
+    "wild_skip_next_player": [
+        "Skip",
+        "Wild card, skips the next person's turn"
+    ],
+    "wild_block_selected_player": [
+        "Player Blocker",
+        "Wild card, Select a player to block them in their next turn"
+    ],
+};
 
 export const extended_advanced_card_objects_with_desc = {
 }

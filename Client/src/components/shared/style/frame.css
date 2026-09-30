@@ -312,7 +312,7 @@
 
 .frame-subbox{
     background: color-mix(in srgb, 
-        var(--theme-background) 60%, 
+        var(--theme-background) 50%, 
         var(--theme-surface-bottom)
     );
     border: 2px solid var(--theme-surface-top);
@@ -478,4 +478,50 @@
 
     box-shadow:
         inset 3px 0 0 var(--theme-highlight);
+}
+
+
+.game-frame-shimmer {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(
+        90deg,
+        color-mix(in srgb,
+            var(--theme-accent) 40%,
+            transparent
+        ),
+        transparent
+    );
+    border-radius: var(--radius-ui-md);
+    border: 1px solid color-mix(in srgb,
+            var(--theme-highlight) 50%,
+            transparent
+        );
+}
+
+.game-frame-shimmer::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(
+        105deg,
+        transparent 30%,
+        color-mix(in srgb, var(--theme-highlight) 60%, transparent) 50%,
+        transparent 70%
+    );
+    transform: translateX(-100%);
+    animation: shimmer-sweep 5s ease-in-out infinite;
+}
+
+@keyframes shimmer-sweep {
+    0% {
+        transform: translateX(-100%);
+    }
+    40% {
+        transform: translateX(100%);
+    }
+    100% {
+        transform: translateX(100%);
+    }
 }
