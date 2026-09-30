@@ -29,10 +29,47 @@ function ChatMsg({msg, className, ...props}){
 
 
 function PlayerLabel({player, 
+    botName, botKick,
     hasKick, kickFunc, kickContent="Kick", kickDisabled,
     owner,
     className, ...props}){
-    if (!player) return
+
+    if (!player && !botName) return
+
+    if(botName){
+        return (
+            <ui.Frame.Label 
+                className={`relative flex flex-row gap-ui-xs !px-ui-lg w-full
+                    items-center ui-text ${className}`}
+                {...props}
+            >
+                <ui.Frame.Avatar 
+                    letter={botName[0].toLocaleUpperCase()} 
+                />
+                <div className="w-full truncate">
+                    <div className="text-lg truncate">
+                        {botName}
+                    </div>
+                    <div 
+                        className="text-xs opacity-80 "
+                        style={{color:`var(--theme-bot-text)`}}
+                    >
+                        Bot
+                    </div>
+                </div>
+
+                {botKick && 
+                    <button
+                        className="player-kick-btn 
+                        p-ui-xxs text-sm"
+                        onClick={botKick}
+                    >
+                        Remove
+                    </button>
+                }
+            </ui.Frame.Label>
+        )
+    }
 
   function KickTimer({target_time}){
     if (!target_time) return
@@ -54,7 +91,7 @@ function PlayerLabel({player,
             <ui.Frame.Avatar 
                 letter={first_letter} 
             />
-            <div className="truncate">
+            <div className="w-full truncate">
                 <div className="text-lg truncate">
                     {player.name}
                     {owner && "👑"}
@@ -104,8 +141,45 @@ function StartGameButton({
 }
 
 
+
+function FrameJoinLobbyInfo({lobby, onClick, className, ...props}){
+    if (!lobby) return
+    return (
+        <div
+            className={`frame-join-lobby-holder cursor-pointer
+                ui-text ${className}`}
+            onClick={onClick}
+            {...props}
+        >
+            <div className="flex flex-col gap-ui-xs">
+                <div className="flex flex-row justify-between gap-ui-md">
+                    <p className="frame-label text-sm truncate w-[60%] md:w-fit">
+                        <span className="opacity-[85%] font-game-thin">
+                            {lobby.id}
+                        </span>
+                    </p>
+                    <div className="flex flex-row gap-ui-xxs truncate">
+                        <p className="frame-label-soft">👤{lobby.players}</p>
+                        <p className="frame-label-soft">🤖{lobby.bots}</p>
+                    </div>
+                </div>
+                <div>
+                    <span className="opacity-[60%] tracking-widest text-xs ">
+                        OWNER
+                    </span>
+                    <span className="text-xl">
+                        {" "}{lobby.owner}
+                    </span>    
+                </div>
+            </div>
+        </div>
+    )
+}
+
+
 export default {
     ChatMsg, 
     PlayerLabel, 
     Start:StartGameButton,
+    JoinLobbyInfo: FrameJoinLobbyInfo,
 }

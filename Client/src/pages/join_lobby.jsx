@@ -6,6 +6,7 @@ import { useApp, AppProvider } from "../utils/context/app_provider"
 import { useNotification } from "../utils/context/notification";
 
 import ui from "../components/shared/_ui"
+import lobby_ui from "../components/lobby/lobby_ui";
 import Loader from "../components/loaders/_loaders";
 import Skeleton from "react-loading-skeleton";
 import bgLandscape from "../assets_staging/bg1.png"
@@ -106,6 +107,8 @@ function JoinLobby() {
   }, [nameInputValue]);
 
 
+  Object.assign(ui, {Lobby:lobby_ui})
+  
 
   return (
     <ui.FullScreen className="flex">
@@ -187,7 +190,7 @@ function JoinLobby() {
             `}
           >
             {lobbies && Object.entries(lobbies).map(([lobbyId, lobby]) => 
-              <ui.Frame.JoinLobbyInfo
+              <ui.Lobby.JoinLobbyInfo
                 key={lobbyId}
                 className={`w-full`}
                 onClick={() => joinLobbyFunc(lobbyId)}

@@ -50,36 +50,17 @@ function FrameBox({
 }
 
 
-function FrameJoinLobbyInfo({lobby, onClick, className, ...props}){
-    if (!lobby) return
+function FrameSubBox({
+    className,
+    children, 
+    ...props
+}){
     return (
         <div
-            className={`frame-join-lobby-holder cursor-pointer
-                ui-text ${className}`}
-            onClick={onClick}
+            className={`frame-subbox ${className}`}
             {...props}
         >
-            <div className="flex flex-col gap-ui-xs">
-                <div className="flex flex-row justify-between gap-ui-md">
-                    <p className="frame-label text-sm truncate w-[60%] md:w-fit">
-                        <span className="opacity-[85%] font-game-thin">
-                            {lobby.id}
-                        </span>
-                    </p>
-                    <div className="flex flex-row gap-ui-xxs truncate">
-                        <p className="frame-label-soft">👤{lobby.players}</p>
-                        <p className="frame-label-soft">🤖{lobby.bots}</p>
-                    </div>
-                </div>
-                <div>
-                    <span className="opacity-[60%] tracking-widest text-xs ">
-                        OWNER
-                    </span>
-                    <span className="text-xl">
-                        {" "}{lobby.owner}
-                    </span>    
-                </div>
-            </div>
+            {children}
         </div>
     )
 }
@@ -179,13 +160,79 @@ function FrameAvatar({
 }
 
 
+function FrameCheckBox({
+    className = "",
+    onChange,
+    ...props
+}) {
+    return (
+        <input
+            className={`
+                game-toggle
+                ${className}
+            `}
+            onChange={onChange}
+            type="checkbox"
+            {...props}
+        />
+    );
+}
+
+
+function FrameContrastInput({
+    className = "",
+    ...props
+}) {
+    return (
+        <input
+            className={`
+                game-contrast-input
+                ${className}
+            `}
+            {...props}
+        />
+    );
+}
+
+
+function FrameContrastButton({
+    children,
+    className = "",
+    onClick,
+    ...props
+}) {
+    return (
+        <button
+            className={`
+                game-contrast-btn
+                ${className}
+            `}
+            onClick={onClick}
+            {...props}
+        >
+            {children}
+        </button>
+    );
+}
+
+
+function hr({className}){
+    return (<div className={`frame-hr ${className}`}></div>)
+}
+
+
+
 Object.assign(Frame, {
     Box: FrameBox, 
+    SubBox: FrameSubBox,
+    hr,
+    Avatar: FrameAvatar,
+    Label: FrameLabel,
     Btn: FrameButton, 
     Input: FrameInput,
-    Label: FrameLabel,
-    Avatar: FrameAvatar,
-    JoinLobbyInfo: FrameJoinLobbyInfo,
+    CheckBox: FrameCheckBox,
+    ContrastBtn: FrameContrastButton,
+    ContrastInput: FrameContrastInput,
 })
 export default {FullScreen, Frame}
 

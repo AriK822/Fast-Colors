@@ -1088,6 +1088,24 @@ function Lobby() {
                 kickDisabled={kick_player_loading == id}
               />
           ))}
+          <ui.Frame.hr className="my-ui-xxs" />
+          {lobby.game_options.bots.map((bot_name, i) => {
+            let botKick = false;
+            if (lobby.owner == session.player_id){
+              botKick = () => {
+                const new_bot_names = [...lobby.game_options.bots];
+                new_bot_names.splice(i, 1);
+                setGameOptions("bots", new_bot_names)
+              }
+            }
+            return (
+              <ui.Lobby.PlayerLabel
+                key={i}
+                botName={bot_name}
+                botKick={botKick}
+              />
+            )
+          })}
           </div>
 
           {lobby.owner == session.player_id && <>
@@ -1188,6 +1206,24 @@ function Lobby() {
                   kickDisabled={kick_player_loading == id}
                 />
             ))}
+            <ui.Frame.hr className="col-span-1 sm:col-span-2" />
+            {lobby.game_options.bots.map((bot_name, i) => {
+              let botKick = false;
+              if (lobby.owner == session.player_id){
+                botKick = () => {
+                  const new_bot_names = [...lobby.game_options.bots];
+                  new_bot_names.splice(i, 1);
+                  setGameOptions("bots", new_bot_names)
+                }
+              }
+              return (
+                <ui.Lobby.PlayerLabel
+                  key={i}
+                  botName={bot_name}
+                  botKick={botKick}
+                />
+              )
+            })}
             </ui.Frame.Box>
 
             <ui.Frame.Box
@@ -1232,7 +1268,86 @@ function Lobby() {
               className="flex-2 min-h-auto lg:min-h-0"
               insideBoxClassName="h-full game-theme-scrollbar"
             >
-              settings
+              <ui.Frame.SubBox>
+                <h1 className="text-lg p-ui-xxs">Bots:</h1>
+                <ui.Frame.hr className="mb-ui-xs" />
+
+                <div className="flex flex-col gap-ui-xxs">
+                {lobby.game_options.bots.map((bot_name, i) => {
+                  let botKick = false;
+                  if (lobby.owner == session.player_id){
+                    botKick = () => {
+                      const new_bot_names = [...lobby.game_options.bots];
+                      new_bot_names.splice(i, 1);
+                      setGameOptions("bots", new_bot_names)
+                    }
+                  }
+                  return (
+                    <ui.Lobby.PlayerLabel
+                      key={i}
+                      botName={bot_name}
+                      botKick={botKick}
+                    />
+                  )
+                })}
+                </div>
+
+                {lobby.game_options.bots.length == 0 &&
+                  <p className="px-ui-md">Empty!</p>
+                }
+
+                {lobby.owner == session.player_id && <>
+
+                <ui.Frame.hr className="mt-ui-xs" />
+
+                <h1 className="text-lg p-ui-xxs">Add bot:</h1>
+                
+                <div className="flex flex-row">
+                <ui.Frame.ContrastInput
+                  placeholder="bot name"
+                  value={bot_name_input}
+                  onChange={(e) => {setBotNameInput(e.target.value)}}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && 
+                      !(
+                        bot_name_input.trim() == "" ||
+                        lobby.game_options.bots.length + 
+                        Object.entries(lobby.players).length 
+                        >= limits.max_total_game_players
+                      )
+                    ){
+                      const this_name = bot_name_input;
+                      setBotNameInput("");
+                      const new_bot_names = [...lobby.game_options.bots];
+                      new_bot_names.push(this_name);
+                      setGameOptions("bots", new_bot_names);
+                    }
+                  }}
+                />
+
+                <ui.Frame.ContrastBtn
+                  className="shrink-0"
+                  onClick={() => {
+                    const this_name = bot_name_input;
+                    setBotNameInput("");
+                    const new_bot_names = [...lobby.game_options.bots];
+                    new_bot_names.push(this_name);
+                    setGameOptions("bots", new_bot_names);
+                  }}
+                  disabled={
+                    bot_name_input.trim() == "" ||
+                    lobby.game_options.bots.length + 
+                    Object.entries(lobby.players).length 
+                    >= limits.max_total_game_players
+                  }
+                >
+                Add Bot
+               </ui.Frame.ContrastBtn>
+               </div>
+                </>}
+               
+              </ui.Frame.SubBox>
+
             </ui.Frame.Box>
             
             {lobby.owner == session.player_id &&

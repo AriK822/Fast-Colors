@@ -137,3 +137,33 @@
     0% {background-position: 110% 0;}
     100% {background-position: -10% 0;}
 }
+
+
+
+.frame-join-lobby-holder {
+    padding: var(--spacing-ui-md);
+
+    border: 2px solid
+        color-mix(
+            in srgb,
+            var(--theme-accent) 80%,
+            white
+        );
+
+    border-radius: var(--radius-ui-lg);
+
+    background: var(--theme-accent);
+
+    /* transition: var(--transition-duration-hover); */
+}
+
+.frame-join-lobby-holder:hover {
+    background: linear-gradient(
+        var(--theme-accent),
+        color-mix(
+            in srgb,
+            var(--theme-accent) 90%,
+            white
+        )
+    );
+}

@@ -93,35 +93,6 @@
 }
 
 
-.frame-join-lobby-holder {
-    padding: var(--spacing-ui-md);
-
-    border: 2px solid
-        color-mix(
-            in srgb,
-            var(--theme-accent) 80%,
-            white
-        );
-
-    border-radius: var(--radius-ui-lg);
-
-    background: var(--theme-accent);
-
-    /* transition: var(--transition-duration-hover); */
-}
-
-.frame-join-lobby-holder:hover {
-    background: linear-gradient(
-        var(--theme-accent),
-        color-mix(
-            in srgb,
-            var(--theme-accent) 90%,
-            white
-        )
-    );
-}
-
-
 .frame-label-soft{
     background: var(--theme-accent-deep);
     border: 1px solid var(--theme-accent-dark);
@@ -186,4 +157,178 @@
 
     font-size: 1.1rem;
     font-weight: 800;
+}
+
+
+
+.game-toggle {
+    appearance: none;
+    width: 3rem;
+    height: 1.6rem;
+
+    border-radius: 100px;
+    background: var(--theme-surface-bottom);
+
+    border: 2px solid var(--theme-accent-dark);
+
+    cursor: pointer;
+
+    position: relative;
+
+    transition: var(--transition-duration-hover);
+}
+
+.game-toggle::before {
+    content: "";
+
+    position: absolute;
+    width: 1.1rem;
+    height: 1.1rem;
+
+    top: 50%;
+    left: 3px;
+
+    transform: translateY(-50%);
+
+    border-radius: 50%;
+
+    background: var(--theme-accent);
+
+    box-shadow:
+        1px 2px 0 rgb(0 0 0 / 35%);
+
+    transition: var(--transition-duration-hover);
+}
+
+.game-toggle:checked {
+    background: var(--theme-button-bottom);
+    border-color: var(--theme-button-highlight);
+}
+
+.game-toggle:checked::before {
+    left: calc(100% - 1.1rem - 3px);
+    background: var(--theme-button-top);
+}
+
+.game-toggle:hover {
+    filter: brightness(1.08);
+}
+
+
+.game-contrast-input {
+    width: 100%;
+    min-width: 0;
+
+    padding: var(--spacing-ui-xs) var(--spacing-ui-sm);
+
+    border: 2px solid var(--theme-accent-dark);
+    border-radius: var(--radius-ui-sm);
+
+    background: color-mix(in srgb, 
+        var(--theme-background) 30%, 
+        var(--theme-surface-bottom)
+    );
+
+    color: var(--theme-text);
+    font-family: var(--theme-font);
+    font-size: 1rem;
+
+    outline: none;
+
+    box-shadow:
+        inset 2px 2px 0 rgba(0, 0, 0, 0.218);
+
+    transition: var(--transition-duration-hover);
+}
+
+.game-contrast-input::placeholder {
+    color: color-mix(
+        in srgb,
+        var(--theme-text) 45%,
+        transparent
+    );
+}
+
+.game-contrast-input:hover {
+    border-color: var(--theme-accent);
+}
+
+.game-contrast-input:focus {
+    border-color: var(--theme-highlight);
+
+    box-shadow:
+        inset 2px 2px 0 rgb(255 255 255 / 8%),
+        inset 0 -2px 0 rgb(0 0 0 / 20%),
+        0 0 0 2px
+            color-mix(
+                in srgb,
+                var(--theme-highlight) 25%,
+                transparent
+            );
+}
+
+.game-contrast-input:disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
+}
+
+
+.game-contrast-btn {
+    padding: var(--spacing-ui-xs) var(--spacing-ui-sm);
+
+    border: 2px solid var(--theme-accent-dark);
+    border-radius: var(--radius-ui-sm);
+
+    background:var(--theme-surface-bottom);
+
+    box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.218);
+
+    color: var(--theme-text);
+    font-family: var(--theme-font);
+    font-weight: 800;
+
+    cursor: pointer;
+
+    transition:
+        var(--transition-duration-hover),
+        box-shadow 120ms ease;
+}
+
+.game-contrast-btn:hover {
+    filter: brightness(1.1);
+    transform: translateY(-1px);
+}
+
+.game-contrast-btn:active {
+    transform: translateY(2px);
+    box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.218);
+}
+
+.game-contrast-btn:disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
+}
+
+
+.frame-subbox{
+    background: color-mix(in srgb, 
+        var(--theme-background) 60%, 
+        var(--theme-surface-bottom)
+    );
+    border: 2px solid var(--theme-surface-top);
+    border-radius: var(--radius-ui-sm);
+    padding: var(--spacing-ui-xxs)
+}
+
+
+.frame-hr{
+    width: 100%;
+    height: 2px;
+    background: radial-gradient(
+        color-mix(in srgb, 
+            var(--theme-highlight-strong) 50%,
+            transparent
+        ),
+        transparent
+    );
 }
