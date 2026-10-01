@@ -8,7 +8,8 @@ const config = {
 
     game:{
         bot_play_delay:1500,
-        game_end_kick_delay:30*1000,
+        finished_game_delete_timeout:30*1000,
+        empty_game_delete_timeout:30*1000,
         max_history_cards:5,
     },
 

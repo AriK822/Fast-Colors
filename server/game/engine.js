@@ -301,12 +301,14 @@ export function noTimeLeftProcess(game){
 export function gameWinProcess(game, services){
     game.players.forEach(p_info => {
         if (p_info.deck.length == 0){
+            console.log("Game ended. Deleting in: "+
+                String(config.game.finished_game_delete_timeout)+"ms")
             game.state = GameStateModes.ENDED;
             game.winner = {id:p_info.id, name:p_info.name};
             setTimeout(() => {
                 if (services.deleteGame) services.deleteGame(game);
                 if (services.gameEndedKick) services.gameEndedKick(game);
-            }, 30*1000);
+            }, config.game.finished_game_delete_timeout);
             return;
         }
     })
