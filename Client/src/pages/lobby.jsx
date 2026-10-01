@@ -760,8 +760,17 @@ function Lobby() {
                   }
                 >
                 Add Bot
-               </ui.Frame.ContrastBtn>
-               </div>
+                </ui.Frame.ContrastBtn>
+                </div>
+
+                {lobby.game_options.bots.length + 
+                    Object.entries(lobby.players).length 
+                    >= limits.max_total_game_players &&
+                  <p className="text-theme-warning p-ui-xs">
+                    Maximum number of bots reached!
+                  </p>    
+                }
+
                 </>}
                
               </ui.Frame.SubBox>
@@ -816,6 +825,14 @@ function Lobby() {
                   }
                 )}
                 </div>
+
+                {session.player_id == lobby.owner &&
+                  lobby.game_options.selected_card_objects.length == 0 &&
+                  <p className="text-theme-warning p-ui-xs">
+                    Please select at least one card type
+                  </p>
+                }
+
                 </>
                 {/* --- END BASIC SETTINGS   --- */}
 
@@ -884,6 +901,7 @@ function Lobby() {
                   </div>
 
                   {session.player_id == lobby.owner &&
+                  <div className="flex flex-col gap-ui-xs">
                   <ui.Frame.ContrastBtn 
                     onClick={() => {
                       const new_colors = [...lobby.game_options.base_colors];
@@ -892,10 +910,20 @@ function Lobby() {
                       )
                       setGameOptions("base_colors", new_colors);
                     }}
+                    disabled={
+                      lobby.game_options.base_colors.length >= limits.max_base_colors
+                    }
                   >
                     Add base color +
                   </ui.Frame.ContrastBtn>
+
+                  {lobby.game_options.base_colors.length >= limits.max_base_colors &&
+                    <p className="text-theme-warning">
+                      Maximum number of advanced card objects reached!
+                    </p>
                   }
+
+                  </div>}
 
                 </ui.Frame.SubBox>
 
@@ -1146,10 +1174,23 @@ function Lobby() {
                       [...lobby.game_options.advanced_card_objects, new_object]
                       );
                     }}
+                    disabled={
+                      lobby.game_options.advanced_card_objects.length >=
+                        limits.max_advanced_card_objects
+                    }
                   >
                   Add new object +
                   </ui.Frame.ContrastBtn>
+
                   </div>
+
+                  {lobby.game_options.advanced_card_objects.length >=
+                        limits.max_advanced_card_objects &&
+                    <p className="text-theme-warning">
+                      Maximum number of advanced card objects reached!
+                    </p>
+                  }
+
 
                   </div>
 

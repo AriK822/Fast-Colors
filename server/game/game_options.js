@@ -73,6 +73,7 @@ export function validateGameOptions(new_options) {
 
     if (new_options.use_advanced_options) {
         if (!Array.isArray(new_options.base_colors)) return false;
+        if (new_options.base_colors.length > limits.max_base_colors) return false;
 
         for (const color of new_options.base_colors) {
             if (
@@ -82,6 +83,7 @@ export function validateGameOptions(new_options) {
         }
 
         if (!Array.isArray(new_options.advanced_card_objects)) return false;
+        if (new_options.advanced_card_objects.length > limits.max_advanced_card_objects) return false;
 
         for (const card_obj of new_options.advanced_card_objects) {
             if (

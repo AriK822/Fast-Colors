@@ -31,6 +31,8 @@ const config = {
         max_weight:100,
         min_norm_num:1,
         max_norm_num:50,
+        max_base_colors:10,
+        max_advanced_card_objects:30,
     },
 
     player:{
