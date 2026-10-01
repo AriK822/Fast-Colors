@@ -525,6 +525,24 @@ function FrameShimmer({
 }
 
 
+function FrameSlider({
+    children,
+    className = "",
+    ...props
+}) {
+    return (
+        <input
+            className={`
+                lobby-slider-weight
+                ${className}
+            `}
+            type="range"
+            {...props}
+        />
+    );
+}
+
+
 
 Object.assign(Frame, {
     Box: FrameBox, 
@@ -536,6 +554,7 @@ Object.assign(Frame, {
     Input: FrameInput,
     CheckBox: FrameCheckBox,
     Select: FrameSelect,
+    Slider: FrameSlider,
     ContrastBtn: FrameContrastButton,
     ContrastInput: FrameContrastInput,
     Shimmer: FrameShimmer,

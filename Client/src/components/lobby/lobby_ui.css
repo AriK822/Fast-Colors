@@ -265,3 +265,88 @@
     font-weight: 700;
     cursor: pointer;
 }
+
+
+.lobby-remove-base-color{
+    border: 1px solid color-mix(in srgb, 
+        var(--theme-highlight) 40%,
+        transparent
+    );
+    border-radius: var(--radius-ui-max);
+    cursor: pointer;
+    transition: var(--transition-duration-hover);
+}
+
+.lobby-remove-base-color:hover{
+    border: 1px solid color-mix(in srgb, 
+        var(--theme-highlight) 70%,
+        transparent
+    );
+}
+
+.lobby-basecolor-input{
+    width: 40px;
+    height: 40px;
+}
+
+.lobby-basecolor-holder{
+    border: 1px solid var(--theme-surface-top);
+    border-radius: var(--radius-ui-sm);
+    padding: var(--spacing-ui-xxs)
+}
+
+
+.lobby-card-type-select{
+    border: 1px solid color-mix(in srgb, 
+        var(--theme-highlight) 30%,
+        transparent
+    );
+    border-radius: var(--radius-ui-sm);
+    padding: var(--spacing-ui-xxs);
+}
+
+
+.lobby-slider-weight{
+  -webkit-appearance: none;
+  appearance: none;
+  background: var(--theme-surface-top);
+  outline: none;
+  cursor: pointer;
+  height: 3px;
+  transform: var(--transition-duration-hover)
+}
+
+.lobby-slider-weight::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  background: var(--theme-highlight);
+  border-radius: 50%;
+}
+
+.lobby-slider-weight::-webkit-slider-thumb:hover {
+  transform: scale(1.15);
+}
+
+.lobby-slider-weight::-webkit-slider-thumb:active {
+  cursor: grabbing;
+  transform: scale(1.1);
+}
+
+
+.lobby-moify-numbers-btn{
+    width: 40px;
+    height: 40px;
+    padding: var(--spacing-ui-md);
+    border-radius: var(--radius-ui-sm);
+    border: 1px solid color-mix(in srgb, 
+        var(--theme-highlight) 30%, 
+        transparent
+    );
+    cursor: pointer;
+}
+
+.lobby-moify-numbers-btn:hover{
+    filter: brightness(1.2);
+}
