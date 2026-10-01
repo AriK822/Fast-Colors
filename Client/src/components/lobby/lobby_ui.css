@@ -168,6 +168,10 @@
     );
 }
 
+.frame-join-lobby-holder-loading{
+    filter: brightness(0.7);
+}
+
 
 .lobby-basic-card-obj{
     background: 

@@ -1,8 +1,9 @@
 import "./lobby_ui.css"
 import ui from "../shared/_ui"
 import { useState } from "react"
-import { useCountdown } from "../../utils/hooks/timer_hooks"
 import {motion} from "motion/react"
+import { useCountdown } from "../../utils/hooks/timer_hooks"
+import Loader from "../loaders/_loaders"
 
 
 function ChatMsg({msg, className, ...props}){
@@ -144,15 +145,30 @@ function StartGameButton({
 
 
 
-function FrameJoinLobbyInfo({lobby, onClick, className, ...props}){
+function FrameJoinLobbyInfo({
+    lobby, onClick, 
+    disabled, loadingAnimation,
+    className, ...props
+}){
     if (!lobby) return
+
     return (
         <div
             className={`frame-join-lobby-holder cursor-pointer
-                ui-text ${className}`}
-            onClick={onClick}
+                ui-text relative 
+                ${disabled && "frame-join-lobby-holder-loading"}
+                ${className}`}
+            onClick={!disabled && onClick}
             {...props}
         >
+            {loadingAnimation &&
+                <div
+                    className="absolute 
+                        left-0 right-0 top-0 bottom-0"
+                >
+                    <Loader.Spinner />
+                </div>
+            }
             <div className="flex flex-col gap-ui-xs">
                 <div className="flex flex-row justify-between gap-ui-md">
                     <p className="frame-label text-sm truncate w-[60%] md:w-fit">

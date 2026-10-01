@@ -21,6 +21,7 @@ function JoinLobby() {
   const { session, setSession } = useApp();
 
   const [lobbies, setLobbies] = useState(null);
+  const [joiningLoading, setJoiningLoading] = useState(false);
   const [refresh_lobbies_loading, setRefreshLobbiesLoading] = useState(false);
   const [nameInputValue, setNameInputValue] = useState(session.player_name);
   const isNameInputInitLoad = useRef(true);
@@ -58,7 +59,9 @@ function JoinLobby() {
 
 
   async function joinLobbyFunc(lobby_id) {
+    setJoiningLoading(lobby_id);
     const result = await SocketAPI.joinLobby(lobby_id)
+    setJoiningLoading(null);
 
     if (result.msg) {
       showNotification({
@@ -198,27 +201,14 @@ function JoinLobby() {
                 className={`w-full`}
                 onClick={() => joinLobbyFunc(lobbyId)}
                 lobby={lobby}
+                disabled={joiningLoading}
+                loadingAnimation={joiningLoading == lobbyId}
 
                 layout
-
-                initial={{
-                    opacity:0,
-                    scale:0.7,
-                }}
-                animate={{
-                    opacity:1,
-                    scale:1,
-                    y:[-5,5,-2,2,0]
-                }}
-                transition={{
-                    type:"spring",
-                    stiffness:400,
-                    damping:20
-                }}
-                exit={{
-                    opacity:0,
-                    scale:0.5,
-                }}
+                initial={{opacity:0,scale:0.7,}}
+                animate={{opacity:1,scale:1,y:[-5,5,-2,2,0]}}
+                transition={{type:"spring",stiffness:400,damping:20}}
+                exit={{opacity:0,scale:0.5,}}
               />
             )}
             </AnimatePresence>
