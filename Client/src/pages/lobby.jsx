@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 import * as SocketAPI from "../api/socket_handler"
 import { useNotification } from "../utils/context/notification";
 import { useApp } from "../utils/context/app_provider"
-import { useCountdown } from "../utils/hooks/timer_hooks";
 
 import ui from "../components/shared/_ui"
 import lobby_ui from "../components/lobby/lobby_ui"
@@ -406,773 +405,6 @@ function Lobby() {
   
   const limits = lobby.game_options.limits;
 
-//   return (
-//   <div className="card">
-
-//     <input 
-//       className="name-input" 
-//       placeholder="Enter your name" 
-//       onChange={(e) => setNameInputValue(e.target.value)} 
-//       value={nameInputValue}
-//     />
-
-//     <p>
-//     You'll appear as{" "}
-//     {nameInputLoading
-//       ? <Skeleton inline width={90} />
-//       : session.player_name
-//     }
-//     </p>
-
-//     <button onClick={leaveLobbyBtn}>
-//       {leave_lobby_loading ? <Loader.Spinner /> : "Leave Lobby"}
-//     </button>
-
-
-//     <p>Lobby id: {lobby.id}</p>
-//     <p>Owner id: {lobby.owner}</p>
-
-
-//     <div className="card">
-//       <strong>Players:</strong>
-//       {Object.entries(lobby.players).map(([id, desc]) => (
-//         <div key={id} className="flex gap-ui-md">
-
-//           <p>Name: {desc.name}</p>
-//           <p>Status: {desc.connection_status}</p>
-
-//           {desc.disconnect_expires_at ? 
-//           <KickTimer target_time={desc.disconnect_expires_at} />
-//           : <></>}
-
-//           {session.player_id == lobby.owner && id != lobby.owner ? (
-//             <button 
-//             onClick={() => kickPlayer(id)}
-//             disabled={kick_player_loading!=null}
-//             >
-//               {kick_player_loading == id ? <Loader.Spinner /> : "Kick"}
-//             </button>
-//           ) : <></>}
-
-//           {id == lobby.owner ? <p>👑</p> : <></>}
-
-//         </div>
-//       ))}
-//     </div>
-
-
-
-//     {lobby.owner == session.player_id ? 
-//     // Lobby owner settings
-//     (<>
-//       <div className="card">
-//       <strong>Game settings:</strong>
-
-//       <div className="card">
-//         <button 
-//           onClick={() => {
-//           setGameOptions("use_advanced_options", !lobby.game_options.use_advanced_options )
-//           }}
-//         >
-//           {lobby.game_options.use_advanced_options 
-//             ? "Disable advanced options" 
-//             : "Enable advanced options"
-//           }
-//         </button>
-//         <br></br><br></br>
-
-
-//         {!lobby.game_options.use_advanced_options && 
-//           Object.entries(lobby.game_options.card_objects).map(([card_id, card_desc]) => {
-//           const selected =lobby.game_options.selected_card_objects.includes(card_id);
-
-//           return (
-//             <button
-//               key={card_id}
-//               className="flex"
-//               style={
-//                 {border: `1px solid ${selected ? "lime" : "grey"}`}
-//               }
-//               onClick={() => {
-//                 const selectedCards = [...lobby.game_options.selected_card_objects];
-
-//                 if (selected) {
-//                   selectedCards.splice(selectedCards.indexOf(card_id), 1);
-//                 } else {
-//                   selectedCards.push(card_id);
-//                 }
-
-//                 setGameOptions(
-//                   "selected_card_objects",
-//                   selectedCards
-//                 );
-//               }}
-//             >
-//               {card_desc}
-//             </button>
-//           );
-//           }
-//         )}
-
-
-//         {lobby.game_options.use_advanced_options && <>
-
-//         <strong>Base colors:</strong>
-//           <div className="flex flex-col card gap-ui-xs">
-//           {lobby.game_options.base_colors.map((b_color, i) => (
-//             <div className="flex flex-row gap-ui-xs" key={i} >
-//               <input 
-//                 type={"color"} 
-//                 value={b_color} 
-//                 style={{height:"50px"}}
-//                 onChange={(e) => {
-//                   const new_colors = [...lobby.game_options.base_colors];
-//                   new_colors[i] = e.target.value;
-
-//                   setLobby(prevLobby => ({
-//                     ...prevLobby,
-//                     game_options: {
-//                       ...prevLobby.game_options,
-//                       base_colors: new_colors,
-//                     },
-//                   }));
-//                 }}
-//                 onBlur={() => {
-//                   setGameOptions("base_colors", lobby.game_options.base_colors);
-//                 }}
-//               />
-//               <button
-//                 onClick={() => {
-//                   const new_colors = [...lobby.game_options.base_colors];
-//                   new_colors.splice(i, 1);
-//                   setGameOptions("base_colors", new_colors);
-//                 }}
-//               >
-//                 Remove
-//               </button>
-//             </div>
-//           ))}
-//           <button 
-//             onClick={() => {
-//               const new_colors = [...lobby.game_options.base_colors];
-//               new_colors.push(
-//                 '#' + Math.floor(Math.random() * 0xffffff).toString(16).padStart(6, '0')
-//               )
-//               setGameOptions("base_colors", new_colors);
-//             }}
-//           >
-//             Add base color +
-//           </button>
-//           </div>
-
-//           <strong>Card objects:</strong>
-//           <div className="card">
-
-//           {lobby.game_options.advanced_card_objects.map((card_obj, i) => (
-//             <div key={i} className="flex flex-col gap-ui-xs card">
-//               <div className="flex flex-row gap-ui-xs">
-//                 <label>Type:</label>
-//                 <select
-//                   value={card_obj.id}
-//                   onChange={(e) => {
-//                     const new_objects = [
-//                       ...lobby.game_options.advanced_card_objects
-//                     ];
-//                     new_objects[i] = {
-//                       ...new_objects[i],
-//                       id: e.target.value,
-//                     };
-//                     setGameOptions(
-//                       "advanced_card_objects",
-//                       new_objects
-//                     );
-//                   }}
-//                 >
-//                   {Object.entries(
-//                     lobby.game_options.allowed_advanced_card_objects
-//                   ).map(([c_id, c_desc]) => (
-//                     <option key={c_id} value={c_id}>
-//                       {c_desc}
-//                     </option>
-//                   ))}
-//                 </select>
-//               </div>
-
-
-//               <div className="flex flex-row gap-ui-xs">
-//                 <label>
-//                   Weight: {card_obj.weight}
-//                 </label>
-
-//                 <input
-//                   type="range"
-//                   min={`${limits.min_weight}`}
-//                   max={`${limits.max_weight}`}
-//                   value={card_obj.weight}
-//                   onChange={(e) => {
-//                     const new_objects = [
-//                       ...lobby.game_options.advanced_card_objects
-//                     ];
-
-//                     new_objects[i] = {
-//                       ...new_objects[i],
-//                       weight: Number(e.target.value),
-//                     };
-
-//                     setLobby(prevLobby => ({
-//                       ...prevLobby,
-//                       game_options: {
-//                         ...prevLobby.game_options,
-//                         advanced_card_objects: new_objects,
-//                       },
-//                     }));
-//                   }}
-//                   onBlur={() => {
-//                     setGameOptions(
-//                       "advanced_card_objects",
-//                       lobby.game_options.advanced_card_objects
-//                     );
-//                   }}
-//                 />
-//               </div>
-
-
-//               {card_obj.id === "norm_base_cards" && (
-//                 <div className="flex flex-col gap-ui-xs">
-//                   <p>Numbers: {String(card_obj.nums)}</p>
-//                   <button
-//                     onClick={() => {
-//                       setOpenNumsIndex(
-//                         openNumsIndex === i ? null : i
-//                       );
-//                     }}
-//                   >
-//                     Modify numbers
-//                   </button>
-
-//                   {openNumsIndex === i && (
-//                     <div className="flex flex-col gap-ui-xs card">
-
-//                       <button
-//                         onClick={() => {
-//                           const allSelected =
-//                             card_obj.nums.length===limits.max_norm_num-limits.min_norm_num+1;
-
-//                           const new_objects = [
-//                             ...lobby.game_options.advanced_card_objects
-//                           ];
-
-//                           new_objects[i] = {
-//                             ...new_objects[i],
-//                             nums: allSelected
-//                               ? []
-//                               : Array.from(
-//                                 { length: limits.max_norm_num - limits.min_norm_num + 1 },
-//                                 (_, index) => index + limits.min_norm_num
-//                               ),
-//                           };
-
-//                           setGameOptions(
-//                             "advanced_card_objects",
-//                             new_objects
-//                           );
-//                         }}
-//                       >
-//                         {card_obj.nums.length===limits.max_norm_num-limits.min_norm_num+1
-//                           ? "Deselect all"
-//                           : "Select all"}
-//                       </button>
-
-
-//                       <div className="flex flex-row flex-wrap gap-ui-xs">
-//                         {Array.from(
-//                           { length: limits.max_norm_num-limits.min_norm_num+1 },
-//                           (_, index) => index + limits.min_norm_num
-//                         ).map((num) => {
-
-//                           const isSelected =
-//                             card_obj.nums.includes(num);
-
-//                           return (
-//                             <button
-//                               key={num}
-//                               style={{background: isSelected ? "green" : ""}}
-//                               onClick={() => {
-//                                 const new_nums =
-//                                   isSelected
-//                                     ? card_obj.nums.filter(
-//                                       n => n !== num
-//                                     )
-//                                     : [
-//                                       ...card_obj.nums,
-//                                       num
-//                                     ].sort(
-//                                       (a, b) => a - b
-//                                     );
-
-//                                 const new_objects = [
-//                                   ...lobby.game_options.advanced_card_objects
-//                                 ];
-
-//                                 new_objects[i] = {
-//                                   ...new_objects[i],
-//                                   nums: new_nums,
-//                                 };
-
-//                                 setGameOptions(
-//                                   "advanced_card_objects",
-//                                   new_objects
-//                                 );
-//                               }}
-//                             >
-//                               {num}
-//                             </button>
-//                           );
-//                         })}
-//                       </div>
-
-//                     </div>
-//                   )}
-
-//                 </div>
-//               )}
-
-
-//               <button
-//                 onClick={() => {
-//                   const new_objects = [
-//                     ...lobby.game_options.advanced_card_objects
-//                   ];
-
-//                   new_objects.splice(i, 1);
-
-//                   setGameOptions(
-//                     "advanced_card_objects",
-//                     new_objects
-//                   );
-//                 }}
-//               >
-//                 Remove
-//               </button>
-
-//             </div>
-//           ))}
-
-//           <button
-//           onClick={() => {
-//             const to_add_index = 
-//               lobby.game_options.advanced_card_objects.length %
-//               Object.entries(lobby.game_options.allowed_advanced_card_objects).length;
-//             const toAddCardObjID = Object.keys(
-//             lobby.game_options.allowed_advanced_card_objects
-//             )[to_add_index];
-
-//             const new_object = {
-//             id: toAddCardObjID,
-//             weight: 4,
-//             ...(toAddCardObjID === "norm_base_cards" && {
-//               nums: Array.from({ length: 10 }, (_, i) => i + 1),
-//             }),
-//             };
-
-//             setGameOptions(
-//             "advanced_card_objects",
-//             [...lobby.game_options.advanced_card_objects, new_object]
-//             );
-//           }}
-//           >
-//           Add new object
-//           </button>
-
-//           </div>
-
-//         </>}
-//       </div>
-
-
-//       <div className="card">
-//         <strong>Bots:</strong>
-//         {lobby.game_options.bots.map((bot_name, i) => (
-//         <div className="flex gap-ui-md" key={i}>
-//           <p>{bot_name}</p>
-//           <button 
-//             style={{color:"orange"}}
-//             onClick={() => {
-//               const new_bot_names = [...lobby.game_options.bots];
-//               new_bot_names.splice(i, 1);
-//               setGameOptions("bots", new_bot_names)
-//             }}
-//           >
-//             Remove
-//           </button>
-//         </div>
-//         ))}
-//         <strong>Add bot:</strong>
-//         <input 
-//           placeholder="bot name"
-//           value={bot_name_input}
-//           onChange={(e) => {setBotNameInput(e.target.value)}}
-//         ></input>
-//         <button
-//           onClick={() => {
-//             if (bot_name_input.trim() == ""){
-//               showNotification({
-//                 type:"warning",
-//                 text:"Please enter a name first.",
-//               })
-//               return;
-//             }
-//             const this_name = bot_name_input;
-//             setBotNameInput("");
-//             const new_bot_names = [...lobby.game_options.bots];
-//             new_bot_names.push(this_name);
-//             setGameOptions("bots", new_bot_names);
-//           }}
-//           disabled={
-//             lobby.game_options.bots.length + 
-//             Object.entries(lobby.players).length 
-//             >= limits.max_total_game_players
-//           }
-//         >
-//           Add new bot
-//         </button>
-//       </div>
-
-//       <div className="card">
-//         <strong>Other options:</strong>
-
-//         <div className="flex gap-ui-md">
-//           <label>
-//             Initial deck size:
-//           </label>
-
-//           <select
-//             value={lobby.game_options.init_deck_size}
-//             onChange={(e) =>
-//               setGameOptions(
-//                 "init_deck_size",
-//                 Number(e.target.value)
-//               )
-//             }
-//           >
-//             {Array.from({ length: limits.max_init_deck_size - limits.min_init_deck_size + 1}, 
-//               (_, i) => i + limits.min_init_deck_size).map(count => (
-//                 <option key={count} value={count}>
-//                   {count}
-//                 </option>
-//               ))
-//             }
-//           </select>
-//         </div>
-
-
-//         <div className="flex gap-ui-md">
-//           <label>
-//             Can draw when playable:
-//           </label>
-
-//           <input
-//             type="checkbox"
-//             checked={lobby.game_options.can_draw_when_playable}
-//             onChange={(e) =>
-//               setGameOptions(
-//                 "can_draw_when_playable",
-//                 e.target.checked
-//               )
-//             }
-//           />
-//         </div>
-
-
-//         <div className="flex gap-ui-md">
-//           <label>
-//             Max draw per turn:
-//           </label>
-
-//           <select
-//             value={lobby.game_options.max_draws_per_turn}
-//             onChange={(e) =>{
-//               const value = e.target.value;
-//               setGameOptions(
-//                 "max_draws_per_turn",
-//                 value === "infinite" ? "infinite" : Number(value)
-//               )
-//             }}
-//           >
-//             <option value={"infinite"}>Infinite</option>
-//             {Array.from(
-//               { length: 
-//                 limits.max_max_draws_per_turn - limits.min_max_draws_per_turn + 1
-//               }, 
-//               (_, i) => i+limits.min_max_draws_per_turn).map(count => (
-//                 <option key={count} value={count}>
-//                   {count}
-//                 </option>
-//               ))
-//             }
-//           </select>
-//         </div>
-
-
-//         <div className="flex gap-ui-md">
-//           <label>
-//             Allow wild card stacking:
-//           </label>
-
-//           <input
-//             type="checkbox"
-//             checked={lobby.game_options.allow_wild_card_stacking}
-//             onChange={(e) =>
-//               setGameOptions(
-//                 "allow_wild_card_stacking",
-//                 e.target.checked
-//               )
-//             }
-//           />
-//         </div>
-
-
-//         <div className="flex gap-ui-md">
-//           <label>
-//             Wild cards must match:
-//           </label>
-
-//           <input
-//             type="checkbox"
-//             checked={lobby.game_options.wild_cards_must_match}
-//             onChange={(e) =>
-//               setGameOptions(
-//                 "wild_cards_must_match",
-//                 e.target.checked
-//               )
-//             }
-//           />
-//         </div>
-
-
-//         <div className="flex gap-ui-md">
-//           <label>
-//             Turn timer:
-//           </label>
-
-//           <select
-//             value={lobby.game_options.turn_timer}
-//             onChange={(e) => {
-//               const value = e.target.value;
-
-//               setGameOptions(
-//                 "turn_timer",
-//                 value === "infinite" ? "infinite" : Number(value)
-//               );
-//             }}
-//           >
-//             <option value="infinite">Infinite</option>
-//             {limits.turn_timers.map(seconds => (
-//               <option key={seconds} value={seconds}>
-//                 {seconds} seconds
-//               </option>
-//             ))}
-//           </select>
-//         </div>
-//       </div>
-
-//       </div>
-
-//       <button 
-//       className="w-full"
-//       style={{background:"lime", color:"black"}}
-//       onClick={startGame}
-//       disabled={!startGameValidation()[0] || start_game_btn_loading}
-//       >
-//       {start_game_btn_loading ? <Loader.Spinner/> : "Start Game"}
-//       </button>
-
-//       {
-//       !startGameValidation()[0] &&
-//       <p>{startGameValidation()[1]}</p>
-//       }
-
-//       {
-//       Object.entries(lobby.players).some(([p_id, p_info]) => p_info.connection_status == "offline") &&
-//       <p style={{color:"orange"}}>
-//         Warning: some players appear to be offline. 
-//         You wont be able to kick them after starting the game
-//       </p>
-//       }
-//     </>) 
-
-
-
-
-//     : 
-//     // Non owner clients
-
-
-
-//     (<>
-//       <div className="card">
-//       <strong>Game settings:</strong>
-
-//       <div className="card gap-ui-xs">
-//         <strong>Game settings:</strong>
-
-//         {!lobby.game_options.use_advanced_options && (
-//           <>
-//             <strong>Card types:</strong>
-
-//             <div className="flex flex-col gap-1">
-//               {Object.entries(lobby.game_options.card_objects).map(
-//                 ([card_id, card_desc]) => {
-//                   const selected =
-//                     lobby.game_options.selected_card_objects.includes(card_id);
-
-//                   return (
-//                     <button
-//                       key={card_id}
-//                       className="flex"
-//                       style={{
-//                         border: `1px solid ${selected ? "lime" : "grey"}`,
-//                         color: selected ? "white" : "grey",
-//                       }}
-//                     >
-//                       {card_desc}
-//                     </button>
-//                   );
-//                 }
-//               )}
-//             </div>
-//           </>
-//         )}
-
-//         {lobby.game_options.use_advanced_options && (
-//           <>
-//             <strong>Base colors:</strong>
-
-//             <div className="flex flex-col gap-ui-xs card">
-//               {lobby.game_options.base_colors.map((color, i) => (
-//                 <div
-//                   key={i}
-//                   className="flex flex-row gap-ui-xs"
-//                 >
-//                   <div
-//                     style={{
-//                       width: "50px",
-//                       height: "50px",
-//                       backgroundColor: color,
-//                       border: "1px solid grey",
-//                     }}
-//                   />
-
-//                   <span>{color}</span>
-//                 </div>
-//               ))}
-//             </div>
-
-
-//             <strong>Card objects:</strong>
-
-//             <div className="flex flex-col gap-ui-xs card">
-//               {lobby.game_options.advanced_card_objects.map(
-//                 (card_obj, i) => (
-//                   <div
-//                     key={i}
-//                     className="flex flex-col gap-ui-xs card"
-//                   >
-//                     <div className="flex flex-row gap-ui-xs">
-//                       <strong>Type:</strong>
-
-//                       <span>
-//                         {
-//                           lobby.game_options
-//                             .allowed_advanced_card_objects[
-//                             card_obj.id
-//                           ]
-//                         }
-//                       </span>
-//                     </div>
-
-//                     <div className="flex flex-row gap-ui-xs">
-//                       <strong>Weight:</strong>
-//                       <span>{card_obj.weight}</span>
-//                     </div>
-
-//                     {card_obj.id === "norm_base_cards" && (
-//                       <div className="flex flex-col gap-1">
-//                         <strong>Numbers:</strong>
-
-//                         <span>
-//                           {String(card_obj.nums)}
-//                         </span>
-//                       </div>
-//                     )}
-//                   </div>
-//                 )
-//               )}
-//             </div>
-//           </>
-//         )}
-//       </div>
-
-
-//       <div className="card">
-//         <strong>Bots:</strong>
-//         {lobby.game_options.bots.map((bot_name, i) => (
-//         <div key={i}>{bot_name}</div>
-//         ))}
-//       </div>
-
-//       <div className="card">
-//         <strong>Other options:</strong>
-//         <li>Initial deck size: {lobby.game_options.init_deck_size}</li>
-//         <li>Can draw when playable: {lobby.game_options.can_draw_when_playable ? 'Yes' : 'No'}</li>
-//         <li>Max draw per turn: {lobby.game_options.max_draws_per_turn}</li>
-//         <li>Allow wild card stacking: {lobby.game_options.allow_wild_card_stacking ? 'Yes' : 'No'}</li>
-//         <li>Wild cards must match: {lobby.game_options.wild_cards_must_match ? 'Yes' : 'No'}</li>
-//         <li>Turn timer: {lobby.game_options.turn_timer} seconds</li>
-//       </div>
-
-//       </div>
-//     </>)
-//     }
-
-//     <div className="card">
-//       <strong>Chat:</strong>
-//       <div 
-//         className="card" 
-//         style={{height:"200px", overflowY:"scroll"}}
-//         ref={chat_container}
-//       >
-//       {lobby.chat.map(([source, msg], i) => (
-//         source === "server-log" 
-//           ? <p key={i} >{msg}</p>
-//           : <p key={i} style={{color:"white"}}>{msg}</p>
-//       ))}
-//       </div>
-      
-//       <div className="flex">
-//         <input 
-//           placeholder="Chat" 
-//           value={lobby_chat_input} 
-//           onChange={(e)=>{setLobbyChatInput(e.target.value)}}
-//           onKeyDown={(e) => {
-//             if (e.key === 'Enter' && lobby_chat_input.trim() != "" && !lobby_chat_sending){
-//               addLobbyMsg();
-//             }
-//           }}
-//         ></input>
-//         <button 
-//           onClick={addLobbyMsg} 
-//           disabled={lobby_chat_sending || lobby_chat_input.trim() == ""}
-//         >
-//           {lobby_chat_sending ? <Loader.Spinner/> : "Send"}
-//         </button>
-//       </div>
-//     </div>
-
-//   </div>
-//   );
-
-
 
   return (
     <ui.FullScreen className="flex">
@@ -1488,6 +720,9 @@ function Lobby() {
                 <h1 className="text-lg">Game options:</h1>
                 <ui.Frame.hr className="mb-ui-xs" />
 
+                {/* --- BASIC SETTINGS   --- */}
+                <>
+
                 {!lobby.game_options.use_advanced_options && 
                   <p className="text-lg m-ui-md">Selected Cards (Qick Play):</p>
                 }
@@ -1528,22 +763,27 @@ function Lobby() {
                   }
                 )}
                 </div>
+                </>
+                {/* --- END BASIC SETTINGS   --- */}
 
 
 
                 {/* -------- Advanced Card Objescts -------- */}
-
-                <div
-                  className="flex flex-col p-ui-xxs !gap-ui-xs"
-                >
-
-                {lobby.game_options.use_advanced_options && <>
+                {lobby.game_options.use_advanced_options &&
+                <div className="flex flex-col p-ui-xxs !gap-ui-xs">
+                  
                 
-
+                {/* OWNER OPTIONS */}
+                {session.player_id == lobby.owner && <>
                 <ui.Frame.SubBox className="gap-ui-xs !p-ui-sm 
                   flex flex-col">
+
                   <p className="text-lg">Base colors:</p>
                   <ui.Frame.hr />
+
+                  {lobby.game_options.base_colors.length == 0 &&
+                    <p className="px-ui-md">Empty!</p>
+                  }
 
                   <div className="grid grid-cols-2 gap-ui-xs
                     xl:grid-cols-3">
@@ -1617,6 +857,10 @@ function Lobby() {
 
                   <ui.Frame.hr />
 
+                  {lobby.game_options.advanced_card_objects.length == 0 &&
+                    <p className="px-ui-md">Empty!</p>
+                  }
+
                   <div className="flex flex-col gap-ui-xs">
 
                   {lobby.game_options.advanced_card_objects.map((card_obj, i) => (
@@ -1633,9 +877,13 @@ function Lobby() {
                             const new_objects = [
                               ...lobby.game_options.advanced_card_objects
                             ];
+                            const new_id = e.target.value;
                             new_objects[i] = {
                               ...new_objects[i],
-                              id: e.target.value,
+                              id: new_id,
+                              ...(new_id === "norm_base_cards" && {
+                                nums: Array.from({ length: 10 }, (_, i) => i + 1),
+                              }),
                             };
                             setGameOptions(
                               "advanced_card_objects",
@@ -1854,13 +1102,112 @@ function Lobby() {
 
                 </ui.Frame.SubBox>
 
-
                 </>}
+                {/* END OWNER OPTIONS */}
+
+
+                {/* NON-OWNER OPTIONS */}
+                {session.player_id !== lobby.owner && <>
+                <div className="flex flex-col p-ui-xxs !gap-ui-xs">
+
+                  {/* -------- Base Colors -------- */}
+                  <ui.Frame.SubBox className="gap-ui-xs !p-ui-sm flex flex-col">
+
+                    <p className="text-lg">Base colors:</p>
+                    <ui.Frame.hr />
+
+                    {lobby.game_options.base_colors.length == 0 &&
+                      <p className="px-ui-md">Empty!</p>
+                    }
+
+                    <div className="grid grid-cols-2 gap-ui-xs xl:grid-cols-3">
+                      {lobby.game_options.base_colors.map((color, i) => (
+                        <div
+                          key={i}
+                          className="
+                            lobby-basecolor-holder
+                            flex flex-row gap-ui-xs
+                            flex-1 justify-between
+                            items-center
+                          "
+                        >
+                          <div
+                            className="lobby-basecolor-input shrink-0"
+                            style={{ backgroundColor: color }}
+                          />
+
+                          <p className="truncate">{color}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </ui.Frame.SubBox>
+
+
+                  {/* -------- Card Objects -------- */}
+                  <ui.Frame.SubBox className="gap-ui-xs !p-ui-sm flex flex-col">
+
+                    <p className="text-lg">
+                      Card objects:
+                    </p>
+                    <ui.Frame.hr />
+
+                    {lobby.game_options.advanced_card_objects.length == 0 &&
+                      <p className="px-ui-md">Empty!</p>
+                    }
+
+                    <div className="flex flex-col gap-ui-xs">
+                      {lobby.game_options.advanced_card_objects.map((card_obj, i) => (
+                        <ui.Frame.SubBox
+                          key={i}
+                          className="flex flex-col gap-ui-xs"
+                        >
+                          <div className="flex flex-row gap-ui-md truncate">
+                            <label>Type:</label>
+                            <p>
+                              {
+                                lobby.game_options.allowed_advanced_card_objects[
+                                  card_obj.id
+                                ]?.[0] ?? card_obj.id
+                              }
+                            </p>
+                          </div>
+
+                          <div className="flex flex-row gap-ui-md truncate">
+                            <label>
+                              Weight:
+                            </label>
+
+                            <p>
+                              {card_obj.weight}
+                            </p>
+                          </div>
+
+
+                          {card_obj.id === "norm_base_cards" && (
+                            <div className="flex flex-row gap-ui-md truncate">
+                              <p>
+                                Numbers:
+                              </p>
+
+                              <p className="truncate">
+                                {String(card_obj.nums)}
+                              </p>
+                            </div>
+                          )}
+
+                        </ui.Frame.SubBox>
+                      ))}
+                    </div>
+                  </ui.Frame.SubBox>
 
                 </div>
 
+                </>}
 
+
+                </div>}
                 {/* -------- END Advanced Card Objescts -------- */}
+
 
 
                 <ui.Frame.hr className="mt-ui-xs" />
@@ -2120,7 +1467,7 @@ function Lobby() {
 
             </ui.Frame.Box>
             
-
+            <>
             {lobby.owner == session.player_id &&
             <div className="w-full flex flex-col pb-ui-lg
               md:hidden">
@@ -2156,6 +1503,8 @@ function Lobby() {
               Waiting for owner to start the game
             </p>
             }
+            </>
+            
             
 
           </div>

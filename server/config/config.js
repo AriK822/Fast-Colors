@@ -3,7 +3,7 @@ const config = {
         port:8080,
         expose_host: false, // localhost or 0.0.0.0
         debug:true,
-        test_delay:3000,
+        test_delay:0,
     },
 
     game:{
