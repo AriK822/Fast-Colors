@@ -2,6 +2,7 @@ import "./lobby_ui.css"
 import ui from "../shared/_ui"
 import { useState } from "react"
 import { useCountdown } from "../../utils/hooks/timer_hooks"
+import {motion} from "motion/react"
 
 
 function ChatMsg({msg, className, ...props}){
@@ -252,9 +253,9 @@ function CardDescriptionViewer({ title, description, onClose }) {
 
 export default {
     ChatMsg, 
-    PlayerLabel, 
+    PlayerLabel: motion(PlayerLabel), 
     Start:StartGameButton,
-    JoinLobbyInfo: FrameJoinLobbyInfo,
+    JoinLobbyInfo: motion(FrameJoinLobbyInfo),
     BasicCardObj,
     CardDescriptionViewer,
 }

@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import { AnimatePresence, easeIn, easeInOut } from "motion/react";
 
 import * as SocketAPI from "../api/socket_handler"
 import { useNotification } from "../utils/context/notification";
@@ -241,7 +242,10 @@ function Lobby() {
 
   useEffect(() => {
     if (chat_container.current) {
-      chat_container.current.scrollTop = chat_container.current.scrollHeight;
+      chat_container.current.scrollTo({
+        top: chat_container.current.scrollHeight,
+        behavior: "smooth"
+      });
     }
   }, [lobby?.chat]);
 
@@ -431,6 +435,8 @@ function Lobby() {
 
           <div className="flex flex-col 
           game-theme-scrollbar max-h-80">
+          
+          <AnimatePresence mode="popLayout">
           {Object.entries(lobby.players).map(([id, p_info]) => (
               <ui.Lobby.PlayerLabel 
                 key={id}
@@ -440,10 +446,20 @@ function Lobby() {
                 kickFunc={() => kickPlayer(id)}
                 kickContent={kick_player_loading == id ? <Loader.Spinner /> : "Kick"}
                 kickDisabled={kick_player_loading == id}
+
+                layout
+                initial={{opacity:0,scale:0.7,}}
+                animate={{opacity:1,scale:[0.85,1,0.97,1]}}
+                transition={{ease:easeInOut, duration:0.4}}
+                exit={{opacity:0,scale:0.5,}}
               />
           ))}
+          </AnimatePresence>
+
           <ui.Frame.hr className="my-ui-xxs" />
-          {lobby.game_options.bots.map((bot_name, i) => {
+
+          <AnimatePresence mode="popLayout">
+          {lobby.game_options.bots.map((bot_info, i) => {
             let botKick = false;
             if (lobby.owner == session.player_id){
               botKick = () => {
@@ -454,12 +470,19 @@ function Lobby() {
             }
             return (
               <ui.Lobby.PlayerLabel
-                key={i}
-                botName={bot_name}
+                key={bot_info.id}
+                botName={bot_info.name}
                 botKick={botKick}
+
+                layout
+                initial={{opacity:0,scale:0.7,}}
+                animate={{opacity:1,scale:[0.99, 0.98, 1]}}
+                exit={{opacity:0,scale:0.5,}}
               />
             )
           })}
+          </AnimatePresence>
+
           </div>
 
           {lobby.owner == session.player_id && <>
@@ -556,6 +579,8 @@ function Lobby() {
               insideBoxClassName="h-full game-theme-scrollbar 
               grid grid-cols-1 sm:grid-cols-2 gap-ui-sm"
             >
+
+            <AnimatePresence mode="popLayout">
             {Object.entries(lobby.players).map(([id, p_info]) => (
                 <ui.Lobby.PlayerLabel 
                   key={id}
@@ -565,10 +590,20 @@ function Lobby() {
                   kickFunc={() => kickPlayer(id)}
                   kickContent={kick_player_loading == id ? <Loader.Spinner /> : "Kick"}
                   kickDisabled={kick_player_loading == id}
+
+                  layout
+                  initial={{opacity:0,scale:0.7,}}
+                  animate={{opacity:1,scale:[0.85,1,0.97,1]}}
+                  transition={{ease:easeInOut, duration:0.4}}
+                  exit={{opacity:0,scale:0.5,}}
                 />
             ))}
+            </AnimatePresence>
+
             <ui.Frame.hr className="col-span-1 sm:col-span-2" />
-            {lobby.game_options.bots.map((bot_name, i) => {
+
+            <AnimatePresence mode="popLayout">
+            {lobby.game_options.bots.map((bot_info, i) => {
               let botKick = false;
               if (lobby.owner == session.player_id){
                 botKick = () => {
@@ -579,12 +614,20 @@ function Lobby() {
               }
               return (
                 <ui.Lobby.PlayerLabel
-                  key={i}
-                  botName={bot_name}
+                  key={bot_info.id}
+                  botName={bot_info.name}
                   botKick={botKick}
+
+                  layout
+                  initial={{opacity:0,scale:0.7,}}
+                  animate={{opacity:1,scale:[0.85,1,0.97,1]}}
+                  transition={{ease:easeInOut, duration:0.4}}
+                  exit={{opacity:0,scale:0.5,}}
                 />
               )
             })}
+            </AnimatePresence>
+
             </ui.Frame.Box>
 
             <ui.Frame.Box
@@ -638,7 +681,9 @@ function Lobby() {
                 <ui.Frame.hr className="mb-ui-xs" />
 
                 <div className="flex flex-col gap-ui-xxs">
-                {lobby.game_options.bots.map((bot_name, i) => {
+
+                <AnimatePresence mode="popLayout">
+                {lobby.game_options.bots.map((bot_info, i) => {
                   let botKick = false;
                   if (lobby.owner == session.player_id){
                     botKick = () => {
@@ -649,12 +694,20 @@ function Lobby() {
                   }
                   return (
                     <ui.Lobby.PlayerLabel
-                      key={i}
-                      botName={bot_name}
+                      key={bot_info.id}
+                      botName={bot_info.name}
                       botKick={botKick}
+
+                      layout
+                      initial={{opacity:0,scale:0.7,}}
+                      animate={{opacity:1,scale:[0.85,1,0.97,1]}}
+                      transition={{ease:easeInOut, duration:0.4}}
+                      exit={{opacity:0,scale:0.5,}}
                     />
                   )
                 })}
+                </AnimatePresence>
+
                 </div>
 
                 {lobby.game_options.bots.length == 0 &&
@@ -681,10 +734,10 @@ function Lobby() {
                         >= limits.max_total_game_players
                       )
                     ){
-                      const this_name = bot_name_input;
+                      const this_bot = {name:bot_name_input, id:crypto.randomUUID()};
                       setBotNameInput("");
                       const new_bot_names = [...lobby.game_options.bots];
-                      new_bot_names.push(this_name);
+                      new_bot_names.push(this_bot);
                       setGameOptions("bots", new_bot_names);
                     }
                   }}
@@ -693,10 +746,10 @@ function Lobby() {
                 <ui.Frame.ContrastBtn
                   className="shrink-0"
                   onClick={() => {
-                    const this_name = bot_name_input;
+                    const this_bot = {name:bot_name_input, id:crypto.randomUUID()};
                     setBotNameInput("");
                     const new_bot_names = [...lobby.game_options.bots];
-                    new_bot_names.push(this_name);
+                    new_bot_names.push(this_bot);
                     setGameOptions("bots", new_bot_names);
                   }}
                   disabled={

@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import { motion, AnimatePresence, LayoutGroup } from "motion/react"
 
 import * as SocketAPI from "../api/socket_handler"
 import { useApp, AppProvider } from "../utils/context/app_provider"
@@ -189,14 +190,39 @@ function JoinLobby() {
               game-theme-scrollbar h-full
             `}
           >
+            
+            <AnimatePresence  mode="popLayout">
             {lobbies && Object.entries(lobbies).map(([lobbyId, lobby]) => 
               <ui.Lobby.JoinLobbyInfo
                 key={lobbyId}
                 className={`w-full`}
                 onClick={() => joinLobbyFunc(lobbyId)}
                 lobby={lobby}
+
+                layout
+
+                initial={{
+                    opacity:0,
+                    scale:0.7,
+                }}
+                animate={{
+                    opacity:1,
+                    scale:1,
+                    y:[-5,5,-2,2,0]
+                }}
+                transition={{
+                    type:"spring",
+                    stiffness:400,
+                    damping:20
+                }}
+                exit={{
+                    opacity:0,
+                    scale:0.5,
+                }}
               />
             )}
+            </AnimatePresence>
+
             {lobbies && Object.entries(lobbies).length == 0 &&
               <div className="text-lg">
                 No lobbies found.

@@ -16,8 +16,8 @@ export function createGameFromLobby(lobby){
     Object.entries(lobby.players).forEach(([p_id, p_desc]) => {
         this_players.push({id:p_id, type:"player"})
     })
-    lobby.game_options.bots.forEach((bot_name) => {
-        this_players.push({id:randomUUID(), type:"bot", name:bot_name})
+    lobby.game_options.bots.forEach((bot_info) => {
+        this_players.push({id:randomUUID(), type:"bot", name:bot_info.name})
     })
 
     for (let i = this_players.length - 1; i > 0; i--) {
