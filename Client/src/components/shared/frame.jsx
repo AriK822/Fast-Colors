@@ -1,5 +1,6 @@
 import "./style/frame.css"
 import { Children, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { motion } from "motion/react";
 
 
 function FullScreen({ children, className = "", ...props }) {
@@ -546,7 +547,7 @@ function FrameSlider({
 
 Object.assign(Frame, {
     Box: FrameBox, 
-    SubBox: FrameSubBox,
+    SubBox: motion.create(FrameSubBox),
     hr,
     Avatar: FrameAvatar,
     Label: FrameLabel,

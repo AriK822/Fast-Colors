@@ -269,9 +269,9 @@ function CardDescriptionViewer({ title, description, onClose }) {
 
 export default {
     ChatMsg, 
-    PlayerLabel: motion(PlayerLabel), 
+    PlayerLabel: motion.create(PlayerLabel), 
     Start:StartGameButton,
-    JoinLobbyInfo: motion(FrameJoinLobbyInfo),
+    JoinLobbyInfo: motion.create(FrameJoinLobbyInfo),
     BasicCardObj,
     CardDescriptionViewer,
 }

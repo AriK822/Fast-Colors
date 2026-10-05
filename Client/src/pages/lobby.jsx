@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { AnimatePresence, easeIn, easeInOut } from "motion/react";
+import { motion, AnimatePresence, easeInOut, easeOut } from "motion/react";
 
 import * as SocketAPI from "../api/socket_handler"
 import { useNotification } from "../utils/context/notification";
@@ -34,6 +34,8 @@ function Lobby() {
   const [lobby_chat_sending, setLobbyChatSending] = useState(false);
   const [start_game_btn_loading, setStartGameBtnLoading] = useState(false);
   const [openNumsIndex, setOpenNumsIndex] = useState(null);
+  const baseColorIds = useRef([]);
+  const advCardObjIds = useRef([]);
 
 
   async function loadLobby(show_notifications=true) {
@@ -174,9 +176,9 @@ function Lobby() {
     }));
 
     const result = await SocketAPI.changeGameOptions(newGameOptions);
-    console.log(result);
     
     if (result.error){
+      console.log(result);
 
       showNotification({
         text: `Error changing settings: ${result.msg}. Syncing lobby...`,
@@ -826,7 +828,7 @@ function Lobby() {
                 )}
                 </div>
 
-                {session.player_id == lobby.owner &&
+                {session.player_id == lobby.owner && !lobby.game_options.use_advanced_options && 
                   lobby.game_options.selected_card_objects.length == 0 &&
                   <p className="text-theme-warning p-ui-xs">
                     Please select at least one card type
@@ -857,50 +859,67 @@ function Lobby() {
 
                   <div className="grid grid-cols-2 gap-ui-xs
                     xl:grid-cols-3">
-                  {lobby.game_options.base_colors.map((b_color, i) => (
-                    <div 
-                      className="lobby-basecolor-holder flex flex-row gap-ui-xs flex-1 justify-between" 
-                      key={i} 
-                    >
-                      <input
-                        className="lobby-basecolor-input shrink-0"
-                        type={"color"} 
-                        value={b_color} 
-                        disabled={session.player_id !== lobby.owner}
-                        onChange={(e) => {
-                          const new_colors = [...lobby.game_options.base_colors];
-                          new_colors[i] = e.target.value;
+                  <AnimatePresence  mode="popLayout">
+                  {lobby.game_options.base_colors.map((b_color, i) => {
+                    let thisId = null;
+                    if (baseColorIds.current.length != lobby.game_options.base_colors.length){
+                      thisId = crypto.randomUUID();
+                      baseColorIds.current.push(thisId);
+                    } 
+                    else {
+                      thisId = baseColorIds.current[i];
+                    }
+                    
+                    return (
+                      <motion.div 
+                        className="lobby-basecolor-holder flex flex-row gap-ui-xs flex-1 justify-between" 
+                        key={baseColorIds.current[i]}
 
-                          setLobby(prevLobby => ({
-                            ...prevLobby,
-                            game_options: {
-                              ...prevLobby.game_options,
-                              base_colors: new_colors,
-                            },
-                          }));
-                        }}
-                        onBlur={() => {
-                          setGameOptions("base_colors", lobby.game_options.base_colors);
-                        }}
-                      />
-                      {session.player_id == lobby.owner &&
-                      <button
-                        className="px-ui-sm !text-xs 
-                          lobby-remove-base-color"
-                        onClick={() => {
-                          const new_colors = [...lobby.game_options.base_colors];
-                          new_colors.splice(i, 1);
-                          setGameOptions("base_colors", new_colors);
-                        }}
+                        layout
+                        initial={{opacity:0,scale:0.7,}}
+                        animate={{opacity:1,scale:[0.85,1,0.97,1]}}
+                        transition={{ease:easeOut, duration:0.2}}
+                        exit={{opacity:0,scale:0.5,}}
                       >
-                        Remove
-                      </button>
-                      }
-                    </div>
-                  ))}
+                        <input
+                          className="lobby-basecolor-input shrink-0"
+                          type={"color"} 
+                          value={b_color} 
+                          disabled={session.player_id !== lobby.owner}
+                          onChange={(e) => {
+                            const new_colors = [...lobby.game_options.base_colors];
+                            new_colors[i] = e.target.value;
+
+                            setLobby(prevLobby => ({
+                              ...prevLobby,
+                              game_options: {
+                                ...prevLobby.game_options,
+                                base_colors: new_colors,
+                              },
+                            }));
+                          }}
+                          onBlur={() => {
+                            setGameOptions("base_colors", lobby.game_options.base_colors);
+                          }}
+                        />
+                        <button
+                          className="px-ui-sm !text-xs 
+                            lobby-remove-base-color"
+                          onClick={() => {
+                            baseColorIds.current.splice(i, 1)
+                            const new_colors = [...lobby.game_options.base_colors];
+                            new_colors.splice(i, 1);
+                            setGameOptions("base_colors", new_colors);
+                          }}
+                        >
+                          Remove
+                        </button>
+                      </motion.div>
+                    )
+                  })}
+                  </AnimatePresence>
                   </div>
 
-                  {session.player_id == lobby.owner &&
                   <div className="flex flex-col gap-ui-xs">
                   <ui.Frame.ContrastBtn 
                     onClick={() => {
@@ -922,8 +941,7 @@ function Lobby() {
                       Maximum number of advanced card objects reached!
                     </p>
                   }
-
-                  </div>}
+                  </div>
 
                 </ui.Frame.SubBox>
 
@@ -944,10 +962,27 @@ function Lobby() {
 
                   <div className="flex flex-col gap-ui-xs">
 
-                  {lobby.game_options.advanced_card_objects.map((card_obj, i) => (
+                  <AnimatePresence mode="popLayout">
+                  {lobby.game_options.advanced_card_objects.map((card_obj, i) => {
+                    let thisId = null;
+                    if (advCardObjIds.current.length != lobby.game_options.advanced_card_objects.length){
+                      thisId = crypto.randomUUID();
+                      advCardObjIds.current.push(thisId);
+                    }
+                    else{
+                      thisId = advCardObjIds.current[i];
+                    }
+
+                    return (
                     <ui.Frame.SubBox 
-                      key={i} 
+                      key={advCardObjIds.current[i]} 
                       className="flex flex-col gap-ui-xs"
+
+                      layout
+                      initial={{opacity:0,scale:0.7,}}
+                      animate={{opacity:1,scale:[0.85,1,0.97,1]}}
+                      transition={{ease:easeOut, duration:.4}}
+                      exit={{opacity:0,scale:0.5,}}
                     >
                       <div className="flex flex-row gap-ui-xs items-center">
                         <label>Type:</label>
@@ -1132,6 +1167,8 @@ function Lobby() {
                       <ui.Frame.ContrastBtn
                         className="!p-0"
                         onClick={() => {
+                          advCardObjIds.current.splice(i, 1);
+
                           const new_objects = [
                             ...lobby.game_options.advanced_card_objects
                           ];
@@ -1148,7 +1185,8 @@ function Lobby() {
                       </ui.Frame.ContrastBtn>
 
                     </ui.Frame.SubBox>
-                  ))}
+                  )})}
+                  </AnimatePresence>
 
                   <div className="flex">
                   <ui.Frame.ContrastBtn
@@ -1215,8 +1253,9 @@ function Lobby() {
                     }
 
                     <div className="grid grid-cols-2 gap-ui-xs xl:grid-cols-3">
+                      <AnimatePresence mode="popLayout">
                       {lobby.game_options.base_colors.map((color, i) => (
-                        <div
+                        <motion.div
                           key={i}
                           className="
                             lobby-basecolor-holder
@@ -1224,6 +1263,10 @@ function Lobby() {
                             flex-1 justify-between
                             items-center
                           "
+                          initial={{opacity:0,scale:0.7,}}
+                          animate={{opacity:1,scale:[0.85,1,0.97,1]}}
+                          transition={{ease:easeOut, duration:0.2}}
+                          exit={{opacity:0,scale:0.5,}}
                         >
                           <div
                             className="lobby-basecolor-input shrink-0"
@@ -1231,8 +1274,9 @@ function Lobby() {
                           />
 
                           <p className="truncate">{color}</p>
-                        </div>
+                        </motion.div>
                       ))}
+                      </AnimatePresence>
                     </div>
                   </ui.Frame.SubBox>
 
@@ -1250,10 +1294,17 @@ function Lobby() {
                     }
 
                     <div className="flex flex-col gap-ui-xs">
+                      <AnimatePresence mode="popLayout">
                       {lobby.game_options.advanced_card_objects.map((card_obj, i) => (
                         <ui.Frame.SubBox
                           key={i}
                           className="flex flex-col gap-ui-xs"
+
+                          layout
+                          initial={{opacity:0,scale:0.7,}}
+                          animate={{opacity:1,scale:[0.85,1,0.97,1]}}
+                          transition={{ease:easeOut, duration:.4}}
+                          exit={{opacity:0,scale:0.5,}}
                         >
                           <div className="flex flex-row gap-ui-md truncate">
                             <label>Type:</label>
@@ -1291,6 +1342,7 @@ function Lobby() {
 
                         </ui.Frame.SubBox>
                       ))}
+                      </AnimatePresence>
                     </div>
                   </ui.Frame.SubBox>
 

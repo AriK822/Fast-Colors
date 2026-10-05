@@ -1,5 +1,4 @@
 import { Routes, Route, Navigate } from "react-router-dom";
-
 import "./api/socket_init";
 
 // Pages
@@ -9,13 +8,12 @@ import JoinLobby from "./pages/join_lobby"
 import Game from "./pages/game"
 import Test from "./pages/test"
 
-// CSS
-import "./components/app.css";
-
 // Context
 import { AppProvider } from "./utils/context/app_provider"
 import { NotificationProvider } from "./utils/context/notification"
 
+// Style
+import "./components/app.css";
 import { SkeletonTheme } from "react-loading-skeleton";
 
 

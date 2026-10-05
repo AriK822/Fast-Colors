@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 
 import { useApp } from "../../utils/context/app_provider"
+import { AnimatePresence, easeIn, easeOut, motion } from "motion/react";
 import interactive from "./interactive"
-import frame from "./frame";
 
 import "./style/sidebar.css"
 import topLeftLeaves from "../../assets_staging/s4.1.png";
@@ -109,9 +109,17 @@ function SideBar({
                 Open
             </interactive.Button>
 
+            <AnimatePresence>
             {open && (
-                <frame.FullScreen className="z-100 flex bg-overlay md:hidden">
-                    <aside
+                <motion.div
+                    className="fixed inset-0 size-full bg-background text-text
+                        z-100 flex bg-overlay md:hidden"
+
+                    initial={{ opacity:0.7 }}
+                    animate={{ opacity:1 }}
+                    exit={{opacity:0 }}
+                >
+                    <motion.aside
                         className={`
                             relative flex flex-col
                             min-w-[70%] max-w-[70%] shrink-0
@@ -120,6 +128,15 @@ function SideBar({
                         `}
                         style={{...style, width  }}
                         {...props}
+
+                        initial={{ x: "-100%" }}
+                        animate={{ x: 0 }}
+                        exit={{ x: "-100%" }}
+                        transition={{
+                            type: "linear",
+                            duration: 0.2,
+                            ease: easeOut,
+                        }}
                     >
                         {children}
 
@@ -142,14 +159,15 @@ function SideBar({
                                 scale-80 drop-shadow-img-soft
                             "
                         />
-                    </aside>
+                    </motion.aside>
 
                     <div
                         className="h-full w-full"
                         onClick={() => setOpen(false)}
                     />
-                </frame.FullScreen>
+                </motion.div>
             )}
+            </AnimatePresence>
         </>
     );
 }

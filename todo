@@ -1,11 +1,23 @@
 <!-- refactor hard-coded values into a global game settings dict -->
 <!-- post effects -->
 <!-- refactor client UI -->
+<!-- home UI -->
+<!-- join lobby UI -->
+<!-- lobby UI -->
 
-make UI
+game UI
 add more cards
+add themes
+features: 
+    bot messages
+    chat filtering
+    logos and assets
+    rematch
+    game logs amd history (cards played, wins, etc)
 run tests and find bugs
 add docs
+release (a single .exe)
+make this public
 
 
 
