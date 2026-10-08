@@ -41,6 +41,7 @@ function Test(){
         <main
             className="
                 relative flex min-w-0 flex-1
+                flex-col
                 items-center justify-center
                 overflow-hidden
                 bg-cover bg-center
@@ -52,22 +53,41 @@ function Test(){
                 "--bg-desktop": `url(${bgLandscape})`,
             }}
         >
-                <ui.Frame
-                    header={"Available Lobbies:"}
-                    className={`
-                        flex flex-col w-[92%] h-[92%]
-                        lg:w-[80%] lg:h-[80%]
-                        items-center justify-center
-                        gap-ui-md game-theme-scrollbar
-                    `}
-                >
- 
-            
-                </ui.Frame>
+            <div
+                className="border bg-overlay
+                w-full flex-2 flex flex-row justify-center items-center"
+            ></div>
+            <div
+                className="border bg-overlay relative
+                w-full flex-12 flex flex-row justify-center items-center
+                gap-[10px]"
+            >
+                <div
+                    className="border bg-overlay
+                    w-[70px] aspect-9/16"
+                ></div>
+                <div
+                    className="border bg-overlay
+                    w-[120px] aspect-9/16"
+                ></div>
+                <div
+                    className="border bg-overlay
+                    w-[65px] aspect-1/1"
+                ></div>
+            </div>
+            <div
+                className="border bg-overlay
+                w-full flex-3 flex flex-row justify-center items-center"
+            >
+                <div
+                    className="border bg-overlay
+                    h-full w-[100%] lg:w-[60%]"
+                ></div>
+            </div>
 
-            </main>
+        </main>
 
-        </ui.FullScreen>
+    </ui.FullScreen>
     )
 }
 

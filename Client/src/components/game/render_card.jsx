@@ -21,24 +21,32 @@ function card({
     rednered_text,
     base_color,
     overlay_image,
+    className="",
+    style,
 
     width=150,
     grayscale=false,
     onclikc_callback = null,
     onclick_enabled = false,
+
+    ...props
 }){
     return (
         <div 
-            className="render-cards--card pointer"
+            className={`render-cards--card pointer ${className}`}
             style={{
                 background: base_color,
                 width,
-                height: width * (1280/720),
+                aspectRatio: "9/16",
+                // height: width * (1280/720),
                 filter: grayscale ? "grayscale(60%)" : "",
-                border: !grayscale ? "5px solid lime" : "",
+                border: !grayscale ? "0px solid lime" : "",
                 // transform: grayscale ? "translateY(10px)" : "",
+                ...style
             }}
             onClick={() => {if(onclick_enabled){onclikc_callback()}}}
+
+            {...props}
         >
             {overlay_image &&
             <img src={ovrelayMap[overlay_image]} alt="card-image" />

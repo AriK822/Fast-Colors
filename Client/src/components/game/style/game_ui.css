@@ -1,0 +1,15 @@
+.game-player-strip-label{
+    background: color-mix(in srgb,
+        var(--theme-surface-bottom) 90%,
+        transparent
+    );
+    border-radius: var(--radius-ui-max);
+    border: 2px solid var(--theme-accent);
+    box-shadow: 
+        inset 3px 3px 3px #00000069,
+        3px 3px 3px #00000069,
+        inset -2px -2px 0px var(--theme-highlight-strong),
+        -2px 2px 0px var(--theme-highlight);
+    transform: scale(calc(100% - var(--i) * 10%));
+    opacity: calc(100% - var(--i) * 10%);
+}

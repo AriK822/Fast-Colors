@@ -129,7 +129,7 @@ export function deleteGame(game){
     game.state = Engine.GameStateModes.ENDED;
     if (GAMES[game.id]){
         game.players.forEach(p_info => {
-            if (Player_To_Game[p_info.id] === game.id)
+            if (Player_To_Game[p_info.id]?.id === game.id)
                 delete Player_To_Game[p_info.id];
         })
         delete GAMES[game.id];
