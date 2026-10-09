@@ -1,4 +1,5 @@
 import "./style/card.css"
+import { motion } from "motion/react"
 
 import defaultOverlay from "../../assets_staging/dafault_overlay.png"
 import wildPlus2Colored from "../../assets_staging/wild_plus2_colored.png"
@@ -33,14 +34,15 @@ function card({
 }){
     return (
         <div 
-            className={`render-cards--card pointer ${className}`}
+            className={`render-cards--card pointer
+                ${onclick_enabled && "render-cards--clickable"} 
+                ${className}`}
             style={{
                 background: base_color,
                 width,
                 aspectRatio: "9/16",
                 // height: width * (1280/720),
                 filter: grayscale ? "grayscale(60%)" : "",
-                border: !grayscale ? "0px solid lime" : "",
                 // transform: grayscale ? "translateY(10px)" : "",
                 ...style
             }}
@@ -63,5 +65,5 @@ function card({
 }
 
 
-export default card
+export default motion.create(card)
 

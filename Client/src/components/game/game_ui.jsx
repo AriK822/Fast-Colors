@@ -1,9 +1,9 @@
 import "./style/game_ui.css"
 import RednerCard from "./render_card"
-import { motion } from "motion/react"
+import { motion, scale } from "motion/react"
 
 
-function PlayerStripLabel({player, className, distance, ...props}){
+function PlayerStripLabel({player, className, ...props}){
     let status = "";
     let status_color = null;
 
@@ -13,11 +13,10 @@ function PlayerStripLabel({player, className, distance, ...props}){
     else if (player.connection_status=="offline"){status = "Online"; status_color="--theme-offline-text"}
     
     return (
-        <div
+        <motion.div
             className={`game-player-strip-label 
                 p-ui-xs ui-text truncate px-ui-md
                 relative overflow-visible ${className}`}
-            style={{"--i":Math.abs(distance)}}
             {...props}
         >
             <h1 className="text-md truncate">{player.name}</h1>
@@ -38,19 +37,25 @@ function PlayerStripLabel({player, className, distance, ...props}){
                     <RednerCard 
                         key={i}
                         className="shrink-0 !absolute -translate-x-1/4"
-                        style={{left:`${
-                            (i+1) / (player.card_count + 2) * 100
-                        }%`}}
+                        style={{
+                            left:`${
+                                (i+1) / (player.card_count + 2) * 100
+                            }%`,
+                            border:`1px solid #ffffff5b`,
+                            }}
                         width="25px"
-                        overlay_image={"card_back_side.png"} 
+                        overlay_image={"card_back_side.png"}
+
+                        initial={{opacity:0,scale:0.7,y:-20}}
+                        animate={{opacity:1,scale:1,y:0}}
                     />
                 ))}
             </div>
-        </div>
+        </motion.div>
     )
 }
 
 
 export default {
-    PlayerStripLabel: motion.create(PlayerStripLabel),
+    PlayerStripLabel: PlayerStripLabel,
 }

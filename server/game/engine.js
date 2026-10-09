@@ -24,7 +24,7 @@ export function makeNewGame({
     turn_timer=20, // seconds
     effects_data={},
     chat=["Game started"],
-    history={played_cards:[]},
+    history={played_cards:[], total_placed_cards:0,},
     state=GameStateModes.INITIALIZING,
     winner=null, // {id:..., name:...}
 }){
@@ -203,7 +203,11 @@ export function place_card(game, card, choice_data=null){
 
 
 export function updateHistoryCard(game, card_object){
-    game.history.played_cards.push(card_object);
+    game.history.total_placed_cards += 1;
+    game.history.played_cards.push([
+        card_object,
+        game.history.total_placed_cards,
+    ]);
     if (game.history.played_cards.length > config.game.max_history_cards)
         game.history.played_cards.splice(0, 1);
 }

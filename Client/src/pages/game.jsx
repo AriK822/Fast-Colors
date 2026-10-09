@@ -15,7 +15,7 @@ import UiIdMapper from "../components/game/ui_choices/map_ui_id"
 import bgLandscape from "../assets_staging/bg1.png"
 import bgMobile from "../assets_staging/bg2.png"
 import paintTexture from "../assets_staging/t1.jpg"
-import { AnimatePresence } from "motion/react";
+import { AnimatePresence, scale } from "motion/react";
 
 
 
@@ -37,19 +37,23 @@ function PlayersStrip({game, sideLength=1}){
 
         layout
         initial={{opacity:0,scale:0.7,}}
-        animate={{opacity:1,scale:[0.99, 0.98, 1]}}
+        animate={{
+          opacity:1 - Math.abs(i)*0.1,
+          scale:1 - Math.abs(i)*0.1,
+        }}
         exit={{opacity:0,scale:0.5,}}
       />
     )
   }
   return(
-  <div className="flex justify-center gap-ui-sm">
+  <div className="flex justify-center gap-ui-sm relative">
     <AnimatePresence mode="popLayout">
       {labels}
     </AnimatePresence>
   </div>
   )
 }
+
 
 
 function Game(){
@@ -65,6 +69,7 @@ function Game(){
   const [leave_game_loading, setLeaveGameLoading] = useState(false);
   const [choiceComponent, setChoiceComponent] = useState(null);
   const [remainingPercent, setRemainingPercent] = useState(100);
+  const handCardIds = useRef([]);
 
 
 
@@ -182,10 +187,12 @@ function Game(){
     const result = await SocketAPI.playCard(card_index, choice);
 
     if (result.error)
-    showNotification({
-        text: result.msg,
-        type: result.error ? "error" : "success",
-    });
+      showNotification({
+          text: result.msg,
+          type: result.error ? "error" : "success",
+      });
+    else
+      handCardIds.current.splice(card_index, 1)
   }
 
   async function skipMove() {
@@ -218,34 +225,34 @@ function Game(){
   }
 
 
-  useEffect(() => {
-    if (!game){return}
-      if (game.turn_timer === "infinite") {
-          setRemainingPercent(100);
-          return;
-      }
+  // useEffect(() => {
+  //   if (!game){return}
+  //     if (game.turn_timer === "infinite") {
+  //         setRemainingPercent(100);
+  //         return;
+  //     }
 
-      const totalTime = game.turn_timer * 1000;
+  //     const totalTime = game.turn_timer * 1000;
 
-      function updateTimer() {
-          const elapsedTime = Date.now() - game.last_move_time;
+  //     function updateTimer() {
+  //         const elapsedTime = Date.now() - game.last_move_time;
 
-          const remainingTime = Math.max(
-              0,
-              totalTime - elapsedTime
-          );
+  //         const remainingTime = Math.max(
+  //             0,
+  //             totalTime - elapsedTime
+  //         );
 
-          const percent = (remainingTime / totalTime) * 100;
+  //         const percent = (remainingTime / totalTime) * 100;
 
-          setRemainingPercent(percent);
-      }
+  //         setRemainingPercent(percent);
+  //     }
 
-      updateTimer();
+  //     updateTimer();
 
-      const interval = setInterval(updateTimer, 50);
+  //     const interval = setInterval(updateTimer, 50);
 
-      return () => clearInterval(interval);
-  }, [game?.last_move_time, game?.turn_timer]);
+  //     return () => clearInterval(interval);
+  // }, [game?.last_move_time, game?.turn_timer]);
 
 
   Object.assign(ui, {Game: game_ui})
@@ -435,6 +442,9 @@ function Game(){
   // )
 
   const thisPlayer = game.players.find((p) => p.id === session.player_id);
+  const thisTurn = game.turn == game.players.indexOf(thisPlayer);
+
+  console.log("Rerendering.")
 
   return (
   <ui.FullScreen className="flex">
@@ -492,45 +502,85 @@ function Game(){
       }}
     >
       <div
-        className="border bg-overlay
-        w-full flex-2 flex flex-row justify-center items-center gap-ui-sm
+        className="w-full flex-2 flex 
+        flex-row justify-center items-center gap-ui-sm
         overflow-visible"
       >
         <PlayersStrip game={game} />
       </div>
 
       <div
-        className="border bg-overlay relative
+        className="relative
         w-full flex-12 flex flex-row justify-center items-center
         gap-[10px]"
       >
 
         <div
-          className="border bg-overlay
-          w-[70px] aspect-9/16 relative"
+          className="w-[70px] aspect-9/16 relative 
+            mx-ui-md cursor-pointer"
           onClick={takeCard}
         >
           <RenderCard
             width="100%"
-            overlay_image={"card_back_side.png"} 
+            className="!absolute"
+            overlay_image={"card_back_side.png"}
+            animate={{rotate:6, x:3, y:2}}
+          />
+          <RenderCard
+            width="100%"
+            className="!absolute"
+            overlay_image={"card_back_side.png"}
+            animate={{rotate:-4, x:-5, y:5}}
+          />
+          <RenderCard
+            width="100%"
+            overlay_image={"card_back_side.png"}
           />
         </div>
 
         <div
-          className="border bg-overlay
-          w-[120px] aspect-9/16"
+          className="w-[120px] aspect-9/16 relative mx-ui-md"
         >
+          <AnimatePresence mode="popLayout">
+
+          {game.history.played_cards.map(([card, c_id], i) => (
+            <RenderCard 
+              key={c_id}
+              className="!absolute"
+              width="100%"
+              base_color={card.base_color} 
+              overlay_image={card.overlay_image} 
+              rednered_text={card.rednered_text}
+
+              initial={{ opacity: 0, scale: 0.85, y: 15 }}
+              animate={{
+                  opacity: 1,
+                  scale: 1,
+                  rotate: ((i - 2) * 4) % 10,
+                  y: (-(i + 2) * 4) % 10,
+                  x: (-(i) * 4) % 10,
+              }}
+              exit={{ opacity: 0, scale: 0.85 }}
+              transition={{ duration: 0.3, ease: "easeOut" }}
+            />
+          ))}
           <RenderCard
+            key={game.history.total_placed_cards+1}
             width={"100%"}
             base_color={game.current_card.base_color} 
             overlay_image={game.current_card.overlay_image} 
             rednered_text={game.current_card.rednered_text} 
+
+            layout
+            initial={{opacity:0.8, scale:0.8}}
+            animate={{opacity:1, scale:1}}
           />
+          
+          </AnimatePresence>
         </div>
 
         <div
-          className="border bg-overlay
-          w-[65px] aspect-1/1"
+          className="w-[65px] aspect-1/1 mx-ui-sm"
         >
           <ui.Frame.Btn 
             className="w-full h-full cursor-pointer !rounded-[100%]"
@@ -542,32 +592,50 @@ function Game(){
 
       </div>
       <div
-        className="border bg-overlay
-        w-full flex-3 flex flex-row justify-center items-center"
+        className="flex-3 flex justify-center
+          w-full lg:w-[80%]"
       >
         <div
-          className="border bg-overlay
-          h-full w-[100%] lg:w-[60%]
-          flex flex-row justify-center items-center"
+          className="h-full overflow-y-auto scrollbar-none
+            flex flex-row items-center px-[100px]"
+          onWheel={(e) => {
+              const el = e.currentTarget;
+              el.scrollBy({
+                  left: e.deltaY,
+                  behavior: "smooth"
+              });
+          }}
         >
-          {thisPlayer.deck.map((card, i) => (
-            <RenderCard 
-              key={i}
-              className=""
+          <AnimatePresence mode="popLayout">
+            {thisPlayer.deck.map((card, i) => {
+              if (handCardIds.current.length < thisPlayer.deck.length)
+                handCardIds.current.push(crypto.randomUUID())
+              
+              return(
+                <RenderCard 
+                  key={handCardIds.current[i]}
+                  className="shrink-0"
+                  base_color={card.base_color} 
+                  overlay_image={card.overlay_image} 
+                  rednered_text={card.rednered_text} 
+                  width={80}
+                  grayscale={card.allowed_to_play ? false : true}
+                  onclick_enabled={thisTurn && card.allowed_to_play}
+                  onclikc_callback={() => {
+                    card.choice?.ui_id 
+                      ? openChoiceUI(card.choice.ui_id, i)
+                      : playCard(i)
+                  }}
 
-              base_color={card.base_color} 
-              overlay_image={card.overlay_image} 
-              rednered_text={card.rednered_text} 
-              width={80}
-              grayscale={card.allowed_to_play ? false : true}
-              onclick_enabled={true}
-              onclikc_callback={() => {
-                card.choice?.ui_id 
-                  ? openChoiceUI(card.choice.ui_id, i)
-                  : playCard(i)
-              }}
-            />
-          ))}
+                  layout
+                  initial={{scale:0.7, opacity:0.7, y:20}}
+                  animate={{opacity:1, y:0,scale: 1,}}
+                  exit={{scale:0.7, opacity:0.7, y:20}}
+                  transition={{type:"linear"}}
+                />
+              )
+            })}
+          </AnimatePresence>
         </div>
       </div>
 
