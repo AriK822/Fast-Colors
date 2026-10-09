@@ -215,6 +215,14 @@ function Game(){
     });
   }
 
+  function generateId() {
+    if (crypto.randomUUID) {
+      return crypto.randomUUID();
+    }
+
+    return `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+  }
+
   function openChoiceUI(choice_ui_id, card_index){
     const ChoiceComponent = UiIdMapper[choice_ui_id];
     const onSelect = (choice_data) => {
@@ -609,7 +617,7 @@ function Game(){
           <AnimatePresence mode="popLayout">
             {thisPlayer.deck.map((card, i) => {
               if (handCardIds.current.length < thisPlayer.deck.length)
-                handCardIds.current.push(crypto.randomUUID())
+                handCardIds.current.push(generateId())
               
               return(
                 <RenderCard 

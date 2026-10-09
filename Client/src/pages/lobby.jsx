@@ -277,6 +277,15 @@ function Lobby() {
   })
 
 
+  function generateId() {
+    if (crypto.randomUUID) {
+      return crypto.randomUUID();
+    }
+
+    return `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+  }
+
+
   Object.assign(ui, {Lobby:lobby_ui})
   
   
@@ -736,7 +745,7 @@ function Lobby() {
                         >= limits.max_total_game_players
                       )
                     ){
-                      const this_bot = {name:bot_name_input, id:crypto.randomUUID()};
+                      const this_bot = {name:bot_name_input, id:generateId()};
                       setBotNameInput("");
                       const new_bot_names = [...lobby.game_options.bots];
                       new_bot_names.push(this_bot);
@@ -748,7 +757,7 @@ function Lobby() {
                 <ui.Frame.ContrastBtn
                   className="shrink-0"
                   onClick={() => {
-                    const this_bot = {name:bot_name_input, id:crypto.randomUUID()};
+                    const this_bot = {name:bot_name_input, id:generateId()};
                     setBotNameInput("");
                     const new_bot_names = [...lobby.game_options.bots];
                     new_bot_names.push(this_bot);
@@ -863,7 +872,7 @@ function Lobby() {
                   {lobby.game_options.base_colors.map((b_color, i) => {
                     let thisId = null;
                     if (baseColorIds.current.length != lobby.game_options.base_colors.length){
-                      thisId = crypto.randomUUID();
+                      thisId = generateId();
                       baseColorIds.current.push(thisId);
                     } 
                     else {
@@ -966,7 +975,7 @@ function Lobby() {
                   {lobby.game_options.advanced_card_objects.map((card_obj, i) => {
                     let thisId = null;
                     if (advCardObjIds.current.length != lobby.game_options.advanced_card_objects.length){
-                      thisId = crypto.randomUUID();
+                      thisId = generateId();
                       advCardObjIds.current.push(thisId);
                     }
                     else{
