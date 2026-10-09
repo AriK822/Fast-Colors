@@ -19,7 +19,7 @@ import paintTexture from "../assets_staging/t1.jpg"
 
 
 
-function PlayersStrip({game, sideLength=1}){
+function PlayersStrip({game, sideLength=2}){
   const labels = []
   for (let i=-sideLength; i<=sideLength; i++){
     const thisPlayer = game.players[
@@ -33,7 +33,8 @@ function PlayersStrip({game, sideLength=1}){
         player={thisPlayer}
         distance={i}
         className="
-        w-[150px] lg:w-[250px] xl:w-[350px] shrink-0"
+          w-[150px] lg:w-[250px] xl:w-[350px] shrink-0"
+        thisTurn={i==0}
 
         layout
         initial={{opacity:0,scale:0.7,}}
@@ -51,6 +52,128 @@ function PlayersStrip({game, sideLength=1}){
       {labels}
     </AnimatePresence>
   </div>
+  )
+}
+
+
+function PlayersCircle({game, thisPlayer}){
+  const thisIdx = game.players.indexOf(thisPlayer);
+  const playersLen = game.players.length;
+
+  if (game.players.length == 2)
+    return (<>
+      <ui.Game.PlayerStripLabel
+        player={game.players[(thisIdx+1)%playersLen]}
+        thisTurn={(thisIdx+1)%playersLen == game.turn}
+        className="w-[150px] lg:w-[250px] shrink-0
+          !absolute left-[50%] top-[7%] -translate-x-1/2"
+      />
+    </>)
+  if (game.players.length == 3)
+    return (<>
+      <ui.Game.PlayerStripLabel
+        player={game.players[(thisIdx+1)%playersLen]}
+        thisTurn={(thisIdx+1)%playersLen == game.turn}
+        className="w-[150px] lg:w-[250px] shrink-0
+          !absolute left-[5%] top-[12%]"
+      />
+      <ui.Game.PlayerStripLabel
+        player={game.players[(thisIdx+2)%playersLen]}
+        thisTurn={(thisIdx+2)%playersLen == game.turn}
+        className="w-[150px] lg:w-[250px] shrink-0
+          !absolute right-[5%] top-[12%]"
+      />
+    </>)
+  if (game.players.length == 4)
+    return (<>
+      <ui.Game.PlayerStripLabel
+        player={game.players[(thisIdx+1)%playersLen]}
+        thisTurn={(thisIdx+1)%playersLen == game.turn}
+        className="w-[150px] lg:w-[250px] shrink-0
+          !absolute left-[5%] top-[15%]"
+      />
+      <ui.Game.PlayerStripLabel
+        player={game.players[(thisIdx+2)%playersLen]}
+        thisTurn={(thisIdx+2)%playersLen == game.turn}
+        className="w-[150px] lg:w-[250px] shrink-0
+          !absolute left-[50%] top-[7%] -translate-x-1/2"
+      />
+      <ui.Game.PlayerStripLabel
+        player={game.players[(thisIdx+3)%playersLen]}
+        thisTurn={(thisIdx+3)%playersLen == game.turn}
+        className="w-[150px] lg:w-[250px] shrink-0
+          !absolute right-[5%] top-[15%]"
+      />
+    </>)
+  if (game.players.length == 5)
+    return (<>
+      <ui.Game.PlayerStripLabel
+        player={game.players[(thisIdx+1)%playersLen]}
+        thisTurn={(thisIdx+1)%playersLen == game.turn}
+        className="w-[150px] lg:w-[250px] shrink-0
+          !absolute left-[5%] top-[22%]"
+      />
+      <ui.Game.PlayerStripLabel
+        player={game.players[(thisIdx+2)%playersLen]}
+        thisTurn={(thisIdx+2)%playersLen == game.turn}
+        className="w-[150px] lg:w-[250px] shrink-0
+          !absolute left-[33%] top-[7%] -translate-x-1/2"
+      />
+      <ui.Game.PlayerStripLabel
+        player={game.players[(thisIdx+3)%playersLen]}
+        thisTurn={(thisIdx+3)%playersLen == game.turn}
+        className="w-[150px] lg:w-[250px] shrink-0
+          !absolute left-[66%] top-[7%] -translate-x-1/2"
+      />
+      <ui.Game.PlayerStripLabel
+        player={game.players[(thisIdx+4)%playersLen]}
+        thisTurn={(thisIdx+4)%playersLen == game.turn}
+        className="w-[150px] lg:w-[250px] shrink-0
+          !absolute right-[5%] top-[22%]"
+      />
+    </>)
+  if (game.players.length == 6)
+    return (<>
+      <ui.Game.PlayerStripLabel
+        player={game.players[(thisIdx+1)%playersLen]}
+        thisTurn={(thisIdx+1)%playersLen == game.turn}
+        className="w-[150px] lg:w-[250px] shrink-0
+          !absolute left-[5%] top-[66%]"
+      />
+      <ui.Game.PlayerStripLabel
+        player={game.players[(thisIdx+2)%playersLen]}
+        thisTurn={(thisIdx+2)%playersLen == game.turn}
+        className="w-[150px] lg:w-[250px] shrink-0
+          !absolute left-[8%] top-[24%]"
+      />
+      <ui.Game.PlayerStripLabel
+        player={game.players[(thisIdx+3)%playersLen]}
+        thisTurn={(thisIdx+3)%playersLen == game.turn}
+        className="w-[150px] lg:w-[250px] shrink-0
+          !absolute left-[50%] top-[7%] -translate-x-1/2"
+      />
+      <ui.Game.PlayerStripLabel
+        player={game.players[(thisIdx+4)%playersLen]}
+        thisTurn={(thisIdx+4)%playersLen == game.turn}
+        className="w-[150px] lg:w-[250px] shrink-0
+          !absolute right-[8%] top-[24%]"
+      />
+      <ui.Game.PlayerStripLabel
+        player={game.players[(thisIdx+5)%playersLen]}
+        thisTurn={(thisIdx+5)%playersLen == game.turn}
+        className="w-[150px] lg:w-[250px] shrink-0
+          !absolute right-[5%] top-[66%]"
+      />
+    </>)
+}
+
+
+function GameDirectionIndicator({game}){
+  return (
+    <div className="direction">
+      <div className="arc arc-one"></div>
+      <div className="arc arc-two"></div>
+    </div>
   )
 }
 
@@ -260,7 +383,6 @@ function Game(){
 
     if (timerRef.current) {
       timerRef.current.style.animation = "none";
-      // Force the browser to apply the reset
       void timerRef.current.offsetWidth;
       timerRef.current.style.animation = "";
     }
@@ -275,6 +397,14 @@ function Game(){
       `${(remaining / duration) * 100}%`
     );
   }, [game?.last_move_time, game?.turn_timer]);
+
+
+  useEffect(() => {
+    document.documentElement.style.setProperty(
+      "--game-direction",
+      game?.direction
+    );
+  }, [game?.direction]);
 
 
   Object.assign(ui, {Game: game_ui})
@@ -464,6 +594,7 @@ function Game(){
   // )
 
   const thisPlayer = game.players.find((p) => p.id === session.player_id);
+  const thisIdx = game.players.indexOf(thisPlayer);
   const thisTurn = game.turn == game.players.indexOf(thisPlayer);
 
   console.log("Rerendering.")
@@ -556,13 +687,15 @@ function Game(){
 
       {choiceComponent}
 
+      {game.players.length > 6 &&
       <div
         className="w-full flex-2 flex 
         flex-row justify-center items-center gap-ui-sm
         overflow-visible"
       >
-        <PlayersStrip game={game} />
+          <PlayersStrip game={game} />
       </div>
+      }
 
       <div
         className="relative
@@ -570,9 +703,30 @@ function Game(){
         gap-[10px]"
       >
 
+        <GameDirectionIndicator game={game} />
+
+        {game.players.length <= 6 &&
+          <PlayersCircle game={game} thisPlayer={thisPlayer} />
+        }
+
+        <AnimatePresence>
+          {thisTurn &&
+          <ui.Game.PlayerStripLabel
+            player={game.players[thisIdx]}
+            thisTurn={true}
+            className="w-[150px] lg:w-[250px] shrink-0
+              !absolute right-[5%] bottom-[7%]"
+
+            initial={{x:200}}
+            animate={{x:0}}
+            exit={{x:200}}
+          />
+          }
+        </AnimatePresence>
+
         <div
           className="w-[70px] aspect-9/16 relative 
-            mx-ui-md cursor-pointer"
+            mx-ui-md cursor-pointer !z-1"
           onClick={takeCard}
         >
           <RenderCard
@@ -594,7 +748,7 @@ function Game(){
         </div>
 
         <div
-          className="w-[120px] aspect-9/16 relative mx-ui-md"
+          className="w-[120px] aspect-9/16 relative mx-ui-md !z-2"
         >
           <AnimatePresence mode="popLayout">
 
@@ -606,6 +760,7 @@ function Game(){
               base_color={card.base_color} 
               overlay_image={card.overlay_image} 
               rednered_text={card.rednered_text}
+              style={{zIndex:i}}
 
               initial={{ opacity: 0, scale: 0.85, y: 15 }}
               animate={{
@@ -617,6 +772,8 @@ function Game(){
               }}
               exit={{ opacity: 0, scale: 0.85 }}
               transition={{ duration: 0.3, ease: "easeOut" }}
+            drag
+            dragSnapToOrigin
             />
           ))}
           <RenderCard
@@ -625,7 +782,10 @@ function Game(){
             base_color={game.current_card.base_color} 
             overlay_image={game.current_card.overlay_image} 
             rednered_text={game.current_card.rednered_text} 
+            style={{zIndex:game.history.total_placed_cards}}
 
+            drag
+            dragSnapToOrigin
             layout
             initial={{opacity:0.8, scale:0.8}}
             animate={{opacity:1, scale:1}}
@@ -635,7 +795,7 @@ function Game(){
         </div>
 
         <div
-          className="w-[65px] aspect-1/1 mx-ui-sm"
+          className="w-[65px] aspect-1/1 mx-ui-sm !z-1"
         >
           <ui.Frame.Btn 
             className="w-full h-full cursor-pointer !rounded-[100%]"
@@ -660,8 +820,8 @@ function Game(){
                 Cards to take: &nbsp; {game.cards_to_take}
               </motion.div>
             }
-            {game.max_draws_per_turn > 1 &&
-              game.cards_taken_in_this_turn > 1 &&
+            {game.max_draws_per_turn > 0 &&
+              game.cards_taken_in_this_turn > 0 &&
               <motion.div
                 className="game-side-pannel-info"
 

@@ -1,0 +1,24 @@
+
+.circle-edge-spinner {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.circle-edge-spinner-circle {
+  display: block;
+  width: 1em;
+  height: 1em;
+  box-sizing: border-box;
+  border: 0.12em solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: circle-edge-spin 0.7s linear infinite;
+}
+
+@keyframes circle-edge-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

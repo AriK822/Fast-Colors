@@ -86,7 +86,7 @@
     --transition-duration-hover: 120ms ease;
 
     --game-base-color: white;
-    --mf: #d04040;
+    --game-direction: 0;
 }
 
 

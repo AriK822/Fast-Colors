@@ -21,6 +21,7 @@
     background: linear-gradient(
         90deg,
         rgba(253, 253, 253, 0.4),
+        /* color-mix(in srgb, var(--game-base-color) 70%, transparent), */
         transparent
     );
     border-radius: var(--radius-ui-lg);
@@ -31,6 +32,7 @@
     background: linear-gradient(
         270deg,
         rgba(253, 253, 253, 0.4),
+        /* color-mix(in srgb, var(--game-base-color) 70%, transparent), */
         transparent
     );
     border-radius: var(--radius-ui-lg);
@@ -44,11 +46,11 @@
         transparent,
         rgba(255, 255, 255, 0.124)
     );
-    backdrop-filter: blur(1px);
+    /* backdrop-filter: blur(1px); */
     /* border: 1px solid white; */
     border-radius: var(--radius-ui-lg);
     box-shadow: 
-        inset 0px -5px 3px var(--game-base-color);
+        inset 0px -7px 0px var(--game-base-color);
 }
 
 
@@ -88,4 +90,34 @@
     border-radius: var(--radius-ui-md);
     margin-left: var(--spacing-ui-xs);
     padding: var(--spacing-ui-xxs);
+}
+
+
+.direction {
+  position: absolute;
+  width: 300px;
+  height: 300px;
+  aspect-ratio: 1;
+  animation: rotate 6s linear infinite;
+}
+
+.arc {
+  position: absolute;
+  inset: 8px;
+  border: 2px solid transparent;
+  border-radius: 50%;
+}
+
+.arc-one {
+  border-top-color: #ffffff55;
+}
+
+.arc-two {
+  border-bottom-color: #ffffff55;
+}
+
+@keyframes rotate {
+  to {
+    transform: rotate(calc(var(--game-direction) * 360deg));
+  }
 }

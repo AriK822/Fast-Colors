@@ -1,9 +1,10 @@
 import "./style/game_ui.css"
 import RednerCard from "./render_card"
-import { motion, scale } from "motion/react"
+import { motion } from "motion/react"
+import Loaders from "../loaders/_loaders";
 
 
-function PlayerStripLabel({player, className, ...props}){
+function PlayerStripLabel({player, className, thisTurn=false, ...props}){
     let status = "";
     let status_color = null;
 
@@ -16,14 +17,19 @@ function PlayerStripLabel({player, className, ...props}){
         <motion.div
             className={`game-player-strip-label 
                 p-ui-xs ui-text truncate px-ui-md
+                flex flex-row justify-between
                 relative overflow-visible ${className}`}
             {...props}
         >
+            <div className="flex flex-col">
             <h1 className="text-md truncate">{player.name}</h1>
             <p
                 className="text-xs truncate"
                 style={{color:`var(${status_color})`}}
             >{status}</p>
+            </div>
+
+            {thisTurn && <Loaders.CircleSpinner />}
 
             <div
                 className="absolute
