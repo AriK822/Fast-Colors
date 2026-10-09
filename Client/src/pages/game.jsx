@@ -234,7 +234,13 @@ function Game(){
       playCard(card_index, choice_data);
       setChoiceComponent(null);
     };
-    setChoiceComponent(<ChoiceComponent game={game} onSelect={onSelect} />)
+    setChoiceComponent(
+    <ChoiceComponent 
+      game={game} 
+      onSelect={onSelect} 
+      onClose={() => setChoiceComponent(null)}
+      />
+    )
   }
 
   useEffect(() => {
@@ -517,6 +523,9 @@ function Game(){
         "--bg-desktop": `url(${bgLandscape})`,
       }}
     >
+
+      {choiceComponent}
+
       <div
         className="w-full flex-2 flex 
         flex-row justify-center items-center gap-ui-sm
@@ -600,7 +609,8 @@ function Game(){
         >
           <ui.Frame.Btn 
             className="w-full h-full cursor-pointer !rounded-[100%]"
-            onClick={skipMove}
+            // onClick={skipMove}
+            onClick={() => openChoiceUI("pick_player", 0)}
           >
             Skip
           </ui.Frame.Btn>
@@ -644,12 +654,14 @@ function Game(){
 
       </div>
 
-      <div className="game-timer-track">
-        <div
-          ref={timerRef}
-          className="game-timer-fill"
-        />
-      </div>
+      {game.turn_timer !== "infinite" &&
+        <div className="game-timer-track">
+          <div
+            ref={timerRef}
+            className="game-timer-fill"
+          />
+        </div>
+      }
 
       <div className="flex-3 min-w-0 w-full flex justify-center 
             main-game-hand-holder">

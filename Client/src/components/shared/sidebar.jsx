@@ -101,7 +101,7 @@ function SideBar({
 
             <interactive.Button
                 className={`
-                    fixed top-3 left-3 z-10 md:hidden
+                    fixed top-3 left-3 z-1000 md:hidden
                     ${open ? "hidden" : ""}
                 `}
                 onClick={() => setOpen(true)}
