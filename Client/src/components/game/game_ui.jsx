@@ -4,7 +4,8 @@ import { motion } from "motion/react"
 import Loaders from "../loaders/_loaders";
 
 
-function PlayerStripLabel({player, className, thisTurn=false, ...props}){
+function PlayerStripLabel({player, className, 
+    thisTurn=false, hoverEffect=false, ...props}){
     let status = "";
     let status_color = null;
 
@@ -15,7 +16,8 @@ function PlayerStripLabel({player, className, thisTurn=false, ...props}){
     
     return (
         <motion.div
-            className={`game-player-strip-label 
+            className={`game-player-strip-label
+                ${hoverEffect && "game-player-strip-label-hover"}
                 p-ui-xs ui-text truncate px-ui-md
                 flex flex-row justify-between
                 relative overflow-visible ${className}`}

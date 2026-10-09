@@ -12,6 +12,14 @@
         -2px 2px 0px var(--theme-highlight);
     transform: scale(calc(100% - var(--i) * 10%));
     opacity: calc(100% - var(--i) * 10%);
+    transition: var(--transition-duration-hover);
+}
+
+.game-player-strip-label-hover:hover{
+    background: color-mix(in srgb,
+        var(--theme-surface-bottom) 80%,
+        var(--theme-accent)
+    );
 }
 
 

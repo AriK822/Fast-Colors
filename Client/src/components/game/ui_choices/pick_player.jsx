@@ -11,14 +11,15 @@ export default function({game, onSelect, onClose}){
 
             <frame.Frame.Box
                 className="w-[80%] max-w-[600px]"
-                insideBoxClassName="grid grid-cols-2 gap-[25px]"
-                header="Pick A Color:"
+                insideBoxClassName="grid grid-cols-2 gap-[35px]"
+                header="Pick A Player:"
                 onClick={(e) => e.stopPropagation()}
             >
                 {game.players.map((player, player_index) => (
                     !player.deck &&
                     <game_ui.PlayerStripLabel
                         player={player}
+                        hoverEffect={true}
                         onClick={() => onSelect({player_index})}
                         className={"cursor-pointer"}
                     />

@@ -141,6 +141,7 @@ export function take_new_card(game){
             game.players[game.turn].deck.push(generate_random_card(game.card_objects));
         }
         game.turn = (game.turn + game.direction) % game.players.length;
+        game.turn = (game.turn + game.players.length) % game.players.length;
         game.cards_taken_in_this_turn = 0;
         game.cards_to_take = 0;
         return [true, "Took new cards successfully."];
@@ -171,6 +172,7 @@ export function skip_turn(game){
 
     game.cards_taken_in_this_turn = 0;
     game.turn = (game.turn + game.direction) % game.players.length;
+    game.turn = (game.turn + game.players.length) % game.players.length;
 
     return [true, "Skipped successfully"];
 }
@@ -183,6 +185,7 @@ export function timeout_move(game){
         }
         game.cards_taken_in_this_turn = 0;
         game.turn = (game.turn + game.direction) % game.players.length;
+        game.turn = (game.turn + game.players.length) % game.players.length;
         return true;
     }
     else{
@@ -324,6 +327,7 @@ export function setGameNextCycleTimeout(game, services){
     delete GAME_CYCLE_TIMEOUTS[game.id];
 
     const this_player = game.players[game.turn];
+    try{
     if (this_player.type == "bot" || this_player.game_status == "left"){
         const this_timeout = setTimeout(() => {
             mainGameCycle(game, GameCycleReasonMode.BOT_PLAY, {}, services);
@@ -337,6 +341,10 @@ export function setGameNextCycleTimeout(game, services){
             }, game.turn_timer * 1000);
             GAME_CYCLE_TIMEOUTS[game.id] = this_timeout;
         }
+    }
+    }
+    catch{
+        console.log(game)
     }
 }
 

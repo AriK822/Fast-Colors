@@ -13,6 +13,7 @@ export const CARD_ID_TO_GENERATE_FUNC = {
     "wild_choose_base_color": makeWildChooseColor,
     "wild_skip_next_player": makeWildSkipNextPlayer,
     "wild_block_selected_player": makeWildBlockSelectedPlayer,
+    "wild_rotate_colored": makeWildRotateColored,
 }
 
 export const REGISTERED_CARDS = {
@@ -22,6 +23,7 @@ export const REGISTERED_CARDS = {
     "wild_choose_base_color": makeWildChooseColor(),
     "wild_skip_next_player": makeWildSkipNextPlayer(),
     "wild_block_selected_player": makeWildBlockSelectedPlayer(),
+    "wild_rotate_colored": makeWildRotateColored(),
 }
 
 
@@ -46,6 +48,10 @@ export const card_objects_with_desc = {
         "Player Blocker",
         "Wild card, Select a player to block them in their next turn"
     ],
+    "wild_rotate_colored" :[
+        "Rotate Game Direction",
+        "Inverts the current game direction to the opposite direction."
+    ]
 };
 
 export const extended_advanced_card_objects_with_desc = {
@@ -131,6 +137,7 @@ export function effectSkipBlockedTurns(game){
     if ((game.effects_data.skip_blocked_players[game.turn] ?? 0) > 0){
         game.effects_data.skip_blocked_players[game.turn] -= 1;
         game.turn = (game.turn + game.direction) % game.players.length;
+        game.turn = (game.turn + game.players.length) % game.players.length;
         game.cards_taken_in_this_turn = 0;
         return true;
     }
@@ -169,6 +176,7 @@ export function makeNormalCards(
             const place_func = (game) => {
                 game.base_color = this_base_color;
                 game.turn = (game.turn + game.direction) % game.players.length;
+                game.turn = (game.turn + game.players.length) % game.players.length;
             }
 
             const this_card = MakeCard({
@@ -213,6 +221,7 @@ export function makeWildDraw2Colored(
         const place_func = (game) => {
             game.base_color = card_base_color;
             game.turn = (game.turn + game.direction) % game.players.length;
+            game.turn = (game.turn + game.players.length) % game.players.length;
             game.cards_to_take += 2;
         }
 
@@ -252,6 +261,7 @@ export function makeWildChooseColor(
         
         game.base_color = choice.base_color;
         game.turn = (game.turn + game.direction) % game.players.length;
+        game.turn = (game.turn + game.players.length) % game.players.length;
     }
 
     const choice = {
@@ -289,6 +299,7 @@ export function makeWildSkipNextPlayer(
         
         game.base_color = choice.base_color;
         game.turn = (game.turn + game.direction*2) % game.players.length;
+        game.turn = (game.turn + game.players.length) % game.players.length;
     }
 
     const choice = {
@@ -332,6 +343,7 @@ export function makeWildBlockSelectedPlayer(
         game.effects_data.skip_blocked_players[choice.player_index] += 1;
         
         game.turn = (game.turn + game.direction*2) % game.players.length;
+        game.turn = (game.turn + game.players.length) % game.players.length;
     }
 
     const choice = {
@@ -358,6 +370,49 @@ export function makeWildBlockSelectedPlayer(
 
     return [{card:this_card, weight}];
 }
+
+
+export function makeWildRotateColored(
+    base_colors = config.cards.default_base_colors,
+    weight = 4,
+){
+    const result = [];
+
+    base_colors.forEach(card_base_color => {
+
+        const allowed_to_play_func = (game) => {
+            if (game.cards_to_take > 0) return false;
+            if (game.base_color == card_base_color) return true;
+            return false;
+        }
+
+        const place_func = (game) => {
+            game.base_color = card_base_color;
+            game.direction = game.direction * -1;
+            game.turn = (game.turn + game.direction) % game.players.length;
+            game.turn = (game.turn + game.players.length) % game.players.length;
+        }
+
+        const this_card = MakeCard({
+            id:`${CardType.wild}-${card_base_color}-rotate-colored`,
+            type:CardType.wild,
+            rednered_text:null,
+            base_color:card_base_color,
+            overlay_image:"wild_rotate_colored.png",
+            allowed_to_play_func: allowed_to_play_func,
+            place_func: place_func,
+            choice:null,
+        })
+
+        result.push({
+            card: this_card,
+            weight,
+        })
+    })
+
+    return result;
+}
+
 
 // To DO:
 // Wild: +2, +4
