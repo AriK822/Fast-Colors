@@ -467,6 +467,7 @@ function Game(){
   const thisTurn = game.turn == game.players.indexOf(thisPlayer);
 
   console.log("Rerendering.")
+  console.log(handCardIds)
 
   return (
   <ui.FullScreen className="flex">
@@ -523,6 +524,35 @@ function Game(){
         "--bg-desktop": `url(${bgLandscape})`,
       }}
     >
+
+      {game.winner &&
+        <ui.FullScreen 
+          className="!absolute z-99 !bg-overlay
+            ui-text flex justify-center items-center">
+          <ui.Frame.SubBox
+            className="!p-ui-lg flex flex-col gap-ui-md"
+          >
+            <p className="text-3xl">
+              {game.winner?.name} WON!
+            </p>
+            <p>
+              Game ended!<br/>
+              This game will be automatically deleted after a short time.
+            </p>
+            <ui.Frame.ContrastBtn>
+              View Game info
+            </ui.Frame.ContrastBtn>
+            <ui.Frame.ContrastBtn
+              onClick={leaveGame}
+            >
+              {leave_game_loading
+              ? <Loader.Spinner />
+              : "Leave Game"
+              }
+            </ui.Frame.ContrastBtn>
+          </ui.Frame.SubBox>
+        </ui.FullScreen>
+      }
 
       {choiceComponent}
 
@@ -609,8 +639,7 @@ function Game(){
         >
           <ui.Frame.Btn 
             className="w-full h-full cursor-pointer !rounded-[100%]"
-            // onClick={skipMove}
-            onClick={() => openChoiceUI("pick_player", 0)}
+            onClick={skipMove}
           >
             Skip
           </ui.Frame.Btn>
@@ -738,12 +767,14 @@ function Game(){
                         }px`,
                         zIndex:i,
                       }}
+                      rainbow={thisTurn && card.type == "wild" && card.allowed_to_play}
 
-                      layout
-                      initial={{scale:0.7, opacity:0.7, y:20}}
-                      animate={{opacity:1, y:0,scale: 1,}}
+                      // layout
+                      initial={{scale:0.7 ,opacity:0.7, y:20}}
+                      animate={{opacity:1, y:card.allowed_to_play?0:3, scale: 1,}}
                       exit={{scale:0.7, opacity:0.7, y:20}}
-                      transition={{type:"linear"}}
+                      whileHover={{y:card.allowed_to_play ? -5 : 3}}
+                      transition={{ duration: 0.3, ease: "easeOut" }}
                     />
                   )
                 })}

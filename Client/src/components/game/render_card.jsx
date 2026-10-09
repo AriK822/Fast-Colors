@@ -29,12 +29,14 @@ function card({
     grayscale=false,
     onclikc_callback = null,
     onclick_enabled = false,
+    rainbow = false,
 
     ...props
 }){
     return (
         <div 
             className={`render-cards--card pointer
+                ${rainbow && "render-cards--rainbow"}
                 ${onclick_enabled && "render-cards--clickable"} 
                 ${className}`}
             style={{

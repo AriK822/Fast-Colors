@@ -11,7 +11,7 @@ export default function({game, onSelect, onClose}){
 
             <frame.Frame.Box
                 className="w-[80%] max-w-[600px]"
-                insideBoxClassName="grid grid-cols-2"
+                insideBoxClassName="grid grid-cols-2 gap-[25px]"
                 header="Pick A Color:"
                 onClick={(e) => e.stopPropagation()}
             >

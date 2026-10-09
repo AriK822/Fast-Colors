@@ -33,7 +33,7 @@
 .render-cards--clickable:hover{
     box-shadow: 
         5px 5px 5px rgba(0, 0, 0, 0.316);
-    transform: translateY(-5px);
+    /* transform: translateY(-5px); */
 }
 
 .render-cards--card img {
@@ -66,3 +66,50 @@
          1px  1px 0 #000;
 }
 
+
+.render-cards--rainbow {
+    isolation: isolate;
+    overflow: hidden;
+}
+
+.render-cards--rainbow::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    padding: 2px;
+    border-radius: inherit;
+
+    background: conic-gradient(
+        from var(--rainbow-angle, 0deg),
+        red,
+        magenta,
+        blue,
+        cyan,
+        lime,
+        yellow,
+        red
+    );
+
+    -webkit-mask:
+        linear-gradient(#fff 0 0) content-box,
+        linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+
+    pointer-events: none;
+    z-index: 2;
+
+    animation: rainbow-border-rotate 3s linear infinite;
+}
+
+@property --rainbow-angle {
+    syntax: "<angle>";
+    initial-value: 0deg;
+    inherits: false;
+}
+
+@keyframes rainbow-border-rotate {
+    to {
+        --rainbow-angle: 360deg;
+    }
+}
