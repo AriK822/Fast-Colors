@@ -13,3 +13,79 @@
     transform: scale(calc(100% - var(--i) * 10%));
     opacity: calc(100% - var(--i) * 10%);
 }
+
+
+.game-hand-left-gradiant{
+    z-index: 100;
+    width: 25px;
+    background: linear-gradient(
+        90deg,
+        rgba(253, 253, 253, 0.4),
+        transparent
+    );
+    border-radius: var(--radius-ui-lg);
+}
+.game-hand-right-gradiant{
+    z-index: 100;
+    width: 25px;
+    background: linear-gradient(
+        270deg,
+        rgba(253, 253, 253, 0.4),
+        transparent
+    );
+    border-radius: var(--radius-ui-lg);
+}
+
+
+.main-game-hand-holder{
+    background: linear-gradient(
+        0deg,
+        rgba(255, 255, 255, 0.144),
+        transparent,
+        rgba(255, 255, 255, 0.124)
+    );
+    backdrop-filter: blur(1px);
+    /* border: 1px solid white; */
+    border-radius: var(--radius-ui-lg);
+    box-shadow: 
+        inset 0px -5px 3px var(--game-base-color);
+}
+
+
+.game-timer-track {
+  width: 100%;
+  min-height: 5px;
+  overflow: hidden;
+  background: #0000004c;
+  border-radius: 100%;
+}
+
+.game-timer-fill {
+  width: var(--timer-progress, 100%);
+  height: 5px;
+  background: lime;
+  transform-origin: left;
+  animation: timer-countdown var(--timer-duration, 0ms) linear forwards;
+}
+
+@keyframes timer-countdown {
+  from {
+    width: var(--timer-progress, 100%);
+    background-color: lime;
+  }
+
+  to {
+    width: 0%;
+    background-color: red;
+  }
+}
+
+
+.game-side-pannel-info{
+    background: var(--theme-surface-bottom);
+    border: 2px solid var(--theme-accent-deep);
+
+    border-radius: var(--radius-ui-md);
+    margin-left: var(--spacing-ui-xs);
+    padding: var(--spacing-ui-xxs);
+}

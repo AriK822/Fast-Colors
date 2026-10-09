@@ -5,6 +5,7 @@ import * as SocketAPI from "../api/socket_handler"
 import { useNotification } from "../utils/context/notification";
 import { useApp } from "../utils/context/app_provider"
 
+import { motion, AnimatePresence } from "motion/react";
 import ui from "../components/shared/_ui"
 import game_ui from "../components/game/game_ui"
 import RenderCard from "../components/game/render_card"
@@ -15,7 +16,6 @@ import UiIdMapper from "../components/game/ui_choices/map_ui_id"
 import bgLandscape from "../assets_staging/bg1.png"
 import bgMobile from "../assets_staging/bg2.png"
 import paintTexture from "../assets_staging/t1.jpg"
-import { AnimatePresence, scale } from "motion/react";
 
 
 
@@ -70,6 +70,11 @@ function Game(){
   const [choiceComponent, setChoiceComponent] = useState(null);
   const [remainingPercent, setRemainingPercent] = useState(100);
   const handCardIds = useRef([]);
+  const holdTimer = useRef(null);
+  const isScrolling = useRef(false);
+  const startX = useRef(0);
+  const startScrollLeft = useRef(0);
+  const timerRef = useRef(null);
 
 
 
@@ -232,35 +237,38 @@ function Game(){
     setChoiceComponent(<ChoiceComponent game={game} onSelect={onSelect} />)
   }
 
+  useEffect(() => {
+    document.documentElement.style.setProperty(
+      "--game-base-color",
+      game?.base_color
+    );
+  }, [game?.base_color]);
 
-  // useEffect(() => {
-  //   if (!game){return}
-  //     if (game.turn_timer === "infinite") {
-  //         setRemainingPercent(100);
-  //         return;
-  //     }
 
-  //     const totalTime = game.turn_timer * 1000;
+  useEffect(() => {
+    if (!game || game.turn_timer === "infinite") return;
 
-  //     function updateTimer() {
-  //         const elapsedTime = Date.now() - game.last_move_time;
+    const duration = game.turn_timer * 1000;
+    const elapsed = Date.now() - game.last_move_time;
+    const remaining = Math.max(0, duration - elapsed);
 
-  //         const remainingTime = Math.max(
-  //             0,
-  //             totalTime - elapsedTime
-  //         );
+    if (timerRef.current) {
+      timerRef.current.style.animation = "none";
+      // Force the browser to apply the reset
+      void timerRef.current.offsetWidth;
+      timerRef.current.style.animation = "";
+    }
 
-  //         const percent = (remainingTime / totalTime) * 100;
+    timerRef.current?.style.setProperty(
+      "--timer-duration",
+      `${remaining}ms`
+    );
 
-  //         setRemainingPercent(percent);
-  //     }
-
-  //     updateTimer();
-
-  //     const interval = setInterval(updateTimer, 50);
-
-  //     return () => clearInterval(interval);
-  // }, [game?.last_move_time, game?.turn_timer]);
+    timerRef.current?.style.setProperty(
+      "--timer-progress",
+      `${(remaining / duration) * 100}%`
+    );
+  }, [game?.last_move_time, game?.turn_timer]);
 
 
   Object.assign(ui, {Game: game_ui})
@@ -551,7 +559,7 @@ function Game(){
         >
           <AnimatePresence mode="popLayout">
 
-          {game.history.played_cards.map(([card, c_id], i) => (
+          {game.history.played_cards.slice(0, -1).map(([card, c_id], i) => (
             <RenderCard 
               key={c_id}
               className="!absolute"
@@ -573,7 +581,7 @@ function Game(){
             />
           ))}
           <RenderCard
-            key={game.history.total_placed_cards+1}
+            key={game.history.total_placed_cards}
             width={"100%"}
             base_color={game.current_card.base_color} 
             overlay_image={game.current_card.overlay_image} 
@@ -598,52 +606,138 @@ function Game(){
           </ui.Frame.Btn>
         </div>
 
+        <div className="absolute left-0 bottom-[10px]
+          flex flex-col gap-ui-xs ui-text">
+            <AnimatePresence>
+            {game.cards_to_take > 1 &&
+              <motion.div
+                className="game-side-pannel-info !px-ui-sm"
+
+                initial={{x:-100}}
+                animate={{x:0}}
+                exit={{x:-100}}
+              >
+                <p style={{color:"#d04040"}}>Danger!</p>
+                Cards to take: &nbsp; {game.cards_to_take}
+              </motion.div>
+            }
+            {game.max_draws_per_turn > 1 &&
+              game.cards_taken_in_this_turn > 1 &&
+              <motion.div
+                className="game-side-pannel-info"
+
+                initial={{x:-200}}
+                animate={{x:0}}
+                exit={{x:-200}}
+              >
+                Cards taken: &nbsp;
+                <span  style={{color:
+                  game.cards_taken_in_this_turn == game.max_draws_per_turn
+                  ? "#d04040" : ""}}>
+                  {game.cards_taken_in_this_turn}/
+                  {game.max_draws_per_turn}
+                </span>
+              </motion.div>
+            }
+            </AnimatePresence>
+        </div>
+
       </div>
-      <div
-        className="flex-3 flex justify-center
-          w-full lg:w-[80%]"
-      >
+
+      <div className="game-timer-track">
         <div
-          className="h-full overflow-y-auto scrollbar-none
-            flex flex-row items-center px-[100px]"
-          onWheel={(e) => {
+          ref={timerRef}
+          className="game-timer-fill"
+        />
+      </div>
+
+      <div className="flex-3 min-w-0 w-full flex justify-center 
+            main-game-hand-holder">
+        <div className="relative w-full min-w-0 ">
+
+          <div className="absolute left-0 top-0 bottom-0 z-99 pointer-events-none">
+            <div className="game-hand-left-gradiant h-full" />
+          </div>
+          <div className="absolute right-0 top-0 bottom-0 z-99 pointer-events-none">
+            <div className="game-hand-right-gradiant h-full" />
+          </div>
+
+          <div
+            className="h-full overflow-x-scroll scrollbar-none"
+            onWheel={(e) => {
               const el = e.currentTarget;
               el.scrollBy({
-                  left: e.deltaY,
-                  behavior: "smooth"
+                left: e.deltaY,
+                behavior: "smooth"
               });
-          }}
-        >
-          <AnimatePresence mode="popLayout">
-            {thisPlayer.deck.map((card, i) => {
-              if (handCardIds.current.length < thisPlayer.deck.length)
-                handCardIds.current.push(generateId())
-              
-              return(
-                <RenderCard 
-                  key={handCardIds.current[i]}
-                  className="shrink-0"
-                  base_color={card.base_color} 
-                  overlay_image={card.overlay_image} 
-                  rednered_text={card.rednered_text} 
-                  width={80}
-                  grayscale={card.allowed_to_play ? false : true}
-                  onclick_enabled={thisTurn && card.allowed_to_play}
-                  onclikc_callback={() => {
-                    card.choice?.ui_id 
-                      ? openChoiceUI(card.choice.ui_id, i)
-                      : playCard(i)
-                  }}
+            }}
 
-                  layout
-                  initial={{scale:0.7, opacity:0.7, y:20}}
-                  animate={{opacity:1, y:0,scale: 1,}}
-                  exit={{scale:0.7, opacity:0.7, y:20}}
-                  transition={{type:"linear"}}
-                />
-              )
-            })}
-          </AnimatePresence>
+            onPointerDown={(e) => {
+              const el = e.currentTarget;
+
+              startX.current = e.clientX;
+              startScrollLeft.current = el.scrollLeft;
+              isScrolling.current = false;
+
+              holdTimer.current = setTimeout(() => {
+                isScrolling.current = true;
+                el.setPointerCapture(e.pointerId);
+              }, 100);
+            }}
+            onPointerMove={(e) => {
+              if (!isScrolling.current) return;
+
+              e.currentTarget.scrollLeft =
+                startScrollLeft.current - (e.clientX - startX.current);
+            }}
+            onPointerUp={() => {
+              clearTimeout(holdTimer.current);
+              isScrolling.current = false;
+            }}
+            onPointerCancel={() => {
+              clearTimeout(holdTimer.current);
+              isScrolling.current = false;
+            }}
+          >
+            <div className="flex h-full w-max min-w-full flex-row justify-center items-center px-[100px]">
+              <AnimatePresence mode="popLayout">
+                {thisPlayer.deck.map((card, i) => {
+                  if (handCardIds.current.length < thisPlayer.deck.length)
+                    handCardIds.current.push(generateId())
+                  
+                  return(
+                    <RenderCard 
+                      key={handCardIds.current[i]}
+                      className="shrink-0"
+                      base_color={card.base_color} 
+                      overlay_image={card.overlay_image} 
+                      rednered_text={card.rednered_text} 
+                      width={80}
+                      grayscale={card.allowed_to_play ? false : true}
+                      onclick_enabled={thisTurn && card.allowed_to_play}
+                      onclikc_callback={() => {
+                        card.choice?.ui_id 
+                          ? openChoiceUI(card.choice.ui_id, i)
+                          : playCard(i)
+                      }}
+                      style={{
+                        marginLeft:`-${
+                          Math.min(25, thisPlayer.deck.length*3)
+                        }px`,
+                        zIndex:i,
+                      }}
+
+                      layout
+                      initial={{scale:0.7, opacity:0.7, y:20}}
+                      animate={{opacity:1, y:0,scale: 1,}}
+                      exit={{scale:0.7, opacity:0.7, y:20}}
+                      transition={{type:"linear"}}
+                    />
+                  )
+                })}
+              </AnimatePresence>
+            </div>
+          </div>
         </div>
       </div>
 
