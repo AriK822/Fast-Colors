@@ -18,6 +18,8 @@ import bgMobile from "../assets_staging/bg2.png"
 import paintTexture from "../assets_staging/t1.jpg"
 
 
+Object.assign(ui, {Game: game_ui})
+
 
 function PlayersStrip({game, sideLength=2}){
   const labels = []
@@ -26,25 +28,48 @@ function PlayersStrip({game, sideLength=2}){
       ((game.turn + game.direction * i) % game.players.length
       + game.players.length) % game.players.length
     ];
-
+  
     labels.push(
-      <ui.Game.PlayerStripLabel
+      <motion.div
         key={thisPlayer.id}
-        player={thisPlayer}
-        distance={i}
+        layout="position"
         className="
-          w-[150px] lg:w-[250px] xl:w-[350px] shrink-0"
-        thisTurn={i==0}
-
-        layout
-        initial={{opacity:0,scale:0.7,}}
-        animate={{
-          opacity:1 - Math.abs(i)*0.1,
-          scale:1 - Math.abs(i)*0.1,
+          w-[150px] lg:w-[250px] xl:w-[350px]
+          shrink-0
+        "
+        transition={{
+          layout: {
+            duration: 0.3,
+            ease: "easeOut",
+          },
         }}
-        exit={{opacity:0,scale:0.5,}}
-      />
-    )
+      >
+        <ui.Game.PlayerStripLabel
+          player={thisPlayer}
+          distance={i}
+          className="w-full"
+          thisTurn={i === 0}
+          initial={{
+            opacity: 0,
+            scale: 0.7,
+          }}
+          animate={{
+            opacity: 1 - Math.abs(i) * 0.1,
+            scale: 1 - Math.abs(i) * 0.1,
+          }}
+          exit={{
+            opacity: 0,
+            scale: 0.5,
+          }}
+          transition={{
+            duration: 0.3,
+            ease: "easeOut",
+          }}
+        />
+      </motion.div>
+    );
+
+
   }
   return(
   <div className="flex justify-center gap-ui-sm relative">
@@ -229,7 +254,35 @@ function Game(){
   }
 
   useEffect(() => {
-      loadGame();
+    loadGame();
+
+    SocketAPI.listenForSyncGame((data) => {
+      console.log(data)
+      setGame(data);
+    })
+
+    SocketAPI.listenForSyncGameProperty((data) => {
+      console.log(data)
+      setGame(prevGame => ({
+        ...prevGame,
+        [data.property]: data.value,
+      }));
+    })
+
+    SocketAPI.listenForGameEndedKick(() => {
+      showNotification({
+          text: "Game ended. Redirecting to Home page...",
+          type: "success",
+      });
+
+      setSession({
+        ...session,
+        active_position: null,
+      });
+
+      navigate("/");
+    })
+
   }, []);
 
 
@@ -252,33 +305,6 @@ function Game(){
       chat: result.chat,
     }));
   }
-
-  SocketAPI.listenForSyncGame((data) => {
-    console.log(data)
-    setGame(data);
-  })
-
-  SocketAPI.listenForSyncGameProperty((data) => {
-    console.log(data)
-    setGame(prevGame => ({
-      ...prevGame,
-      [data.property]: data.value,
-    }));
-  })
-
-  SocketAPI.listenForGameEndedKick(() => {
-    showNotification({
-        text: "Game ended. Redirecting to Home page...",
-        type: "success",
-    });
-
-    setSession({
-      ...session,
-      active_position: null,
-    });
-
-    navigate("/");
-  })
 
 
   useEffect(() => {
@@ -405,9 +431,6 @@ function Game(){
       game?.direction
     );
   }, [game?.direction]);
-
-
-  Object.assign(ui, {Game: game_ui})
 
 
   if (!game){
@@ -907,6 +930,18 @@ function Game(){
                     handCardIds.current.push(generateId())
                   
                   return(
+                    <motion.div
+                      key={handCardIds.current[i]}
+                      layout="position"
+                      className="shrink-0"
+                      style={{
+                        marginLeft: `-${Math.min(25, thisPlayer.deck.length * 3)}px`,
+                        zIndex: i,
+                      }}
+                      transition={{
+                        layout: { duration: 0.3, ease: "easeOut" },
+                      }}
+                    >
                     <RenderCard 
                       key={handCardIds.current[i]}
                       className="shrink-0"
@@ -921,21 +956,15 @@ function Game(){
                           ? openChoiceUI(card.choice.ui_id, i)
                           : playCard(i)
                       }}
-                      style={{
-                        marginLeft:`-${
-                          Math.min(25, thisPlayer.deck.length*3)
-                        }px`,
-                        zIndex:i,
-                      }}
                       rainbow={thisTurn && card.type == "wild" && card.allowed_to_play}
 
-                      // layout
                       initial={{scale:0.7 ,opacity:0.7, y:20}}
                       animate={{opacity:1, y:card.allowed_to_play?0:3, scale: 1,}}
                       exit={{scale:0.7, opacity:0.7, y:20}}
                       whileHover={{y:card.allowed_to_play ? -5 : 3}}
                       transition={{ duration: 0.3, ease: "easeOut" }}
                     />
+                    </motion.div>
                   )
                 })}
               </AnimatePresence>
