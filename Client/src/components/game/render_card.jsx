@@ -39,7 +39,7 @@ function card({
     return (
         <div 
             className={`render-cards--card pointer
-                ${rainbow && "render-cards--rainbow"}
+                ${rainbow && "game-rainbow-border"}
                 ${onclick_enabled && "render-cards--clickable"} 
                 ${className}`}
             style={{

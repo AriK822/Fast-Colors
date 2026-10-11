@@ -90,6 +90,7 @@ function PlayersCircle({game, thisPlayer}){
       <ui.Game.PlayerStripLabel
         player={game.players[(thisIdx+1)%playersLen]}
         thisTurn={(thisIdx+1)%playersLen == game.turn}
+        winner={game.winner}
         className="w-[150px] lg:w-[250px] shrink-0
           !absolute left-[50%] top-[7%] -translate-x-1/2"
       />
@@ -99,12 +100,14 @@ function PlayersCircle({game, thisPlayer}){
       <ui.Game.PlayerStripLabel
         player={game.players[(thisIdx+1)%playersLen]}
         thisTurn={(thisIdx+1)%playersLen == game.turn}
+        winner={game.winner}
         className="w-[150px] lg:w-[250px] shrink-0
           !absolute left-[5%] top-[12%]"
       />
       <ui.Game.PlayerStripLabel
         player={game.players[(thisIdx+2)%playersLen]}
         thisTurn={(thisIdx+2)%playersLen == game.turn}
+        winner={game.winner}
         className="w-[150px] lg:w-[250px] shrink-0
           !absolute right-[5%] top-[12%]"
       />
@@ -114,18 +117,21 @@ function PlayersCircle({game, thisPlayer}){
       <ui.Game.PlayerStripLabel
         player={game.players[(thisIdx+1)%playersLen]}
         thisTurn={(thisIdx+1)%playersLen == game.turn}
+        winner={game.winner}
         className="w-[150px] lg:w-[250px] shrink-0
           !absolute left-[5%] top-[15%]"
       />
       <ui.Game.PlayerStripLabel
         player={game.players[(thisIdx+2)%playersLen]}
         thisTurn={(thisIdx+2)%playersLen == game.turn}
+        winner={game.winner}
         className="w-[150px] lg:w-[250px] shrink-0
           !absolute left-[50%] top-[7%] -translate-x-1/2"
       />
       <ui.Game.PlayerStripLabel
         player={game.players[(thisIdx+3)%playersLen]}
         thisTurn={(thisIdx+3)%playersLen == game.turn}
+        winner={game.winner}
         className="w-[150px] lg:w-[250px] shrink-0
           !absolute right-[5%] top-[15%]"
       />
@@ -135,24 +141,28 @@ function PlayersCircle({game, thisPlayer}){
       <ui.Game.PlayerStripLabel
         player={game.players[(thisIdx+1)%playersLen]}
         thisTurn={(thisIdx+1)%playersLen == game.turn}
+        winner={game.winner}
         className="w-[150px] lg:w-[250px] shrink-0
           !absolute left-[5%] top-[22%]"
       />
       <ui.Game.PlayerStripLabel
         player={game.players[(thisIdx+2)%playersLen]}
         thisTurn={(thisIdx+2)%playersLen == game.turn}
+        winner={game.winner}
         className="w-[150px] lg:w-[250px] shrink-0
           !absolute left-[33%] top-[7%] -translate-x-1/2"
       />
       <ui.Game.PlayerStripLabel
         player={game.players[(thisIdx+3)%playersLen]}
         thisTurn={(thisIdx+3)%playersLen == game.turn}
+        winner={game.winner}
         className="w-[150px] lg:w-[250px] shrink-0
           !absolute left-[66%] top-[7%] -translate-x-1/2"
       />
       <ui.Game.PlayerStripLabel
         player={game.players[(thisIdx+4)%playersLen]}
         thisTurn={(thisIdx+4)%playersLen == game.turn}
+        winner={game.winner}
         className="w-[150px] lg:w-[250px] shrink-0
           !absolute right-[5%] top-[22%]"
       />
@@ -162,30 +172,35 @@ function PlayersCircle({game, thisPlayer}){
       <ui.Game.PlayerStripLabel
         player={game.players[(thisIdx+1)%playersLen]}
         thisTurn={(thisIdx+1)%playersLen == game.turn}
+        winner={game.winner}
         className="w-[150px] lg:w-[250px] shrink-0
           !absolute left-[5%] top-[66%]"
       />
       <ui.Game.PlayerStripLabel
         player={game.players[(thisIdx+2)%playersLen]}
         thisTurn={(thisIdx+2)%playersLen == game.turn}
+        winner={game.winner}
         className="w-[150px] lg:w-[250px] shrink-0
           !absolute left-[8%] top-[24%]"
       />
       <ui.Game.PlayerStripLabel
         player={game.players[(thisIdx+3)%playersLen]}
         thisTurn={(thisIdx+3)%playersLen == game.turn}
+        winner={game.winner}
         className="w-[150px] lg:w-[250px] shrink-0
           !absolute left-[50%] top-[7%] -translate-x-1/2"
       />
       <ui.Game.PlayerStripLabel
         player={game.players[(thisIdx+4)%playersLen]}
         thisTurn={(thisIdx+4)%playersLen == game.turn}
+        winner={game.winner}
         className="w-[150px] lg:w-[250px] shrink-0
           !absolute right-[8%] top-[24%]"
       />
       <ui.Game.PlayerStripLabel
         player={game.players[(thisIdx+5)%playersLen]}
         thisTurn={(thisIdx+5)%playersLen == game.turn}
+        winner={game.winner}
         className="w-[150px] lg:w-[250px] shrink-0
           !absolute right-[5%] top-[66%]"
       />
@@ -214,6 +229,8 @@ function Game(){
   const [game_chat_input, setGameChatInput] = useState("");
   const [game_chat_sending, setGameChatSending] = useState(false);
   const chat_container = useRef(null);
+  const [chatBoxOpen, setChatBoxOpen] = useState(true);
+  const [playerInfoBoxOpen, setPlayerInfoBoxOpen] = useState(true);
   const [leave_game_loading, setLeaveGameLoading] = useState(false);
   const [choiceComponent, setChoiceComponent] = useState(null);
   const handCardIds = useRef([]);
@@ -225,6 +242,8 @@ function Game(){
   const [nameInputValue, setNameInputValue] = useState(session.player_name);
   const isNameInputInitLoad = useRef(true);
   const [nameInputLoading, setNameInputLoading] = useState(false);
+  const [inspectGameAfterWin, setInspectGameAfterWin] = useState(false);
+  const [GameInfoBoxOpen, setGameInfoBoxOpen] = useState(false);
 
 
 
@@ -316,7 +335,7 @@ function Game(){
         behavior: "smooth"
       });
     }
-  }, [game?.chat]);
+  }, [game?.chat, chatBoxOpen]);
 
 
   async function leaveGame() {
@@ -504,11 +523,53 @@ function Game(){
 
       <ui.SideBar.Divider />
 
-      <h1 className="ui-text text-2xl truncate shrink-0">
-        Chat:
-      </h1>
+      <ui.Frame.Btn 
+        className="ui-text text-2xl truncate shrink-0
+          w-full mb-ui-md"
+        onClick={() => setPlayerInfoBoxOpen(prev => !prev)}
+      >
+        {playerInfoBoxOpen ? "Players 🠅" : "Players 🠇"}
+      </ui.Frame.Btn>
 
-      <div className="relative">
+      <AnimatePresence>
+      {playerInfoBoxOpen && game.players.map((player, i) => (
+        <motion.div
+          key={player.id}
+
+          initial={{ height: 0,opacity:0}}
+          animate={{ height: "auto",opacity:1}}
+          exit={{ height: 0,opacity:0 }}
+        >
+          <ui.Game.PlayerLabel
+            key={player.id}
+            player={player}
+            thisTurn={!game.winner && game.turn == i}
+            winner={game.winner?.id == player.id}
+          />
+        </motion.div>
+      ))}
+      </AnimatePresence>
+
+      <ui.SideBar.Divider />
+
+      <ui.Frame.Btn 
+        className="ui-text text-2xl truncate shrink-0
+          w-full mb-ui-md"
+        onClick={() => setChatBoxOpen(prev => !prev)}
+      >
+        {chatBoxOpen ? "Chat 🠅" : "Chat 🠇"}
+      </ui.Frame.Btn>
+
+      <AnimatePresence>
+      {chatBoxOpen &&
+      <motion.div
+        key="chatbox"
+        className="relative"
+
+        initial={{ height: 0,opacity:0}}
+        animate={{ height: "auto",opacity:1}}
+        exit={{ height: 0,opacity:0 }}
+      >
       <ui.Frame.SubBox
         ref={chat_container}
         className="!p-ui-xs max-h-[400px] h-[400px] 
@@ -543,8 +604,53 @@ function Game(){
         </div>
 
       </ui.Frame.SubBox>
-      </div>
+      </motion.div>
+      }
+      </AnimatePresence>
 
+
+      <ui.SideBar.Divider />
+
+      <div className="ui-text">
+        <ui.Frame.Btn 
+          className="ui-text text-2xl truncate shrink-0
+            w-full mb-ui-md"
+          onClick={() => setGameInfoBoxOpen(prev => !prev)}
+        >
+          {GameInfoBoxOpen ? "Game info 🠅" : "Game info 🠇"}
+        </ui.Frame.Btn>
+
+        <AnimatePresence>
+        {GameInfoBoxOpen && 
+        <motion.div
+          key="game-info-box"
+          initial={{ height: 0,opacity:0}}
+          animate={{ height: "auto",opacity:1}}
+          exit={{ height: 0,opacity:0 }}
+        >
+        <ui.Frame.SubBox
+          className="!p-ui-xs"
+        >
+          <p style={{color:"var(--theme-accent)"}}>General:</p>
+          <p><span className="opacity-35">Game Id: </span>{game.id}</p>
+          <p><span className="opacity-35">Game State: </span>{game.state}</p>
+          <p><span className="opacity-35">Total Placed Cards: </span>{game.history.total_placed_cards}</p>
+          <p><span className="opacity-35">Winner: </span>{game.winner ? game.winner?.name : "No winner"}</p>
+          
+          <p style={{color:"var(--theme-accent)"}}>Settings:</p>
+          <p><span className="opacity-35">Base colors: </span>{game.base_colors.join(", ")}</p>
+          <p><span className="opacity-35">Wild card stacking: </span>{game.allow_wild_card_stacking ? "YES" : "NO"}</p>
+          <p><span className="opacity-35">Can draw when playable: </span>{game.can_draw_when_playable ? " YES" : "NO"}</p>
+          <p><span className="opacity-35">Max Draws Per Turn: </span>{game.max_draws_per_turn}</p>
+          <p><span className="opacity-35">Turn timer: </span>{game.turn_timer}</p>
+          <p><span className="opacity-35">Wild cards must match: </span>{game.wild_cards_must_match ? "YES" : "NO"}</p>
+          <p><span className="opacity-35">Direction: </span>{game.direction == 1 ? "Clockwise" : "Counter-Clockwise"}</p>
+        </ui.Frame.SubBox>
+        </motion.div>
+        }
+      </AnimatePresence>
+
+      </div>
 
       <ui.SideBar.Divider />
 
@@ -582,7 +688,7 @@ function Game(){
       }}
     >
 
-      {game.winner &&
+      {game.winner && !inspectGameAfterWin &&
         <ui.FullScreen 
           className="!absolute z-99 !bg-overlay
             ui-text flex justify-center items-center">
@@ -596,8 +702,10 @@ function Game(){
               Game ended!<br/>
               This game will be automatically deleted after a short time.
             </p>
-            <ui.Frame.ContrastBtn>
-              View Game info
+            <ui.Frame.ContrastBtn
+              onClick={() => setInspectGameAfterWin(true)}
+            >
+              Inspect
             </ui.Frame.ContrastBtn>
             <ui.Frame.ContrastBtn
               onClick={leaveGame}
@@ -640,6 +748,8 @@ function Game(){
           <ui.Game.PlayerStripLabel
             player={game.players[thisIdx]}
             thisTurn={true}
+            winner={game.winner}
+            
             className="w-[150px] lg:w-[250px] shrink-0
               !absolute right-[5%] bottom-[7%]"
 
@@ -770,6 +880,7 @@ function Game(){
       </div>
 
       {game.turn_timer !== "infinite" &&
+        !game.winner &&
         <div className="game-timer-track">
           <div
             ref={timerRef}

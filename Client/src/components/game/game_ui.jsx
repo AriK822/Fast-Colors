@@ -1,11 +1,12 @@
 import "./style/game_ui.css"
 import RednerCard from "./render_card"
-import { motion } from "motion/react"
+import { AnimatePresence, motion } from "motion/react"
 import Loaders from "../loaders/_loaders";
+import ui from "../shared/_ui";
 
 
 function PlayerStripLabel({player, className, 
-    thisTurn=false, hoverEffect=false, ...props}){
+    thisTurn=false, hoverEffect=false, winner=false, ...props}){
     let status = "";
     let status_color = null;
 
@@ -20,7 +21,9 @@ function PlayerStripLabel({player, className,
                 ${hoverEffect && "game-player-strip-label-hover"}
                 p-ui-xs ui-text truncate px-ui-md
                 flex flex-row justify-between
-                relative overflow-visible ${className}`}
+                relative overflow-visible 
+                ${winner?.id == player.id && "game-rainbow-border"}
+                ${className}`}
             {...props}
         >
             <div className="flex flex-col">
@@ -31,7 +34,24 @@ function PlayerStripLabel({player, className,
             >{status}</p>
             </div>
 
-            {thisTurn && <Loaders.CircleSpinner />}
+            <AnimatePresence>
+            {thisTurn && !winner && (
+                <motion.div
+                key="turn-spinner"
+                className="flex flex-inline"
+                initial={{ scale: 0, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0, opacity: 0 }}
+                transition={{
+                    type: "spring",
+                    stiffness: 180,
+                    damping: 18,
+                }}
+                >
+                <Loaders.CircleSpinner />
+                </motion.div>
+            )}
+            </AnimatePresence>
 
             <div
                 className="absolute
@@ -89,7 +109,76 @@ function ChatMsg({msg, className, ...props}){
 }
 
 
+function PlayerLabel({player, className, thisTurn, winner=false, ...props}){
+    const first_letter = String(player.name[0]).toLocaleUpperCase();
+    let status = "";
+    let status_color = null;
+
+    if (player.type=="bot"){status="Bot"; status_color="--theme-bot-text"}
+    else if (player.game_status=="left"){status = "Left"; status_color="--theme-left-text"}
+    else if (player.connection_status=="online"){status = "Online"; status_color="--theme-online-text"}
+    else if (player.connection_status=="offline"){status = "Online"; status_color="--theme-offline-text"}
+
+    return (
+        <ui.Frame.Label 
+            className={`relative flex flex-row gap-ui-xs !px-ui-lg w-full
+                 items-center ui-text 
+                 ${winner && "game-rainbow-border"} 
+                 ${className}`}
+            {...props}
+        >
+            <ui.Frame.Avatar 
+                letter={first_letter} 
+            />
+            <div className="w-full truncate">
+                <div className="text-lg truncate">
+                    {player.name} 
+                </div>
+                <div 
+                    className="text-xs opacity-80 "
+                    style={{color:`var(${status_color})`}}
+                >
+                    {status}
+                </div>
+            </div>
+            <div className="w-auto truncate shrink-0">
+                <div className="text-sm truncate 
+                    flex flex-row gap-ui-xxs items-center">
+                    <RednerCard 
+                        className=""
+                        width="20px"
+                        overlay_image={"card_back_side.png"}
+                    />
+                    {player.card_count}
+                </div>
+            </div>
+
+            <AnimatePresence>
+            {thisTurn && !winner && (
+                <motion.div
+                key="turn-spinner"
+                className="flex flex-inline"
+                initial={{ width: 0, opacity: 0 }}
+                animate={{ width: "auto", opacity: 1 }}
+                exit={{ scale: 0, opacity: 0 }}
+                transition={{
+                    type: "spring",
+                    stiffness: 180,
+                    damping: 18,
+                }}
+                >
+                <Loaders.CircleSpinner />
+                </motion.div>
+            )}
+            </AnimatePresence>
+
+        </ui.Frame.Label>
+    )
+}
+
+
 export default {
     PlayerStripLabel: PlayerStripLabel,
     ChatMsg,
+    PlayerLabel,
 }
