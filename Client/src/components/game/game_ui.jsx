@@ -64,6 +64,32 @@ function PlayerStripLabel({player, className,
 }
 
 
+function ChatMsg({msg, className, ...props}){
+    if (!msg) return (<></>)
+
+    return (            
+        <div 
+            className={`text-md p-ui-xxs text-sm leading-snug break-words ${className}`} 
+            {...props}
+        >
+        {msg[0] === "server-log" ?
+            <span className="opacity-50 itali">
+                {msg[1]}
+            </span>
+        : 
+            <>
+            <span className="game-chat-player-name">
+                {msg[1]}: 
+            </span>
+            &nbsp; {msg[2]}
+            </>
+        }
+        </div>
+    )
+}
+
+
 export default {
     PlayerStripLabel: PlayerStripLabel,
+    ChatMsg,
 }

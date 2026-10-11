@@ -67,22 +67,31 @@ function Lobby() {
 
   useEffect(() => {
     loadLobby();
-  }, []);
 
-  
-  SocketAPI.listenForLobbySync((new_lobby) => {
-    setLobby(new_lobby); 
-    setKickPlayerLoading(null);
-    console.log(new_lobby);
-  })
-
-  SocketAPI.listenForKickedFromLobby(() => {
-    showNotification({
-      text:"Sorry, you were kicked from the lobby.",
-      type: "warning",
+    SocketAPI.listenForLobbySync((new_lobby) => {
+      setLobby(new_lobby); 
+      setKickPlayerLoading(null);
+      console.log(new_lobby);
     })
-    navigate("/joinlobby");
-  })
+
+    SocketAPI.listenForKickedFromLobby(() => {
+      showNotification({
+        text:"Sorry, you were kicked from the lobby.",
+        type: "warning",
+      })
+      navigate("/joinlobby");
+    })
+
+    SocketAPI.listenForGameStart(() => {
+      showNotification({
+        text: "Game Started. Redirecting to game...",
+        type: "success"
+      })
+
+      navigate("/game");
+    })
+    
+  }, []);
 
 
   async function leaveLobbyBtn() {
@@ -265,16 +274,6 @@ function Lobby() {
       });
     }
   }
-
-
-  SocketAPI.listenForGameStart(() => {
-    showNotification({
-      text: "Game Started. Redirecting to game...",
-      type: "success"
-    })
-
-    navigate("/game");
-  })
 
 
   function generateId() {

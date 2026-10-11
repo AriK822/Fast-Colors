@@ -131,7 +131,7 @@
 }
 
 .game-theme-scrollbar::-webkit-scrollbar {
-    width: 10px;
+    width: 6px;
 }
 
 .game-theme-scrollbar::-webkit-scrollbar-track {
@@ -143,7 +143,7 @@
     background: var(--theme-accent);
     cursor: pointer;
     border-radius: var(--radius-ui-sm);
-    border: 2px solid var(--theme-surface-top);
+    border: 0px solid var(--theme-surface-top);
     transition: var(--transition-duration-hover);
 }
 

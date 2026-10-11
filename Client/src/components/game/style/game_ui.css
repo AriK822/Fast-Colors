@@ -129,3 +129,11 @@
     transform: rotate(calc(var(--game-direction) * 360deg));
   }
 }
+
+
+.game-chat-player-name{
+    color: color-mix(in srgb,
+        var(--theme-highlight) 80%,
+        white)
+    ;
+}

@@ -23,7 +23,7 @@ export function makeNewGame({
     wild_cards_must_match=false,
     turn_timer=20, // seconds
     effects_data={},
-    chat=["Game started"],
+    chat=[["server-log", "Game started"]],
     history={played_cards:[], total_placed_cards:0,},
     state=GameStateModes.INITIALIZING,
     winner=null, // {id:..., name:...}

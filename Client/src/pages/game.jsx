@@ -216,13 +216,15 @@ function Game(){
   const chat_container = useRef(null);
   const [leave_game_loading, setLeaveGameLoading] = useState(false);
   const [choiceComponent, setChoiceComponent] = useState(null);
-  const [remainingPercent, setRemainingPercent] = useState(100);
   const handCardIds = useRef([]);
   const holdTimer = useRef(null);
   const isScrolling = useRef(false);
   const startX = useRef(0);
   const startScrollLeft = useRef(0);
   const timerRef = useRef(null);
+  const [nameInputValue, setNameInputValue] = useState(session.player_name);
+  const isNameInputInitLoad = useRef(true);
+  const [nameInputLoading, setNameInputLoading] = useState(false);
 
 
 
@@ -308,9 +310,12 @@ function Game(){
 
 
   useEffect(() => {
-      if (chat_container.current) {
-          chat_container.current.scrollTop = chat_container.current.scrollHeight;
-      }
+    if (chat_container.current) {
+      chat_container.current.scrollTo({
+        top: chat_container.current.scrollHeight,
+        behavior: "smooth"
+      });
+    }
   }, [game?.chat]);
 
 
@@ -433,195 +438,49 @@ function Game(){
   }, [game?.direction]);
 
 
+  useEffect(() => {
+    if (isNameInputInitLoad.current){
+      isNameInputInitLoad.current = false;
+      return;
+    }
+
+    const timeout = setTimeout(async () => {
+      if (nameInputValue.trim().length < 4) return
+
+      setNameInputLoading(true);
+      const result = await SocketAPI.setPlayerName(nameInputValue);
+      setNameInputLoading(false);
+
+      showNotification({
+        text: result.msg,
+        type: result.error ? "error" : "success"
+      });
+
+      if (!result.error){
+        setSession({
+          ...session,
+          player_name: nameInputValue,
+        });
+      }
+
+    }, 700);
+
+    return () => {
+      clearTimeout(timeout);
+    };
+
+  }, [nameInputValue]);
+
+
   if (!game){
     return <Loader.FullScreen />
   }
 
-  // return (
-  //   <div className="card">
-
-  //     <button
-  //       onClick={leaveGame}
-  //       disabled={leave_game_loading}
-  //     >
-  //       {leave_game_loading ? <Loader.Spinner /> : "Leave game"}
-  //     </button>
-
-  //     {game.state === "ended" &&
-  //     <div className="game-over-overlay">
-  //         <div className="game-over-content">
-  //             <h1>Game Over</h1>
-
-  //             <p>Winner:</p>
-
-  //             <h2>{game.winner?.name}</h2>
-
-  //             <p>ID: {game.winner?.id}</p>
-  //         </div>
-  //     </div>
-  //     }
-
-
-  //     <div className="card">
-  //       <strong>Current card:</strong>
-  //       <p>id: {game.current_card.id}</p>
-  //       <p>type: {game.current_card.type}</p>
-  //       <p>rednered_text: {game.current_card.rednered_text}</p>
-  //       <p>base_color: {game.current_card.base_color}</p>
-  //       <p>overlay_image: {game.current_card.overlay_image}</p>
-  //       <p>choice: {game.current_card.choice?.ui_id ?? "No choice"}</p>
-
-  //       <RenderCard 
-  //         base_color={game.current_card.base_color} 
-  //         overlay_image={game.current_card.overlay_image} 
-  //         rednered_text={game.current_card.rednered_text} 
-  //       />
-  //     </div>
-
-
-  //     <div className="timer-container">
-  //         <div
-  //             className="timer-bar"
-  //             style={{
-  //                 width: `${remainingPercent}%`
-  //             }}
-  //         />
-  //     </div>
-
-
-  //     <div className="card">
-  //       <strong>Players:</strong>
-  //       {game.players.map((player, p_index) => (
-  //         <div 
-  //           className="card"
-  //           style={{
-  //             border:session.player_id == player.id ? "1px solid lime" : "",
-  //             outline:p_index == game.turn ? "1px solid orange" : "",
-  //           }}
-  //           key={player.id}
-  //         >
-  //           <p>id: {player.id}</p>
-  //           <p>type: {player.type}</p>
-  //           <p>name: {player.name}</p>
-  //           <p>connection_status: {player.connection_status}</p>
-  //           <p>game_status: {player.game_status}</p>
-  //           <p>card_count: {player.card_count}</p>
-
-  //           {player.deck && <>
-
-  //           {game.cards_to_take > 0 &&
-  //           <p style={{color:"red"}}>Danger, cards to take: {game.cards_to_take}</p>
-  //           }
-
-  //           {choiceComponent}
-
-  //           <div className="flex">
-  //             {player.deck.map((card, i) => (
-  //               <RenderCard 
-  //                 key={i}
-  //                 base_color={card.base_color} 
-  //                 overlay_image={card.overlay_image} 
-  //                 rednered_text={card.rednered_text} 
-  //                 width={80}
-  //                 grayscale={card.allowed_to_play ? false : true}
-  //                 onclick_enabled={true}
-  //                 onclikc_callback={() => {
-  //                   card.choice?.ui_id 
-  //                     ? openChoiceUI(card.choice.ui_id, i)
-  //                     : playCard(i)
-  //                 }}
-  //               />
-  //             ))}
-  //           </div>
-
-  //           <button onClick={takeCard}>Take card</button>
-  //           <button onClick={skipMove}>Skip turn</button>
-  //           </>}
-
-  //           {!player.deck &&
-  //             <div className="flex">
-  //               {Array.from({length:player.card_count}).map((_, i) => (
-  //                 <RenderCard 
-  //                   key={i}
-  //                   overlay_image={"card_back_side.png"} 
-  //                   width={80}
-  //                 />
-  //               ))}
-  //             </div>
-  //           }
-
-  //         </div>
-  //       ))}
-  //     </div>
-
-  //     <div className="card">
-  //       <strong>Game info</strong>
-  //       <div>
-  //         <p>Game id: {game.id}</p>
-  //         <p>Turn: {game.turn}</p>
-  //         <p>Direction: {game.direction}</p>
-  //         <p>Base color: {game.base_color}</p>
-  //         <p>Cards to take: {game.cards_to_take}</p>
-  //         <p>cards taken in this turn: {game.cards_taken_in_this_turn}</p>
-  //       </div>
-  //     </div>
-
-
-  //     <div className="card">
-  //       <strong>Game settings:</strong>
-  //       <div>
-  //         <p>Base colors: {game.base_colors.join(" - ")}</p>
-  //         <p>Can draw when playable: {game.can_draw_when_playable}</p>
-  //         <p>Max draw per turn: {game.max_draws_per_turn}</p>
-  //         <p>Allow wild card stacking: {game.allow_wild_card_stacking}</p>
-  //         <p>Wild cards must match: {game.wild_cards_must_match}</p>
-  //         <p>Turn timer: {game.turn_timer}</p>
-  //         <p>Last move time: {game.last_move_time}</p>
-  //       </div>
-  //     </div>
-
-
-  //     <div className="card">
-  //         <strong>Chat:</strong>
-  //         <div 
-  //             className="card" 
-  //             style={{height:"200px", overflowY:"scroll"}}
-  //             ref={chat_container}
-  //         >
-  //         {game.chat.map((msg, i) => (
-  //           <p key={i} style={{color:"white"}}>{msg}</p>
-  //         ))}
-  //         </div>
-          
-  //         <div className="flex">
-  //             <input 
-  //                 placeholder="Chat" 
-  //                 value={game_chat_input} 
-  //                 onChange={(e)=>{setGameChatInput(e.target.value)}}
-  //                 onKeyDown={(e) => {
-  //                     if (e.key === 'Enter' && game_chat_input.trim() != "" && !game_chat_sending){
-  //                         sendGameChatMassage();
-  //                     }
-  //                 }}
-  //             ></input>
-  //             <button 
-  //                 onClick={sendGameChatMassage} 
-  //                 disabled={game_chat_sending || game_chat_input.trim() == ""}
-  //             >
-  //                 {game_chat_sending ? <Loader.Spinner/> : "Send"}
-  //             </button>
-  //         </div>
-  //     </div>
-
-  //   </div>
-  // )
 
   const thisPlayer = game.players.find((p) => p.id === session.player_id);
   const thisIdx = game.players.indexOf(thisPlayer);
   const thisTurn = game.turn == game.players.indexOf(thisPlayer);
 
-  console.log("Rerendering.")
-  console.log(handCardIds)
 
   return (
   <ui.FullScreen className="flex">
@@ -629,7 +488,7 @@ function Game(){
     <ui.SideBar 
       style={{"--bg-paint-texture": `url(${paintTexture})`,}}
     >
-      {/* <h1 className="ui-text text-2xl truncate shrink-0">
+      <h1 className="ui-text text-2xl truncate shrink-0">
         Play as: &nbsp;
           {nameInputLoading
             ? <Skeleton inline width={90} />
@@ -641,7 +500,51 @@ function Game(){
         placeholder="Your name"
         onChange={(e) => setNameInputValue(e.target.value)} 
         value={nameInputValue}
-      /> */}
+      />
+
+      <ui.SideBar.Divider />
+
+      <h1 className="ui-text text-2xl truncate shrink-0">
+        Chat:
+      </h1>
+
+      <div className="relative">
+      <ui.Frame.SubBox
+        ref={chat_container}
+        className="!p-ui-xs max-h-[400px] h-[400px] 
+          ui-text game-theme-scrollbar !pb-15"
+      >
+        {game.chat.map((msg, i) => (
+          <ui.Game.ChatMsg key={i} msg={msg} />
+        ))}
+        
+        <div className="flex flex-row
+          gap-ui-xs items-center absolute bottom-ui-md
+          left-0 right-0 px-ui-md">
+
+          <ui.Frame.ContrastInput 
+            className="w-full"
+            placeholder="Say something..." 
+            value={game_chat_input} 
+            onChange={(e)=>{setGameChatInput(e.target.value)}}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && game_chat_input.trim() != "" && !game_chat_sending){
+                sendGameChatMassage();
+              }
+            }}
+          />
+          <ui.Frame.ContrastBtn
+            onClick={sendGameChatMassage} 
+            disabled={game_chat_sending || game_chat_input.trim() == ""}                
+          >
+            {game_chat_sending ? <Loader.Spinner/> : "Send"}
+          </ui.Frame.ContrastBtn>
+
+        </div>
+
+      </ui.Frame.SubBox>
+      </div>
+
 
       <ui.SideBar.Divider />
 
@@ -740,9 +643,9 @@ function Game(){
             className="w-[150px] lg:w-[250px] shrink-0
               !absolute right-[5%] bottom-[7%]"
 
-            initial={{x:200}}
+            initial={{x:"150%"}}
             animate={{x:0}}
-            exit={{x:200}}
+            exit={{x:"150%"}}
           />
           }
         </AnimatePresence>

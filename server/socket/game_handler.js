@@ -117,9 +117,11 @@ socket.on("send_game_chat_msg", async (data, ack) => {
         return;
     }
 
-    active_game.chat.push(
-        `${PlayerstateHandler.getPlayerName(socket.request.session.player_id)}: `
-        + data.msg);
+    active_game.chat.push([
+        "player",
+        `${PlayerstateHandler.getPlayerName(socket.request.session.player_id)}`,
+        data.msg,
+    ]);
 
     ack({
         chat: active_game.chat,
