@@ -1,4 +1,5 @@
 import frame from "../../shared/frame";
+import { motion } from "motion/react";
 
 export default function ({ game, onSelect, onClose }) {
     const colors = game.base_colors;
@@ -36,9 +37,13 @@ export default function ({ game, onSelect, onClose }) {
             flex justify-center items-center z-10"
             onClick={onClose}
         >
-
-            <frame.Frame.Box
+            <motion.div
                 className="w-[80%] max-w-[600px]"
+                initial={{scale:0.3, opacity:0.3}}
+                animate={{scale:1, opacity:1}}
+            >
+            <frame.Frame.Box
+                className="w-full"
                 header="Pick A Color:"
                 onClick={(e) => e.stopPropagation()}
             >
@@ -63,6 +68,7 @@ export default function ({ game, onSelect, onClose }) {
                     </svg>
                 </div>
             </frame.Frame.Box>
+            </motion.div>
         </div>
     );
 }

@@ -49,7 +49,7 @@ export const card_objects_with_desc = {
         "Wild card, Select a player to block them in their next turn"
     ],
     "wild_rotate_colored" :[
-        "Rotate Game Direction",
+        "Rotate Direction",
         "Inverts the current game direction to the opposite direction."
     ]
 };
@@ -133,14 +133,17 @@ function add_cards_to_player(game, player_index, count=1){
 // ---   EFFECTS   ---
 export function effectSkipBlockedTurns(game){
     if (!game.effects_data.skip_blocked_players) return;
-
-    if ((game.effects_data.skip_blocked_players[game.turn] ?? 0) > 0){
+    console.log("Start: ",game.effects_data.skip_blocked_players)
+    
+    while ((game.effects_data.skip_blocked_players[game.turn] ?? 0) > 0){
+        console.log("For: ", game.turn, game.players[game.turn].name)
         game.effects_data.skip_blocked_players[game.turn] -= 1;
         game.turn = (game.turn + game.direction) % game.players.length;
         game.turn = (game.turn + game.players.length) % game.players.length;
         game.cards_taken_in_this_turn = 0;
-        return true;
     }
+    console.log("End: ",game.effects_data.skip_blocked_players)
+    return true;
 }
 
 
@@ -342,7 +345,7 @@ export function makeWildBlockSelectedPlayer(
         game.effects_data.skip_blocked_players[choice.player_index] ??= 0;
         game.effects_data.skip_blocked_players[choice.player_index] += 1;
         
-        game.turn = (game.turn + game.direction*2) % game.players.length;
+        game.turn = (game.turn + game.direction) % game.players.length;
         game.turn = (game.turn + game.players.length) % game.players.length;
     }
 

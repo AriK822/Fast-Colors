@@ -124,6 +124,7 @@ function SideBar({
                             relative flex flex-col
                             min-w-[70%] max-w-[70%] shrink-0
                             bg-background game-sidebar
+                            game-theme-scrollbar
                             ${className}
                         `}
                         style={{...style, width  }}
@@ -140,26 +141,27 @@ function SideBar({
                     >
                         {children}
 
-                        <img
-                            src={topLeftLeaves}
-                            alt=""
-                            className="
-                                pointer-events-none
-                                absolute -top-15 -left-10
-                                scale-80 drop-shadow-img-soft
-                            "
-                        />
-
-                        <img
-                            src={bottomLeftLeaves}
-                            alt=""
-                            className="
-                                pointer-events-none
-                                absolute -bottom-15 -left-10
-                                scale-80 drop-shadow-img-soft
-                            "
-                        />
                     </motion.aside>
+
+                    <img
+                        src={topLeftLeaves}
+                        alt=""
+                        className="
+                            pointer-events-none
+                            absolute -top-15 -left-10
+                            scale-80 drop-shadow-img-soft
+                        "
+                    />
+
+                    <img
+                        src={bottomLeftLeaves}
+                        alt=""
+                        className="
+                            pointer-events-none
+                            absolute -bottom-15 -left-10
+                            scale-80 drop-shadow-img-soft
+                        "
+                    />
 
                     <div
                         className="h-full w-full"

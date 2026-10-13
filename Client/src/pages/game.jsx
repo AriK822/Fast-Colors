@@ -49,6 +49,9 @@ function PlayersStrip({game, sideLength=2}){
           distance={i}
           className="w-full"
           thisTurn={i === 0}
+          blockedCount={game.effects_data?.skip_blocked_players?.[game.players.indexOf(thisPlayer)] ?? 0}
+          showTimer={game.turn_timer !== "infinite"}
+
           initial={{
             opacity: 0,
             scale: 0.7,
@@ -91,6 +94,8 @@ function PlayersCircle({game, thisPlayer}){
         player={game.players[(thisIdx+1)%playersLen]}
         thisTurn={(thisIdx+1)%playersLen == game.turn}
         winner={game.winner}
+        showTimer={game.turn_timer !== "infinite"}
+        blockedCount={game.effects_data?.skip_blocked_players?.[(thisIdx+1)%playersLen] ?? 0}
         className="w-[150px] lg:w-[250px] shrink-0
           !absolute left-[50%] top-[7%] -translate-x-1/2"
       />
@@ -101,6 +106,8 @@ function PlayersCircle({game, thisPlayer}){
         player={game.players[(thisIdx+1)%playersLen]}
         thisTurn={(thisIdx+1)%playersLen == game.turn}
         winner={game.winner}
+        showTimer={game.turn_timer !== "infinite"}
+        blockedCount={game.effects_data?.skip_blocked_players?.[(thisIdx+1)%playersLen] ?? 0}
         className="w-[150px] lg:w-[250px] shrink-0
           !absolute left-[5%] top-[12%]"
       />
@@ -108,6 +115,8 @@ function PlayersCircle({game, thisPlayer}){
         player={game.players[(thisIdx+2)%playersLen]}
         thisTurn={(thisIdx+2)%playersLen == game.turn}
         winner={game.winner}
+        showTimer={game.turn_timer !== "infinite"}
+        blockedCount={game.effects_data?.skip_blocked_players?.[(thisIdx+2)%playersLen] ?? 0}
         className="w-[150px] lg:w-[250px] shrink-0
           !absolute right-[5%] top-[12%]"
       />
@@ -118,6 +127,8 @@ function PlayersCircle({game, thisPlayer}){
         player={game.players[(thisIdx+1)%playersLen]}
         thisTurn={(thisIdx+1)%playersLen == game.turn}
         winner={game.winner}
+        showTimer={game.turn_timer !== "infinite"}
+        blockedCount={game.effects_data?.skip_blocked_players?.[(thisIdx+1)%playersLen] ?? 0}
         className="w-[150px] lg:w-[250px] shrink-0
           !absolute left-[5%] top-[15%]"
       />
@@ -125,6 +136,8 @@ function PlayersCircle({game, thisPlayer}){
         player={game.players[(thisIdx+2)%playersLen]}
         thisTurn={(thisIdx+2)%playersLen == game.turn}
         winner={game.winner}
+        showTimer={game.turn_timer !== "infinite"}
+        blockedCount={game.effects_data?.skip_blocked_players?.[(thisIdx+2)%playersLen] ?? 0}
         className="w-[150px] lg:w-[250px] shrink-0
           !absolute left-[50%] top-[7%] -translate-x-1/2"
       />
@@ -132,6 +145,8 @@ function PlayersCircle({game, thisPlayer}){
         player={game.players[(thisIdx+3)%playersLen]}
         thisTurn={(thisIdx+3)%playersLen == game.turn}
         winner={game.winner}
+        showTimer={game.turn_timer !== "infinite"}
+        blockedCount={game.effects_data?.skip_blocked_players?.[(thisIdx+3)%playersLen] ?? 0}
         className="w-[150px] lg:w-[250px] shrink-0
           !absolute right-[5%] top-[15%]"
       />
@@ -142,6 +157,8 @@ function PlayersCircle({game, thisPlayer}){
         player={game.players[(thisIdx+1)%playersLen]}
         thisTurn={(thisIdx+1)%playersLen == game.turn}
         winner={game.winner}
+        showTimer={game.turn_timer !== "infinite"}
+        blockedCount={game.effects_data?.skip_blocked_players?.[(thisIdx+1)%playersLen] ?? 0}
         className="w-[150px] lg:w-[250px] shrink-0
           !absolute left-[5%] top-[22%]"
       />
@@ -149,6 +166,8 @@ function PlayersCircle({game, thisPlayer}){
         player={game.players[(thisIdx+2)%playersLen]}
         thisTurn={(thisIdx+2)%playersLen == game.turn}
         winner={game.winner}
+        showTimer={game.turn_timer !== "infinite"}
+        blockedCount={game.effects_data?.skip_blocked_players?.[(thisIdx+2)%playersLen] ?? 0}
         className="w-[150px] lg:w-[250px] shrink-0
           !absolute left-[33%] top-[7%] -translate-x-1/2"
       />
@@ -156,6 +175,8 @@ function PlayersCircle({game, thisPlayer}){
         player={game.players[(thisIdx+3)%playersLen]}
         thisTurn={(thisIdx+3)%playersLen == game.turn}
         winner={game.winner}
+        showTimer={game.turn_timer !== "infinite"}
+        blockedCount={game.effects_data?.skip_blocked_players?.[(thisIdx+3)%playersLen] ?? 0}
         className="w-[150px] lg:w-[250px] shrink-0
           !absolute left-[66%] top-[7%] -translate-x-1/2"
       />
@@ -163,6 +184,8 @@ function PlayersCircle({game, thisPlayer}){
         player={game.players[(thisIdx+4)%playersLen]}
         thisTurn={(thisIdx+4)%playersLen == game.turn}
         winner={game.winner}
+        showTimer={game.turn_timer !== "infinite"}
+        blockedCount={game.effects_data?.skip_blocked_players?.[(thisIdx+4)%playersLen] ?? 0}
         className="w-[150px] lg:w-[250px] shrink-0
           !absolute right-[5%] top-[22%]"
       />
@@ -173,6 +196,8 @@ function PlayersCircle({game, thisPlayer}){
         player={game.players[(thisIdx+1)%playersLen]}
         thisTurn={(thisIdx+1)%playersLen == game.turn}
         winner={game.winner}
+        showTimer={game.turn_timer !== "infinite"}
+        blockedCount={game.effects_data?.skip_blocked_players?.[(thisIdx+1)%playersLen] ?? 0}
         className="w-[150px] lg:w-[250px] shrink-0
           !absolute left-[5%] top-[66%]"
       />
@@ -180,6 +205,8 @@ function PlayersCircle({game, thisPlayer}){
         player={game.players[(thisIdx+2)%playersLen]}
         thisTurn={(thisIdx+2)%playersLen == game.turn}
         winner={game.winner}
+        showTimer={game.turn_timer !== "infinite"}
+        blockedCount={game.effects_data?.skip_blocked_players?.[(thisIdx+2)%playersLen] ?? 0}
         className="w-[150px] lg:w-[250px] shrink-0
           !absolute left-[8%] top-[24%]"
       />
@@ -187,6 +214,8 @@ function PlayersCircle({game, thisPlayer}){
         player={game.players[(thisIdx+3)%playersLen]}
         thisTurn={(thisIdx+3)%playersLen == game.turn}
         winner={game.winner}
+        showTimer={game.turn_timer !== "infinite"}
+        blockedCount={game.effects_data?.skip_blocked_players?.[(thisIdx+3)%playersLen] ?? 0}
         className="w-[150px] lg:w-[250px] shrink-0
           !absolute left-[50%] top-[7%] -translate-x-1/2"
       />
@@ -194,6 +223,8 @@ function PlayersCircle({game, thisPlayer}){
         player={game.players[(thisIdx+4)%playersLen]}
         thisTurn={(thisIdx+4)%playersLen == game.turn}
         winner={game.winner}
+        showTimer={game.turn_timer !== "infinite"}
+        blockedCount={game.effects_data?.skip_blocked_players?.[(thisIdx+4)%playersLen] ?? 0}
         className="w-[150px] lg:w-[250px] shrink-0
           !absolute right-[8%] top-[24%]"
       />
@@ -201,6 +232,8 @@ function PlayersCircle({game, thisPlayer}){
         player={game.players[(thisIdx+5)%playersLen]}
         thisTurn={(thisIdx+5)%playersLen == game.turn}
         winner={game.winner}
+        showTimer={game.turn_timer !== "infinite"}
+        blockedCount={game.effects_data?.skip_blocked_players?.[(thisIdx+5)%playersLen] ?? 0}
         className="w-[150px] lg:w-[250px] shrink-0
           !absolute right-[5%] top-[66%]"
       />
@@ -431,21 +464,21 @@ function Game(){
     const elapsed = Date.now() - game.last_move_time;
     const remaining = Math.max(0, duration - elapsed);
 
-    if (timerRef.current) {
-      timerRef.current.style.animation = "none";
-      void timerRef.current.offsetWidth;
-      timerRef.current.style.animation = "";
+    document.documentElement.style.setProperty("--timer-duration", `${remaining}ms`);
+    document.documentElement.style.setProperty("--timer-progress",`${(remaining / duration) * 100}%`);
+
+    function restartAnimation(element) {
+        element.style.animation = "none";
+        void element.offsetWidth;
+        element.style.animation = "";
     }
+    if (timerRef.current) {
+        restartAnimation(timerRef.current);
+    }
+    document
+        .querySelectorAll(".game-strip-label-card-count")
+        .forEach(restartAnimation);
 
-    timerRef.current?.style.setProperty(
-      "--timer-duration",
-      `${remaining}ms`
-    );
-
-    timerRef.current?.style.setProperty(
-      "--timer-progress",
-      `${(remaining / duration) * 100}%`
-    );
   }, [game?.last_move_time, game?.turn_timer]);
 
 
@@ -489,6 +522,10 @@ function Game(){
     };
 
   }, [nameInputValue]);
+
+  useEffect(() => {
+    setChoiceComponent(null);
+  }, [game?.turn]);
 
 
   if (!game){
@@ -544,7 +581,8 @@ function Game(){
             key={player.id}
             player={player}
             thisTurn={!game.winner && game.turn == i}
-            winner={game.winner?.id == player.id}
+            winner={game.winner}
+            activePlayer={player.id==thisPlayer.id}
           />
         </motion.div>
       ))}
@@ -696,7 +734,11 @@ function Game(){
             className="!p-ui-lg flex flex-col gap-ui-md"
           >
             <p className="text-3xl">
-              {game.winner?.name} WON!
+              {
+                game.winner.id == thisPlayer.id 
+                ? `YOU WON!`
+                : `${game.winner?.name} WON!`
+              }
             </p>
             <p>
               Game ended!<br/>
@@ -749,6 +791,7 @@ function Game(){
             player={game.players[thisIdx]}
             thisTurn={true}
             winner={game.winner}
+            showTimer={game.turn_timer !== "infinite"}
             
             className="w-[150px] lg:w-[250px] shrink-0
               !absolute right-[5%] bottom-[7%]"
@@ -881,12 +924,16 @@ function Game(){
 
       {game.turn_timer !== "infinite" &&
         !game.winner &&
-        <div className="game-timer-track">
+        <motion.div 
+          className="game-timer-track"
+
+          animate={{opacity:thisTurn ? 1 : 0.5}}
+        >
           <div
             ref={timerRef}
             className="game-timer-fill"
           />
-        </div>
+        </motion.div>
       }
 
       <div className="flex-3 min-w-0 w-full flex justify-center 
@@ -973,10 +1020,10 @@ function Game(){
                       rainbow={thisTurn && card.type == "wild" && card.allowed_to_play}
 
                       initial={{scale:0.7 ,opacity:0.7, y:20}}
-                      animate={{opacity:1, y:card.allowed_to_play?0:3, scale: 1,}}
+                      animate={{opacity:card.allowed_to_play?1:0.9, y:card.allowed_to_play?-2:3, scale: 1,}}
                       exit={{scale:0.7, opacity:0.7, y:20}}
-                      whileHover={{y:card.allowed_to_play ? -5 : 3}}
-                      transition={{ duration: 0.3, ease: "easeOut" }}
+                      whileHover={{y:card.allowed_to_play ? -10 : 3,}}
+                      transition={{ duration: 0.2, ease: "easeOut" }}
                     />
                     </motion.div>
                   )

@@ -1,40 +1,73 @@
-<!-- refactor hard-coded values into a global game settings dict -->
-<!-- post effects -->
-<!-- refactor client UI -->
-<!-- home UI -->
-<!-- join lobby UI -->
-<!-- lobby UI -->
+✅refactor hard-coded values into a global game settings dict
+✅post effects
+✅refactor client UI
+✅home UI
+✅join lobby UI
+✅lobby UI
+✅game UI
 
-game UI
+UI features (bellow)
+
 add more cards
-add themes
-features: 
-    bot messages
-    chat filtering
-    logos and assets
-    rematch
-    game logs amd history (cards played, wins, etc)
+
 run tests and find bugs
 add docs
 release (a single .exe)
-make this public
+make public
 
 
 
 
-<!-- TEMP NOETS -->
-Design Rules:
-In root: tailwindcss for layout
-Component when: has a clear rule 
-CSS in component: things that belong to the component, not the parent
-Tailwind -> layout + short styles
-Native CSS -> component spesific + clear redundent styles
-(
-    Tailwind = contextual composition/layout
-    Component CSS = component appearance + intrinsic internal layout
-    Components = semantic/visual/behavioral units
-    Tokens = shared design decisions
-    Parent = external geometry/context
-    Component = internal geometry/appearance
-)
+UI features:
+✅Animate open choice box 
+✅polish timer
+✅polish player strip labels (limit for rednered cards + timer + number of cards)
+✅PlayerStrip Badges: Uno, blocked (up right on border) 
+✅Add a "(you)" tag in sidebar players for active player (game and lobby) 
+✅Move the timer to around the player label
 
+Base color: make the turn indicator ticker and the color of the base color. Add a arrow like at the end of them too 
+
+polish player hand
+
+Place animation 
+
+Draw animation 
+
+Dont allow skip or take client side 
+
+Add bot chat messages (start game, end game, uno) 
+
+Chat icon for the phone bellow open sidebar, with it scaling up and down on new messages (icon hidden if chat hidden) 
+
+Fix notifications 
+
+Try making the active hand curved 
+
+Win screen animation ans celebration 
+
+Chat server-log on player leave, winner and game end 
+
+Timestamps for chat 
+
+Play hints in sidebar 
+
+Syncing indicator 
+
+Ended game kick timer 
+
+Reduced motion (settings)
+
+Ping + connection quality in sidebar 
+
+
+Add themes
+Add sfx
+Add settings
+
+
+Ideas that could be added:
+Uno btn
+Quick reactions
+chat filtering
+rematch

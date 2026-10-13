@@ -28,7 +28,8 @@
     width: 25px;
     background: linear-gradient(
         90deg,
-        rgba(253, 253, 253, 0.4),
+        #00000032,
+        /* rgba(253, 253, 253, 0.4), */
         /* color-mix(in srgb, var(--game-base-color) 70%, transparent), */
         transparent
     );
@@ -39,7 +40,8 @@
     width: 25px;
     background: linear-gradient(
         270deg,
-        rgba(253, 253, 253, 0.4),
+        #00000032,
+        /* rgba(253, 253, 253, 0.4), */
         /* color-mix(in srgb, var(--game-base-color) 70%, transparent), */
         transparent
     );
@@ -48,11 +50,21 @@
 
 
 .main-game-hand-holder{
-    background: linear-gradient(
+    /* background: linear-gradient(
         0deg,
         rgba(255, 255, 255, 0.144),
         transparent,
         rgba(255, 255, 255, 0.124)
+    );
+    background: #00000022; */
+    background: linear-gradient(
+        0deg,
+        color-mix(in srgb,
+            var(--game-base-color) 20%,
+            rgba(0, 0, 0, 0.309)
+        ),
+        transparent
+        /* rgba(0, 0, 0, 0.124) */
     );
     /* backdrop-filter: blur(1px); */
     /* border: 1px solid white; */
@@ -66,14 +78,15 @@
   width: 100%;
   min-height: 5px;
   overflow: hidden;
-  background: #0000004c;
-  border-radius: 100%;
+  background: #00000038;
+  /* border-radius: 100%; */
 }
 
 .game-timer-fill {
   width: var(--timer-progress, 100%);
   height: 5px;
   background: lime;
+  border-right: 3px solid white;
   transform-origin: left;
   animation: timer-countdown var(--timer-duration, 0ms) linear forwards;
 }
@@ -81,12 +94,12 @@
 @keyframes timer-countdown {
   from {
     width: var(--timer-progress, 100%);
-    background-color: lime;
+    background-color: #00d800;
   }
 
   to {
     width: 0%;
-    background-color: red;
+    background-color: #f34a4a;
   }
 }
 
@@ -184,5 +197,138 @@
     to {
         --rainbow-angle: 360deg;
     }
+}
+
+
+@property --timer-ring-progress {
+    syntax: "<percentage>";
+    inherits: true;
+    initial-value: 0%;
+}
+
+.game-strip-label-card-count {
+    width: 30px;
+    height: 30px;
+    border: 1px solid var(--theme-accent);
+    border-radius: var(--radius-ui-max);
+    box-shadow:
+        inset 2px 2px 8px color-mix(
+            in srgb,
+            var(--theme-accent) 50%,
+            transparent
+        ),
+        -2px 2px 3px var(--theme-accent-deep);
+
+    position: relative;
+    isolation: isolate;
+
+    --timer-ring-progress: calc(
+        100% - var(--timer-progress, 100%)
+    );
+
+    animation: strip-label-timer
+        var(--timer-duration, 0ms)
+        linear forwards;
+}
+
+.game-strip-label-card-count-timer::before {
+    content: "";
+    position: absolute;
+    inset: -2px;
+    border-radius: inherit;
+    padding: 3px;
+
+    background: conic-gradient(
+        from -0deg,
+        color-mix(
+            in srgb,
+            lime,
+            rgb(251, 86, 86) var(--timer-ring-progress)
+        ) 0% var(--timer-ring-progress),
+        transparent var(--timer-ring-progress) 100%
+    );
+
+    -webkit-mask:
+        linear-gradient(#fff 0 0) content-box,
+        linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+
+    z-index: -1;
+}
+
+@keyframes strip-label-timer {
+    from {
+        --timer-ring-progress: calc(
+            100% - var(--timer-progress, 100%)
+        );
+    }
+
+    to {
+        --timer-ring-progress: 100%;
+    }
+}
+
+
+.game-player-strip-shimmer::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(
+        105deg,
+        transparent 30%,
+        color-mix(in srgb, var(--theme-highlight) 60%, transparent) 50%,
+        transparent 70%
+    );
+    transform: translateX(-100%);
+    animation: shimmer-sweep 5s ease-in-out infinite;
+}
+
+@keyframes shimmer-sweep {
+    0% {
+        transform: translateX(-100%);
+    }
+    40% {
+        transform: translateX(100%);
+    }
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+
+.game-player-strip-uno-flash {
+    animation: uno-flash-anim 3s ease-in-out infinite;
+}
+
+@keyframes uno-flash-anim {
+    0% {}
+    40% {}
+    50% {
+        background: color-mix(in srgb,
+            var(--theme-surface-bottom) 60%,
+            var(--theme-highlight)
+        );
+    }
+    60% {}
+    100% {}
+}
+
+.game-player-strip-sidebar-uno-flash {
+    animation: uno-flash-anim-sidebar 3s ease-in-out infinite;
+}
+
+@keyframes uno-flash-anim-sidebar {
+    0% {}
+    40% {}
+    50% {
+        background: color-mix(in srgb,
+            var(--theme-surface-bottom) 80%,
+            var(--theme-highlight)
+        );
+    }
+    60% {}
+    100% {}
 }
 

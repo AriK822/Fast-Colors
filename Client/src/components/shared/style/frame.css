@@ -484,14 +484,14 @@
 .game-frame-shimmer {
     position: relative;
     overflow: hidden;
-    background: linear-gradient(
+    /* background: linear-gradient(
         90deg,
         color-mix(in srgb,
             var(--theme-accent) 40%,
             transparent
         ),
         transparent
-    );
+    ); */
     border-radius: var(--radius-ui-md);
     border: 1px solid color-mix(in srgb,
             var(--theme-highlight) 50%,
