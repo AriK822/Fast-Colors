@@ -137,6 +137,9 @@ socket.on("leave_active_game", async (data, ack) => {
     }
 
     GameHandler.leavePlayerFromGame(socket.request.session.player_id);
+    active_game.chat.push(["server-log", `${
+        PlayerstateHandler.getPlayerName(socket.request.session.player_id)
+    } left the game`])
     const removed_game = GameHandler.gameCleanupAfterLeave(active_game);
 
     if (removed_game){
@@ -152,7 +155,7 @@ socket.on("leave_active_game", async (data, ack) => {
         "msg": "Game successfully left",
         "redirect": "/",
     })
-    broadCastHiddenGame(active_game, "players")
+    broadCastHiddenGame(active_game)
     socket.leave(active_game.id);
 
     return

@@ -16,6 +16,7 @@ import UiIdMapper from "../components/game/ui_choices/map_ui_id"
 import bgLandscape from "../assets_staging/bg1.png"
 import bgMobile from "../assets_staging/bg2.png"
 import paintTexture from "../assets_staging/t1.jpg"
+import chatIcon from "../assets_staging/chat-icon.png"
 
 
 Object.assign(ui, {Game: game_ui})
@@ -251,6 +252,28 @@ function GameDirectionIndicator({game}){
 }
 
 
+function FinishedGameDeleteTimer({ deadline }) {
+    const [secondsRemaining, setSecondsRemaining] = useState(
+        Math.max(0, Math.ceil((deadline - Date.now()) / 1000))
+    );
+
+    useEffect(() => {
+        const update = () => {
+            setSecondsRemaining(
+                Math.max(0, Math.ceil((deadline - Date.now()) / 1000))
+            );
+        };
+
+        update();
+
+        const interval = setInterval(update, 1000);
+        return () => clearInterval(interval);
+    }, [deadline]);
+
+    return <>{secondsRemaining}</>;
+}
+
+
 
 function Game(){
   const navigate = useNavigate();
@@ -280,12 +303,20 @@ function Game(){
   const [connectionPing, setConnectionPing] = useState("-")
   const [connectionQuality, setConnectionQuality] = useState("-")
   const [connectionQualityColor, setConnectionQualityColor] = useState("-")
+  const [showChatIconNotif, setShowChatIconNotif] = useState(false)
+  const hideChatIconTimeout = useRef(null);
 
 
 
   async function loadGame(show_notifications=true) {
       setGame(null);
+      const startDate = Date.now();
+
       const result = await SocketAPI.loadGame();
+
+      const ping = Date.now() - startDate;
+      setConnectionPing(ping)
+      updateConectionQualityFromPing(ping)
 
       if (show_notifications && result.msg) {
           showNotification({
@@ -319,11 +350,18 @@ function Game(){
     })
 
     SocketAPI.listenForSyncGameProperty((data) => {
-      console.log(data)
       setGame(prevGame => ({
         ...prevGame,
         [data.property]: data.value,
       }));
+
+      if(data.property == "chat"){
+        setShowChatIconNotif(true);
+        clearTimeout(hideChatIconTimeout.current)
+        hideChatIconTimeout.current = setTimeout(() => {
+          setShowChatIconNotif(false);
+        }, 1000)        
+      }
     })
 
     SocketAPI.listenForGameEndedKick(() => {
@@ -343,34 +381,38 @@ function Game(){
     setInterval(async () => {
       const ping = await SocketAPI.getPing()
       setConnectionPing(ping);
-
-      if (ping < 30) {
-          setConnectionQuality("Excellent");
-          setConnectionQualityColor("#22C55E");
-      }
-      else if (ping < 60) {
-          setConnectionQuality("Great");
-          setConnectionQualityColor("#84CC16");
-      }
-      else if (ping < 100) {
-          setConnectionQuality("Good");
-          setConnectionQualityColor("#EAB308");
-      }
-      else if (ping < 150) {
-          setConnectionQuality("Fair");
-          setConnectionQualityColor("#F59E0B");
-      }
-      else if (ping < 250) {
-          setConnectionQuality("Poor");
-          setConnectionQualityColor("#F97316");
-      }
-      else {
-          setConnectionQuality("Very Poor");
-          setConnectionQualityColor("#EF4444");
-      }
+      updateConectionQualityFromPing(ping);
     }, 10000);
 
   }, []);
+
+
+  function updateConectionQualityFromPing(ping){
+    if (ping < 30) {
+        setConnectionQuality("Excellent");
+        setConnectionQualityColor("#22C55E");
+    }
+    else if (ping < 60) {
+        setConnectionQuality("Great");
+        setConnectionQualityColor("#84CC16");
+    }
+    else if (ping < 100) {
+        setConnectionQuality("Good");
+        setConnectionQualityColor("#EAB308");
+    }
+    else if (ping < 150) {
+        setConnectionQuality("Fair");
+        setConnectionQualityColor("#F59E0B");
+    }
+    else if (ping < 250) {
+        setConnectionQuality("Poor");
+        setConnectionQualityColor("#F97316");
+    }
+    else {
+        setConnectionQuality("Very Poor");
+        setConnectionQualityColor("#EF4444");
+    }
+  }
 
 
   async function sendGameChatMassage() {
@@ -593,6 +635,33 @@ function Game(){
 
       <ui.SideBar.Divider />
 
+      <p
+        className="ui-text text-lg opacity-70 flex"
+      >
+        {/* {thisTurn 
+        ? <>
+          Your turn...<br/>
+          Click on a card to play
+        </>
+        : `${game.players[game.turn].name}'s turn...`
+        } */}
+
+        {game.winner && (
+            <>
+                Game will be deleted after{" "}
+                <FinishedGameDeleteTimer
+                    deadline={
+                        game.last_move_time +
+                        game.finished_game_delete_timeout
+                    }
+                />
+                s
+            </>
+        )}
+      </p>
+
+      <ui.SideBar.Divider />
+
       <ui.Frame.Btn 
         className="ui-text text-2xl truncate shrink-0
           w-full mb-ui-md"
@@ -706,7 +775,7 @@ function Game(){
           <p><span className="opacity-35">Quality: </span>
             <span style={{color:connectionQualityColor}}>{connectionQuality}</span>
           </p>
-          <p><span className="opacity-35">Ping: </span>{connectionPing}</p>
+          <p><span className="opacity-35">Ping: </span>{connectionPing}ms</p>
           
 
           <p style={{color:"var(--theme-accent)"}}>General:</p>
@@ -843,27 +912,39 @@ function Game(){
           }
         </AnimatePresence>
 
-        {/* <AnimatePresence>
-          {chatBoxOpen &&
+        <AnimatePresence>
+          {chatBoxOpen && showChatIconNotif &&
           <motion.div
+            key="chat-icon"
+            className="absolute top-20 left-3"
             initial={{ opacity:0}}
             animate={{ opacity:1}}
             exit={{ opacity:0}}
           >
             <ui.Frame.Label
-              className="absolute top-20 left-3 
-                md:hidden cursor-pointer"
+              className="!p-1 
+                flex justify-center items-center
+                md:hidden cursor-pointer w-[40px] h-[40px]"
             >
-              Chat
+              <img
+                className="w-full"
+                src={chatIcon} 
+              />
             </ui.Frame.Label>
           </motion.div>
           }
-        </AnimatePresence> */}
+        </AnimatePresence>
 
         <div
           className="w-[70px] aspect-9/16 relative 
             mx-ui-md cursor-pointer !z-1"
-          onClick={takeCard}
+          onClick={() => {
+            if (
+              !thisTurn ||
+              game.cards_taken_in_this_turn >= game.max_draws_per_turn
+            ) return
+            takeCard()
+          }}
         >
           <RenderCard
             width="100%"
@@ -936,6 +1017,11 @@ function Game(){
           <ui.Frame.Btn 
             className="w-full h-full cursor-pointer !rounded-[100%]"
             onClick={skipMove}
+            disabled={
+              !thisTurn ||
+               game.cards_taken_in_this_turn == 0 ||
+               game.cards_to_take > 0
+            }
           >
             Skip
           </ui.Frame.Btn>
@@ -958,6 +1044,7 @@ function Game(){
             }
             {game.max_draws_per_turn > 0 &&
               game.cards_taken_in_this_turn > 0 &&
+              thisTurn &&
               <motion.div
                 className="game-side-pannel-info"
 

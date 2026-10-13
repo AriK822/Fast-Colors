@@ -50,6 +50,23 @@
 
 .game-frame-btn:disabled{
     cursor: not-allowed;
+
+    transform: translateY(2px);
+
+    box-shadow:
+        inset 4px 2px 0
+            color-mix(
+                in srgb,
+                var(--theme-accent) 80%,
+                white
+            ),
+        2px 3px 0
+            color-mix(
+                in srgb,
+                var(--theme-surface-bottom) 50%,
+                var(--theme-accent)
+            ),
+        3px 7px 5px rgb(0 0 0 / 45%);
 }
 
 

@@ -27,6 +27,10 @@ UI features:
 ✅Move the timer to around the player label
 ✅fix engine timer reset on reload
 ✅Ping + connection quality in sidebar 
+✅Chat icon for the phone bellow open sidebar, with it scaling up and down on new messages (icon hidden if chat hidden) 
+✅Chat server-log on player leave, winner and game end 
+✅Ended game kick timer 
+✅Dont allow skip or take client side 
 
 
 Base color: make the turn indicator ticker and the color of the base color. Add a arrow like at the end of them too 
@@ -37,29 +41,20 @@ Place animation
 
 Draw animation 
 
-Dont allow skip or take client side 
-
 Add bot chat messages (start game, end game, uno) 
-
-Chat icon for the phone bellow open sidebar, with it scaling up and down on new messages (icon hidden if chat hidden) 
 
 Fix notifications 
 
 Try making the active hand curved 
 
-Win screen animation ans celebration 
-
-Chat server-log on player leave, winner and game end 
-
-Timestamps for chat 
-
-Play hints in sidebar 
+Win screen animation and celebration 
 
 Syncing indicator 
 
-Ended game kick timer 
+Play hints in sidebar
 
-Reduced motion (settings)
+active player blocked
+
 
 
 Add themes
@@ -72,3 +67,5 @@ Uno btn
 Quick reactions
 chat filtering
 rematch
+Timestamps for chat
+Reduced motion (settings)

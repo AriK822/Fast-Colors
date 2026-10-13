@@ -27,6 +27,7 @@ export function makeNewGame({
     history={played_cards:[], total_placed_cards:0,},
     state=GameStateModes.INITIALIZING,
     winner=null, // {id:..., name:...}
+    finished_game_delete_timeout=config.game.finished_game_delete_timeout,
 }){
     const start_card = generate_random_card(card_objects);
     const start_base_color = get_start_base_color(start_card, base_colors);
@@ -58,6 +59,7 @@ export function makeNewGame({
         wild_cards_must_match,
         turn_timer,
         last_move_time:Date.now(),
+        finished_game_delete_timeout,
         }
 }
 
@@ -312,6 +314,8 @@ export function gameWinProcess(game, services){
                 String(config.game.finished_game_delete_timeout)+"ms")
             game.state = GameStateModes.ENDED;
             game.winner = {id:p_info.id, name:p_info.name};
+            game.chat.push(["server-log",`${game.winner.name} won!`])
+            game.chat.push(["server-log",`game ended`])
             setTimeout(() => {
                 if (services.deleteGame) services.deleteGame(game);
                 if (services.gameEndedKick) services.gameEndedKick(game);
