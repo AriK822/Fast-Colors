@@ -133,16 +133,13 @@ function add_cards_to_player(game, player_index, count=1){
 // ---   EFFECTS   ---
 export function effectSkipBlockedTurns(game){
     if (!game.effects_data.skip_blocked_players) return;
-    console.log("Start: ",game.effects_data.skip_blocked_players)
     
     while ((game.effects_data.skip_blocked_players[game.turn] ?? 0) > 0){
-        console.log("For: ", game.turn, game.players[game.turn].name)
         game.effects_data.skip_blocked_players[game.turn] -= 1;
         game.turn = (game.turn + game.direction) % game.players.length;
         game.turn = (game.turn + game.players.length) % game.players.length;
         game.cards_taken_in_this_turn = 0;
     }
-    console.log("End: ",game.effects_data.skip_blocked_players)
     return true;
 }
 

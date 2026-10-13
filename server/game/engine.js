@@ -327,7 +327,7 @@ export function setGameNextCycleTimeout(game, services){
     delete GAME_CYCLE_TIMEOUTS[game.id];
 
     const this_player = game.players[game.turn];
-    try{
+
     if (this_player.type == "bot" || this_player.game_status == "left"){
         const this_timeout = setTimeout(() => {
             mainGameCycle(game, GameCycleReasonMode.BOT_PLAY, {}, services);
@@ -341,10 +341,6 @@ export function setGameNextCycleTimeout(game, services){
             }, game.turn_timer * 1000);
             GAME_CYCLE_TIMEOUTS[game.id] = this_timeout;
         }
-    }
-    }
-    catch{
-        console.log(game)
     }
 }
 

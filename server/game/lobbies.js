@@ -29,9 +29,6 @@ export function joinPlayerToLobby(player_id, lobby_id){
         LOBBIES[lobby_id].chat.push(["server-log", 
             `${PlayerstateHandler.getPlayerName(player_id)} joined the lobby.`])
     }
-    else {
-        console.log("ERROR: Lobby doesnt exist")
-    }
 }
 
 

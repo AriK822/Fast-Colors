@@ -48,16 +48,8 @@ const EngineServices = {
 
 const this_game = GameHandler.Player_To_Game[socket.request.session.player_id];
 if (this_game){
-    const started_cycle = GameHandler.handlePlayerConnection(this_game);
-    if (started_cycle)
-        Engine.mainGameCycle(
-            this_game,
-            Engine.GameCycleReasonMode.START_CYCLE,
-            {},
-            EngineServices,
-        )
-    else
-        broadCastHiddenGame(this_game, "players")
+    GameHandler.handlePlayerConnection(this_game);
+    broadCastHiddenGame(this_game, "players")
 }
 
 }
@@ -76,9 +68,6 @@ socket.on("load_game", async (data, ack) => {
         return;
     }
 
-    ack({
-        game: GameHandler.hiddenGameForClient(socket.request.session.player_id),
-    })
     socket.join(active_game.id)
 
     if (active_game.state == Engine.GameStateModes.INITIALIZING ||
@@ -92,7 +81,10 @@ socket.on("load_game", async (data, ack) => {
             EngineServices,
         )
     }
-    
+
+    ack({
+        game: GameHandler.hiddenGameForClient(socket.request.session.player_id),
+    })
     return
 })
 
@@ -258,7 +250,7 @@ socket.on("game_take_card", async (data, ack) => {
 socket.on("disconnecting", () => {
     const active_game = GameHandler.Player_To_Game[socket.request.session.player_id]
     if (active_game){
-        active_game.state = GameHandler.handlePlayerDisconnection(active_game);
+        GameHandler.handlePlayerDisconnection(active_game);
         broadCastHiddenGame(active_game, "players")
     }
 });

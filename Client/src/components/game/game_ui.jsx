@@ -16,7 +16,7 @@ function PlayerStripLabel({player, className,
     if (player.type=="bot"){status="Bot"; status_color="--theme-bot-text"}
     else if (player.game_status=="left"){status = "Left"; status_color="--theme-left-text"}
     else if (player.connection_status=="online"){status = "Online"; status_color="--theme-online-text"}
-    else if (player.connection_status=="offline"){status = "Online"; status_color="--theme-offline-text"}
+    else if (player.connection_status=="offline"){status = "Offline"; status_color="--theme-offline-text"}
 
     const render_card_count = player.card_count > 30 ? 30 : player.card_count;
     
@@ -142,7 +142,7 @@ function PlayerLabel({player,
     if (player.type=="bot"){status="Bot"; status_color="--theme-bot-text"}
     else if (player.game_status=="left"){status = "Left"; status_color="--theme-left-text"}
     else if (player.connection_status=="online"){status = "Online"; status_color="--theme-online-text"}
-    else if (player.connection_status=="offline"){status = "Online"; status_color="--theme-offline-text"}
+    else if (player.connection_status=="offline"){status = "Offline"; status_color="--theme-offline-text"}
 
     return (
         <ui.Frame.Label 

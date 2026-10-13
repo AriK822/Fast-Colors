@@ -176,10 +176,6 @@ export function handlePlayerConnection(game){
     if (game.state == Engine.GameStateModes.ENDED) return
     clearTimeout(DELETE_GAME_TIMEOUTS[game.id]);
     delete DELETE_GAME_TIMEOUTS[game.id];
-    if (game.state !== Engine.GameStateModes.ONGOING){
-        game.state = Engine.GameStateModes.ONGOING;
-        return true;
-    }
     return
 }
 

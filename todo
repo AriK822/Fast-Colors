@@ -25,6 +25,8 @@ UI features:
 ✅PlayerStrip Badges: Uno, blocked (up right on border) 
 ✅Add a "(you)" tag in sidebar players for active player (game and lobby) 
 ✅Move the timer to around the player label
+✅fix engine timer reset on reload
+
 
 Base color: make the turn indicator ticker and the color of the base color. Add a arrow like at the end of them too 
 
