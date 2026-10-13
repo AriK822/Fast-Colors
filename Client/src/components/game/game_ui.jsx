@@ -57,7 +57,7 @@ function PlayerStripLabel({player, className,
                 {player.card_count}
                 {thisTurn && !winner && !showTimer &&
                 <Loaders.CircleSpinner
-                    size="30px"
+                    size="32px"
                     className="absolute"
                 />
                 }

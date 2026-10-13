@@ -83,3 +83,21 @@ export function listenForGameEndedKick(callback) {
 }
 
 
+export async function getPing() {
+    const sentDate = Date.now();
+    try {
+        await new Promise((resolve, reject) => {
+            socket.timeout(3000).emit("ping", null, (err) => {
+                if (err) reject(err);
+                else resolve();
+            });
+        });
+        return Date.now() - sentDate;
+    } 
+    catch (err) {
+        console.error("Ping failed:", err);
+        return -1;
+    }
+}
+
+

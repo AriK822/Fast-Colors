@@ -70,6 +70,9 @@ io.on("connection", async (socket) => {
     });
 
 
+    socket.on("ping", async (data, ack) => {ack()});
+
+
 
     socket.on("disconnecting", () => {
         PlayerstateHandler.setPlayerState(socket.request.session.player_id, false);

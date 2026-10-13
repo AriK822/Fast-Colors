@@ -277,6 +277,9 @@ function Game(){
   const [nameInputLoading, setNameInputLoading] = useState(false);
   const [inspectGameAfterWin, setInspectGameAfterWin] = useState(false);
   const [GameInfoBoxOpen, setGameInfoBoxOpen] = useState(false);
+  const [connectionPing, setConnectionPing] = useState("-")
+  const [connectionQuality, setConnectionQuality] = useState("-")
+  const [connectionQualityColor, setConnectionQualityColor] = useState("-")
 
 
 
@@ -336,6 +339,36 @@ function Game(){
 
       navigate("/");
     })
+
+    setInterval(async () => {
+      const ping = await SocketAPI.getPing()
+      setConnectionPing(ping);
+
+      if (ping < 30) {
+          setConnectionQuality("Excellent");
+          setConnectionQualityColor("#22C55E");
+      }
+      else if (ping < 60) {
+          setConnectionQuality("Great");
+          setConnectionQualityColor("#84CC16");
+      }
+      else if (ping < 100) {
+          setConnectionQuality("Good");
+          setConnectionQualityColor("#EAB308");
+      }
+      else if (ping < 150) {
+          setConnectionQuality("Fair");
+          setConnectionQualityColor("#F59E0B");
+      }
+      else if (ping < 250) {
+          setConnectionQuality("Poor");
+          setConnectionQualityColor("#F97316");
+      }
+      else {
+          setConnectionQuality("Very Poor");
+          setConnectionQualityColor("#EF4444");
+      }
+    }, 10000);
 
   }, []);
 
@@ -669,6 +702,13 @@ function Game(){
         <ui.Frame.SubBox
           className="!p-ui-xs"
         >
+          <p style={{color:"var(--theme-accent)"}}>Connection:</p>
+          <p><span className="opacity-35">Quality: </span>
+            <span style={{color:connectionQualityColor}}>{connectionQuality}</span>
+          </p>
+          <p><span className="opacity-35">Ping: </span>{connectionPing}</p>
+          
+
           <p style={{color:"var(--theme-accent)"}}>General:</p>
           <p><span className="opacity-35">Game Id: </span>{game.id}</p>
           <p><span className="opacity-35">Game State: </span>{game.state}</p>
@@ -802,6 +842,23 @@ function Game(){
           />
           }
         </AnimatePresence>
+
+        {/* <AnimatePresence>
+          {chatBoxOpen &&
+          <motion.div
+            initial={{ opacity:0}}
+            animate={{ opacity:1}}
+            exit={{ opacity:0}}
+          >
+            <ui.Frame.Label
+              className="absolute top-20 left-3 
+                md:hidden cursor-pointer"
+            >
+              Chat
+            </ui.Frame.Label>
+          </motion.div>
+          }
+        </AnimatePresence> */}
 
         <div
           className="w-[70px] aspect-9/16 relative 
