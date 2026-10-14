@@ -25,16 +25,15 @@ export function makeNewGame({
     turn_timer=20, // seconds
     effects_data={},
     chat=[["server-log", "Game started"]],
-    history={played_cards:[], total_placed_cards:0,},
     state=GameStateModes.INITIALIZING,
     winner=null, // {id:..., name:...}
     finished_game_delete_timeout=config.game.finished_game_delete_timeout,
-    created_at=Date.now(),
 }){
     const start_card = generate_random_card(card_objects);
     const start_base_color = get_start_base_color(start_card, base_colors);
     const players_initiated = init_players(players, init_deck_size, card_objects);
     const effects = generateGameEffects(card_objects);
+    const history = {played_cards:[[start_card, 0]], total_placed_cards:0,};
 
     return {
         id,
@@ -61,8 +60,8 @@ export function makeNewGame({
         wild_cards_must_match,
         turn_timer,
         last_move_time:Date.now(),
+        created_at:Date.now(),
         finished_game_delete_timeout,
-        created_at,
     }
 }
 

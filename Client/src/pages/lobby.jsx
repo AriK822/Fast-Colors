@@ -572,6 +572,7 @@ function Lobby() {
             lg:w-[85%] lg:h-[85%]
             items-center justify-center
             gap-ui-md game-theme-scrollbar
+            relative
           `}
         >
           <div className="
@@ -984,7 +985,7 @@ function Lobby() {
                     return (
                     <ui.Frame.SubBox 
                       key={advCardObjIds.current[i]} 
-                      className="flex flex-col gap-ui-xs"
+                      className="relative flex flex-col gap-ui-xs"
 
                       layout
                       initial={{opacity:0,scale:0.7,}}

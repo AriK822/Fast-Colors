@@ -36,19 +36,23 @@ UI features:
 ✅active player blocked 
 ✅logo for sidebar
 ✅Add bot chat messages (start game, end game, uno, winner, random) 
+✅fix rerender in middle cards
+✅fix motion in lobby
+✅Play hints in sidebar
+✅game loading skeleton
+✅remove name input from game
+✅add the first card history
+✅Win screen animation and celebration 
 
 
 Base color: make the turn indicator ticker and the color of the base color. Add a arrow like at the end of them too 
 polish player hand
+polish take new card
 Place animation 
 Draw animation 
 Try making the active hand curved 
-Syncing indicator 
+Syncing indicator (disable all the action btns and run animation, run loader after 1sec if server didnt respond)
 
-Win screen animation and celebration 
-Play hints in sidebar
-fix rerender in middle cards
-fix motion in lobby
 
 
 
@@ -66,3 +70,4 @@ rematch
 Timestamps for chat
 Reduced motion (settings)
 realistic bot chat messages based on game
+random state based play hints

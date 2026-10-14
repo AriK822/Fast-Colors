@@ -6,7 +6,8 @@ import { useNotification } from "../utils/context/notification";
 import { useApp } from "../utils/context/app_provider"
 import * as Timer from "../utils/hooks/timer_hooks"
 
-import { motion, AnimatePresence } from "motion/react";
+import { motion, AnimatePresence, scale } from "motion/react";
+import confetti from "canvas-confetti";
 import ui from "../components/shared/_ui"
 import game_ui from "../components/game/game_ui"
 import RenderCard from "../components/game/render_card"
@@ -275,11 +276,11 @@ function Game(){
   const startX = useRef(0);
   const startScrollLeft = useRef(0);
   const timerRef = useRef(null);
-  const [nameInputValue, setNameInputValue] = useState(session.player_name);
-  const isNameInputInitLoad = useRef(true);
-  const [nameInputLoading, setNameInputLoading] = useState(false);
+  const playedConfettiAnimation = useRef(false);
+  const subBoxRef = useRef(null);
   const [inspectGameAfterWin, setInspectGameAfterWin] = useState(false);
   const [GameInfoBoxOpen, setGameInfoBoxOpen] = useState(false);
+  const [hintBoxOpen, setHintBoxOpen] = useState(false);
   const [connectionPing, setConnectionPing] = useState("-")
   const [connectionQuality, setConnectionQuality] = useState("-")
   const [connectionQualityColor, setConnectionQualityColor] = useState("-")
@@ -546,51 +547,146 @@ function Game(){
 
 
   useEffect(() => {
-    if (isNameInputInitLoad.current){
-      isNameInputInitLoad.current = false;
-      return;
-    }
-
-    const timeout = setTimeout(async () => {
-      if (nameInputValue.trim().length < 4) return
-
-      setNameInputLoading(true);
-      const result = await SocketAPI.setPlayerName(nameInputValue);
-      setNameInputLoading(false);
-
-      showNotification({
-        text: result.msg,
-        type: result.error ? "error" : "success"
-      });
-
-      if (!result.error){
-        setSession({
-          ...session,
-          player_name: nameInputValue,
-        });
-      }
-
-    }, 700);
-
-    return () => {
-      clearTimeout(timeout);
-    };
-
-  }, [nameInputValue]);
-
-  useEffect(() => {
     setChoiceComponent(null);
   }, [game?.turn]);
 
 
-  if (!game){
-    return <Loader.FullScreen />
+  function gameEndedConfettiAnimation() {
+      if (playedConfettiAnimation.current) return true;
+
+      const rect = subBoxRef.current?.getBoundingClientRect();
+
+      if (!rect) return true;
+
+      confetti({
+          particleCount: 100,
+          spread: 80,
+          startVelocity: 35,
+          gravity: 1,
+          colors: [
+              "#f76c57",
+              "#58ed80",
+              "#34a8eb",
+              "#ede158",
+              "#b67130",
+          ],
+          origin: {
+              x: (rect.left + rect.width / 2) / window.innerWidth,
+              y: (rect.top + rect.height / 2) / window.innerHeight,
+          },
+      });
+
+      playedConfettiAnimation.current = true;
+      return true;
+  }
+
+
+
+  if (!game) {
+    return (
+      <ui.FullScreen className="flex overflow-hidden">
+        <ui.SideBar
+          style={{ "--bg-paint-texture": `url(${paintTexture})` }}
+          className="flex flex-col gap-ui-md p-ui-md"
+        >
+
+          <div className="flex flex-col gap-ui-sm">
+            {Array.from({ length: 4 }, (_, i) => (
+              <div key={i} className="flex items-center gap-3">
+                <Skeleton circle width={32} height={32} />
+                <div className="flex-1">
+                  <Skeleton width="65%" />
+                  <Skeleton width="35%" />
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <Skeleton height={150} />
+
+          <Skeleton height={30} />
+          <Skeleton height={30} />
+          <Skeleton height={30} />
+
+        </ui.SideBar>
+
+        <main
+          className="
+            relative flex min-w-0 flex-1 flex-col
+            items-center justify-center overflow-hidden
+            bg-cover bg-center
+            bg-[image:var(--bg-mobile)]
+            md:bg-[image:var(--bg-desktop)]
+          "
+          style={{
+            "--bg-mobile": `url(${bgMobile})`,
+            "--bg-desktop": `url(${bgLandscape})`,
+          }}
+        >
+          <div className="absolute top-[8%] flex gap-ui-md">
+            {Array.from({ length: 3 }, (_, i) => (
+              <div key={i} className="flex items-center gap-2">
+                <Skeleton circle width={36} height={36} />
+                <div>
+                  <Skeleton width={60} />
+                  <Skeleton width={38} />
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="flex items-center justify-center gap-5">
+            <Skeleton
+              width={70}
+              height={124}
+              borderRadius={12}
+            />
+
+            <Skeleton
+              width={120}
+              height={200}
+              borderRadius={16}
+            />
+
+            <Skeleton
+              width={65}
+              height={65}
+              borderRadius={16}
+            />
+          </div>
+
+          <div className="
+            absolute bottom-[7%] left-1/2 -translate-x-1/2
+            flex items-end justify-center
+          ">
+            {Array.from({ length: 7 }, (_, i) => (
+              <div
+                key={i}
+                className="-mx-2"
+                style={{
+                  transform: `translateY(${Math.abs(i - 3) * 5}px)
+                    rotate(${(i - 3) * 5}deg)`,
+                  zIndex: i,
+                }}
+              >
+                <Skeleton
+                  width={75}
+                  height={125}
+                  borderRadius={12}
+                />
+              </div>
+            ))}
+          </div>
+        </main>
+      </ui.FullScreen>
+    );
   }
 
 
   const thisPlayer = game.players.find((p) => p.id === session.player_id);
   const thisIdx = game.players.indexOf(thisPlayer);
   const thisTurn = game.turn == game.players.indexOf(thisPlayer);
+  const toPlayLen = thisPlayer.deck.filter(card => (card.allowed_to_play)).length;
 
 
   return (
@@ -599,35 +695,51 @@ function Game(){
     <ui.SideBar 
       style={{"--bg-paint-texture": `url(${paintTexture})`,}}
     >
-      <h1 className="ui-text text-2xl truncate shrink-0">
-        Play as: &nbsp;
-          {nameInputLoading
-            ? <Skeleton inline width={90} />
-            : session.player_name
-          }
-      </h1>
-      <ui.SideBar.Input 
-        className="mt-3"
-        placeholder="Your name"
-        onChange={(e) => setNameInputValue(e.target.value)} 
-        value={nameInputValue}
-      />
 
-      <ui.SideBar.Divider />
-
-      <p
-        className="ui-text text-lg opacity-70 flex"
+      {hintBoxOpen && <>
+      <div
+        className="ui-text text-lg opacity-70 flex flex-col
+          min-h-22 max-h-22 overflow-hidden"
       >
-        {/* {thisTurn 
-        ? <>
-          Your turn...<br/>
-          Click on a card to play
-        </>
-        : `${game.players[game.turn].name}'s turn...`
-        } */}
+        {!game.winner && <>
+          {thisTurn 
+          ? 
+          <>
+          {(() => {
+            let skip_msg = "";
+            if (game.cards_taken_in_this_turn > 0) 
+              skip_msg = "You can skip your turn";
+            else
+              skip_msg = "Take at least one card to skip"
+            if (!game.can_draw_when_playable && toPlayLen > 0)
+              skip_msg = "Skip or draw not allowed, use your playable cards"
+
+            if (game.cards_to_take > 0){
+              return (<>
+                  Danger mode! <br/>
+                  {toPlayLen > 0 
+                  ? `${toPlayLen} cards to play`
+                  : `No playable card. Click on the deck to take the cards`}
+              </>)
+            }
+            return (<>
+                Your turn, Click on a card to play...<br/>
+                {toPlayLen} cards are playable<br/>
+                {skip_msg}
+            </>)
+          })()}
+          </>
+          : 
+          <>
+            {game.players[game.turn].name}'s turn...
+          </>
+          }
+        </>}
 
         {game.winner && (
-            <>
+            <p>
+                Game over.<br />
+                {game.winner.name} has won. <br />
                 Game will be deleted after&nbsp;
                 <Timer.Countdown
                     targetTime={
@@ -636,11 +748,18 @@ function Game(){
                     }
                 />
                 s
-            </>
+            </p>
         )}
-      </p>
+      </div>
 
+      <ui.Frame.ContrastBtn
+        onClick={() => setHintBoxOpen(false)}
+      >
+        Hide hints
+      </ui.Frame.ContrastBtn>
       <ui.SideBar.Divider />
+      </>}
+
 
       <ui.Frame.Btn 
         className="ui-text text-2xl truncate shrink-0
@@ -788,6 +907,14 @@ function Game(){
       >
         Home
       </ui.SideBar.Btn>
+      {!hintBoxOpen &&
+      <ui.SideBar.Btn 
+        onClick={() => {setHintBoxOpen(true)}}
+        className="shrink-0"
+      >
+        Show hints
+      </ui.SideBar.Btn>
+      }
       <ui.SideBar.Btn
         className="shrink-0"
       >
@@ -816,12 +943,18 @@ function Game(){
       }}
     >
 
+      <AnimatePresence>
       {game.winner && !inspectGameAfterWin &&
+        gameEndedConfettiAnimation() &&
         <ui.FullScreen 
           className="!absolute z-99 !bg-overlay
             ui-text flex justify-center items-center">
           <ui.Frame.SubBox
+            ref={subBoxRef}
             className="!p-ui-lg flex flex-col gap-ui-md"
+            initial={{scale:0.3, opacity:0.3}}
+            animate={{scale:1, opacity:1}}
+            exit={{scale:1, opacity:0}}
           >
             <p className="text-3xl">
               {
@@ -850,8 +983,9 @@ function Game(){
           </ui.Frame.SubBox>
         </ui.FullScreen>
       }
+      </AnimatePresence>
 
-      {choiceComponent}
+      {!game.winner && choiceComponent}
 
       {game.players.length > 6 &&
       <div
@@ -916,34 +1050,59 @@ function Game(){
           }
         </AnimatePresence>
 
-        <div
-          className="w-[70px] aspect-9/16 relative 
-            mx-ui-md cursor-pointer !z-1"
-          onClick={() => {
-            if (
-              !thisTurn ||
-              game.cards_taken_in_this_turn >= game.max_draws_per_turn
-            ) return
-            takeCard()
-          }}
+        {(() => {
+        const deckVariants = {
+            initial: {},
+            hover: {},
+        };
+
+        const cardVariants = [
+            { rotate: 6, x: 3, y: 2 },
+            { rotate: -4, x: -5, y: 5 },
+            { rotate: 0, x: 0, y: 0 },
+        ];
+
+        const hoverCardVariants = [
+            { rotate: 12, x: 12, y: -5 },
+            { rotate: -10, x: -12, y: 2 },
+            { rotate: 0, x: 0, y: 8 },
+        ];
+
+        return <motion.div
+            className="w-[70px] aspect-9/16 relative
+                mx-ui-md cursor-pointer !z-1"
+            variants={deckVariants}
+            initial="initial"
+            whileHover="hover"
+            onClick={() => {
+                if (
+                    !thisTurn ||
+                    game.cards_taken_in_this_turn >= game.max_draws_per_turn ||
+                    (!game.can_draw_when_playable && toPlayLen > 0)
+                ) return;
+
+                takeCard();
+            }}
         >
-          <RenderCard
-            width="100%"
-            className="!absolute"
-            overlay_image={"card_back_side.png"}
-            animate={{rotate:6, x:3, y:2}}
-          />
-          <RenderCard
-            width="100%"
-            className="!absolute"
-            overlay_image={"card_back_side.png"}
-            animate={{rotate:-4, x:-5, y:5}}
-          />
-          <RenderCard
-            width="100%"
-            overlay_image={"card_back_side.png"}
-          />
-        </div>
+            {cardVariants.map((style, i) => (
+                <RenderCard
+                    key={i}
+                    width="100%"
+                    className={i < 2 ? "!absolute" : ""}
+                    overlay_image="card_back_side.png"
+                    variants={{
+                        initial: style,
+                        hover: hoverCardVariants[i],
+                    }}
+                    transition={{
+                        type: "spring",
+                        stiffness: 300,
+                        damping: 18,
+                    }}
+                />
+            ))}
+        </motion.div>
+        })()}
 
         <div
           className="w-[120px] aspect-9/16 relative mx-ui-md !z-2"
@@ -970,8 +1129,8 @@ function Game(){
               }}
               exit={{ opacity: 0, scale: 0.85 }}
               transition={{ duration: 0.3, ease: "easeOut" }}
-            drag
-            dragSnapToOrigin
+              drag
+              dragSnapToOrigin
             />
           ))}
           <RenderCard
@@ -984,7 +1143,6 @@ function Game(){
 
             drag
             dragSnapToOrigin
-            layout
             initial={{opacity:0.8, scale:0.8}}
             animate={{opacity:1, scale:1}}
           />
@@ -1000,8 +1158,9 @@ function Game(){
             onClick={skipMove}
             disabled={
               !thisTurn ||
-               game.cards_taken_in_this_turn == 0 ||
-               game.cards_to_take > 0
+              game.cards_taken_in_this_turn == 0 ||
+              game.cards_to_take > 0 ||
+              (!game.can_draw_when_playable && toPlayLen>0)
             }
           >
             Skip
