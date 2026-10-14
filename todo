@@ -31,36 +31,32 @@ UI features:
 ✅Chat server-log on player leave, winner and game end 
 ✅Ended game kick timer 
 ✅Dont allow skip or take client side 
+✅Fix notifications
+✅game timer
+✅active player blocked 
+✅logo for sidebar
+✅Add bot chat messages (start game, end game, uno, winner, random) 
 
 
 Base color: make the turn indicator ticker and the color of the base color. Add a arrow like at the end of them too 
-
 polish player hand
-
 Place animation 
-
 Draw animation 
-
-Add bot chat messages (start game, end game, uno) 
-
-Fix notifications 
-
 Try making the active hand curved 
-
-Win screen animation and celebration 
-
 Syncing indicator 
 
+Win screen animation and celebration 
 Play hints in sidebar
+fix rerender in middle cards
+fix motion in lobby
 
-active player blocked
 
 
 
+Features to add later:
 Add themes
 Add sfx
 Add settings
-
 
 Ideas that could be added:
 Uno btn
@@ -69,3 +65,4 @@ chat filtering
 rematch
 Timestamps for chat
 Reduced motion (settings)
+realistic bot chat messages based on game

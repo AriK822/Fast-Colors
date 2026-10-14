@@ -7,6 +7,7 @@ import interactive from "./interactive"
 import "./style/sidebar.css"
 import topLeftLeaves from "../../assets_staging/s4.1.png";
 import bottomLeftLeaves from "../../assets_staging/s3.png";
+import sidebarLogo from "../../assets_staging/sidebar-logo.png"
 
 
 
@@ -79,6 +80,17 @@ function SideBar({
                 />
 
                 <img
+                    src={sidebarLogo}
+                    alt=""
+                    className="
+                        pointer-events-none
+                        absolute drop-shadow-img-soft
+                        w-[80%] left-1/2 -translate-1/2
+                        top-[3.75rem] scale-[75%] sidebar-image-accent-glow
+                    "
+                />
+
+                <img
                     src={topLeftLeaves}
                     alt=""
                     className="
@@ -113,7 +125,7 @@ function SideBar({
             {open && (
                 <motion.div
                     className="fixed inset-0 size-full bg-background text-text
-                        z-100 flex bg-overlay md:hidden"
+                        !z-1000 flex bg-overlay md:hidden"
 
                     initial={{ opacity:0.7 }}
                     animate={{ opacity:1 }}
@@ -124,7 +136,7 @@ function SideBar({
                             relative flex flex-col
                             min-w-[70%] max-w-[70%] shrink-0
                             bg-background game-sidebar
-                            game-theme-scrollbar
+                            game-theme-scrollbar z-1000
                             ${className}
                         `}
                         style={{...style, width  }}
@@ -141,14 +153,25 @@ function SideBar({
                     >
                         {children}
 
+                    <img
+                        src={sidebarLogo}
+                        alt=""
+                        className="
+                            pointer-events-none
+                            absolute drop-shadow-img-soft z-1001
+                            w-[80%] left-1/2 -translate-1/2
+                            top-[3.75rem] scale-[75%] sidebar-image-accent-glow
+                        "
+                    />
                     </motion.aside>
+
 
                     <img
                         src={topLeftLeaves}
                         alt=""
                         className="
                             pointer-events-none
-                            absolute -top-15 -left-10
+                            absolute -top-15 -left-10 z-1001
                             scale-80 drop-shadow-img-soft
                         "
                     />
@@ -158,7 +181,7 @@ function SideBar({
                         alt=""
                         className="
                             pointer-events-none
-                            absolute -bottom-15 -left-10
+                            absolute -bottom-15 -left-10 z-1001
                             scale-80 drop-shadow-img-soft
                         "
                     />

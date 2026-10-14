@@ -79,19 +79,20 @@ function Notification({ text, type, color, timeout }) {
         typeColors[type] ?? color ?? "var(--theme-accent)";
 
     return (
+        <div className="notification-shadow">
         <div
-            className="game-notification"
+            className="game-notification p-ui-sm px-ui-lg"
             style={{
                 "--notification-color": backgroundColor,
                 "--notification-duration": `${timeout}ms`,
             }}
         >
-            <div className="ui-text text-xl game-notification-text">
+            <div className="ui-text text-lg game-notification-text">
                 {text}
             </div>
 
             <div className="game-notification-timer" />
-        </div>
+        </div></div>
     );
 }
 

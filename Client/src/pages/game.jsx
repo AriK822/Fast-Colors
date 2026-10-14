@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import * as SocketAPI from "../api/socket_handler"
 import { useNotification } from "../utils/context/notification";
 import { useApp } from "../utils/context/app_provider"
+import * as Timer from "../utils/hooks/timer_hooks"
 
 import { motion, AnimatePresence } from "motion/react";
 import ui from "../components/shared/_ui"
@@ -17,6 +18,7 @@ import bgLandscape from "../assets_staging/bg1.png"
 import bgMobile from "../assets_staging/bg2.png"
 import paintTexture from "../assets_staging/t1.jpg"
 import chatIcon from "../assets_staging/chat-icon.png"
+import BlockedIcon from "../assets_staging/blocked.png"
 
 
 Object.assign(ui, {Game: game_ui})
@@ -249,28 +251,6 @@ function GameDirectionIndicator({game}){
       <div className="arc arc-two"></div>
     </div>
   )
-}
-
-
-function FinishedGameDeleteTimer({ deadline }) {
-    const [secondsRemaining, setSecondsRemaining] = useState(
-        Math.max(0, Math.ceil((deadline - Date.now()) / 1000))
-    );
-
-    useEffect(() => {
-        const update = () => {
-            setSecondsRemaining(
-                Math.max(0, Math.ceil((deadline - Date.now()) / 1000))
-            );
-        };
-
-        update();
-
-        const interval = setInterval(update, 1000);
-        return () => clearInterval(interval);
-    }, [deadline]);
-
-    return <>{secondsRemaining}</>;
 }
 
 
@@ -648,9 +628,9 @@ function Game(){
 
         {game.winner && (
             <>
-                Game will be deleted after{" "}
-                <FinishedGameDeleteTimer
-                    deadline={
+                Game will be deleted after&nbsp;
+                <Timer.Countdown
+                    targetTime={
                         game.last_move_time +
                         game.finished_game_delete_timeout
                     }
@@ -779,6 +759,7 @@ function Game(){
           
 
           <p style={{color:"var(--theme-accent)"}}>General:</p>
+          <p><span className="opacity-35">Time passed: </span><Timer.ElapsedTimeFormatted targetTime={game.created_at} /></p>
           <p><span className="opacity-35">Game Id: </span>{game.id}</p>
           <p><span className="opacity-35">Game State: </span>{game.state}</p>
           <p><span className="opacity-35">Total Placed Cards: </span>{game.history.total_placed_cards}</p>
@@ -1030,7 +1011,7 @@ function Game(){
         <div className="absolute left-0 bottom-[10px]
           flex flex-col gap-ui-xs ui-text">
             <AnimatePresence>
-            {game.cards_to_take > 1 &&
+            {game.cards_to_take > 1 && !game.winner &&
               <motion.div
                 className="game-side-pannel-info !px-ui-sm"
 
@@ -1044,7 +1025,7 @@ function Game(){
             }
             {game.max_draws_per_turn > 0 &&
               game.cards_taken_in_this_turn > 0 &&
-              thisTurn &&
+              thisTurn && !game.winner &&
               <motion.div
                 className="game-side-pannel-info"
 
@@ -1059,6 +1040,29 @@ function Game(){
                   {game.cards_taken_in_this_turn}/
                   {game.max_draws_per_turn}
                 </span>
+              </motion.div>
+            }
+            {(game.effects_data?.skip_blocked_players?.[thisIdx] ?? 0) > 0 &&
+              !game.winner &&
+              <motion.div
+                className="game-side-pannel-info"
+
+                initial={{x:-200}}
+                animate={{x:0}}
+                exit={{x:-200}}
+              >
+                <div
+                  className="w-auto h-[30px] flex"
+                >
+                  {Array.from({length:game.effects_data?.skip_blocked_players?.[thisIdx]}).map((_, i) => (
+                    <img 
+                      key={i}
+                      className="w-full drop-shadow-img"
+                      style={{marginLeft:i==0?0:-15}}
+                      src={BlockedIcon} 
+                    />
+                  ))}
+                </div>
               </motion.div>
             }
             </AnimatePresence>

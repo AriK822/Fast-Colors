@@ -153,6 +153,12 @@ function PlayerLabel({player,
                  ${className}`}
             {...props}
         >
+            {winner?.id == player.id &&
+            <div className="absolute inset-0
+                rounded-full overflow-hidden">
+                <div className="game-player-strip-shimmer" />
+            </div>
+            }
             <ui.Frame.Avatar 
                 letter={first_letter} 
             />

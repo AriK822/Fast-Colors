@@ -2,7 +2,7 @@ import "./lobby_ui.css"
 import ui from "../shared/_ui"
 import { useState } from "react"
 import {motion} from "motion/react"
-import { useCountdown } from "../../utils/hooks/timer_hooks"
+import { Countdown } from "../../utils/hooks/timer_hooks"
 import Loader from "../loaders/_loaders"
 
 
@@ -76,8 +76,7 @@ function PlayerLabel({player,
 
   function KickTimer({target_time}){
     if (!target_time) return
-    const time_left = useCountdown(target_time);
-    return <span>kicking in {time_left}</span>
+    return <span>kicking in <Countdown targetTime={target_time} /></span>
   }
 
     const first_letter = String(player.name[0]).toLocaleUpperCase();

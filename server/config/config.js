@@ -13,6 +13,16 @@ const config = {
         max_history_cards:5,
     },
 
+    gameChat:{
+        allowBotMessages:true,
+        maxSentMsgs:2,
+        startGameWeight:0.2,
+        endGameWeight:0.2,
+        unoStateWeight:0.25,
+        winnerWeight:0.25,
+        randomMsgWeight:0.01,
+    },
+
     lobby:{
         disconnected_lobby_kick_timeout:30*1000,
     },

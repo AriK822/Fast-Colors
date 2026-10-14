@@ -1,5 +1,6 @@
 import { REGISTERED_CARDS, EFFECTS } from "./cards.js";
 import * as PlayerstateHandler from "../game/player_states.js"
+import * as GameChatHandler from "./game_chat.js"
 import config from "../config/config.js"
 
 
@@ -28,6 +29,7 @@ export function makeNewGame({
     state=GameStateModes.INITIALIZING,
     winner=null, // {id:..., name:...}
     finished_game_delete_timeout=config.game.finished_game_delete_timeout,
+    created_at=Date.now(),
 }){
     const start_card = generate_random_card(card_objects);
     const start_base_color = get_start_base_color(start_card, base_colors);
@@ -60,7 +62,8 @@ export function makeNewGame({
         turn_timer,
         last_move_time:Date.now(),
         finished_game_delete_timeout,
-        }
+        created_at,
+    }
 }
 
 
@@ -126,6 +129,7 @@ export function generateGameEffects(card_objects){
 }
 
 
+// Engine low level funcs
 export function possible_cards_to_play(game){
     const possible_cards = [];
     game.players[game.turn].deck.forEach((this_card)=>{
@@ -200,7 +204,10 @@ export function place_card(game, card, choice_data=null){
     const card_index = game.players[game.turn].deck.indexOf(card);
     game.players[game.turn].deck.splice(card_index, 1);
     game.current_card = card;
-    updateHistoryCard(game, card)
+
+    updateHistoryCard(game, card);
+    GameChatHandler.addBotUnoStateGameMsg(game);
+
     card.place_func(game, choice_data);
     game.cards_taken_in_this_turn = 0;
     return [true, "Card placed successfully"]
@@ -312,14 +319,20 @@ export function gameWinProcess(game, services){
         if (p_info.deck.length == 0){
             console.log("Game ended. Deleting in: "+
                 String(config.game.finished_game_delete_timeout)+"ms")
+
             game.state = GameStateModes.ENDED;
-            game.winner = {id:p_info.id, name:p_info.name};
+            game.winner = p_info;
+
+            GameChatHandler.addBotWinnerGameMsg(game);
+            GameChatHandler.addBotEndGameMsg(game);
             game.chat.push(["server-log",`${game.winner.name} won!`])
             game.chat.push(["server-log",`game ended`])
+
             setTimeout(() => {
                 if (services.deleteGame) services.deleteGame(game);
                 if (services.gameEndedKick) services.gameEndedKick(game);
             }, config.game.finished_game_delete_timeout);
+
             return;
         }
     })
@@ -398,6 +411,7 @@ export function mainGameCycle(game, reason, args={}, services={}){
         if (game.state == GameStateModes.ONGOING){
             runEffectsProcess(game);
             setGameNextCycleTimeout(game, services);
+            GameChatHandler.addBotRandomGameMsg(game);
         }
         game.last_move_time = Date.now();
     }

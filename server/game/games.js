@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 import * as GameEngine from "./engine.js"
 import { CARD_ID_TO_GENERATE_FUNC, REGISTERED_CARDS } from "./cards.js";
 import * as Engine from "./engine.js"
+import * as GameChat from "./game_chat.js"
 import config from "../config/config.js";
 
 
@@ -72,6 +73,8 @@ export function createGameFromLobby(lobby){
         wild_cards_must_match:lobby.game_options.wild_cards_must_match,
         turn_timer:lobby.game_options.turn_timer,
     })
+
+    GameChat.addBotStartGameMsg(this_game);
 
     GAMES[this_game.id] = this_game;
     Object.entries(lobby.players).forEach(([p_id, p_desc]) => {

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-export function useCountdown(targetTime) {
+export function Countdown({targetTime}) {
     const [timeLeft, setTimeLeft] = useState(() => {
         if (!targetTime) return null;
         return Math.ceil((targetTime - Date.now()) / 1000);
@@ -17,6 +17,56 @@ export function useCountdown(targetTime) {
         return () => clearInterval(interval);
     }, [targetTime]);
 
-    return timeLeft;
+    return <span>{timeLeft}</span>;
 }
 
+
+export function ElapsedTime({ targetTime }) {
+    const [timePassed, setTimePassed] = useState(() => {
+        if (!targetTime) return null;
+        return Math.floor((Date.now() - targetTime) / 1000);
+    });
+
+    useEffect(() => {
+        if (!targetTime) return;
+
+        const interval = setInterval(() => {
+            const elapsed = Math.floor((Date.now() - targetTime) / 1000);
+            setTimePassed(elapsed);
+        }, 1000);
+
+        return () => clearInterval(interval);
+    }, [targetTime]);
+
+    return <span>{timePassed}</span>;
+}
+
+
+export function ElapsedTimeFormatted({ targetTime }) {
+    const [timePassed, setTimePassed] = useState(() => {
+        if (!targetTime) return null;
+        return Math.floor((Date.now() - targetTime) / 1000);
+    });
+    const hours = Math.floor(timePassed / 3600);
+    const minutes = Math.floor((timePassed % 3600) / 60);
+    const seconds = Math.floor(timePassed % 60);
+
+    useEffect(() => {
+        if (!targetTime) return;
+
+        const interval = setInterval(() => {
+            const elapsed = Math.floor((Date.now() - targetTime) / 1000);
+            setTimePassed(elapsed);
+        }, 1000);
+
+        return () => clearInterval(interval);
+    }, [targetTime]);
+
+    return (
+        <span>
+            {hours > 0 && `${hours}h `}
+            {minutes > 0 && `${minutes}m `}
+            {seconds}s
+        </span>
+    )
+}
