@@ -245,6 +245,7 @@ function PlayersCircle({game, thisPlayer}){
 }
 
 
+
 function GameDirectionIndicator({game}){
   return (
     <div className="direction">
@@ -252,6 +253,61 @@ function GameDirectionIndicator({game}){
       <div className="arc arc-two"></div>
     </div>
   )
+}
+
+
+
+function ConnectionDetailsComponent(){
+  const [connectionPing, setConnectionPing] = useState("-")
+  const [connectionQuality, setConnectionQuality] = useState("-")
+  const [connectionQualityColor, setConnectionQualityColor] = useState("-")
+
+    function updateConectionQualityFromPing(ping){
+      if (ping < 30) {
+          setConnectionQuality("Excellent");
+          setConnectionQualityColor("#22C55E");
+      }
+      else if (ping < 60) {
+          setConnectionQuality("Great");
+          setConnectionQualityColor("#84CC16");
+      }
+      else if (ping < 100) {
+          setConnectionQuality("Good");
+          setConnectionQualityColor("#EAB308");
+      }
+      else if (ping < 150) {
+          setConnectionQuality("Fair");
+          setConnectionQualityColor("#F59E0B");
+      }
+      else if (ping < 250) {
+          setConnectionQuality("Poor");
+          setConnectionQualityColor("#F97316");
+      }
+      else {
+          setConnectionQuality("Very Poor");
+          setConnectionQualityColor("#EF4444");
+      }
+    }
+
+  useEffect(() => {
+    const checkPing = async () => {
+      const ping = await SocketAPI.getPing();
+      setConnectionPing(ping);
+      updateConectionQualityFromPing(ping);
+    };
+
+    checkPing();
+    const interval = setInterval(checkPing, 10000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  return (<>
+    <p><span className="opacity-35">Quality: </span>
+      <span style={{color:connectionQualityColor}}>{connectionQuality}</span>
+    </p>
+    <p><span className="opacity-35">Ping: </span>{connectionPing}ms</p>
+  </>)
 }
 
 
@@ -274,6 +330,7 @@ function Game(){
   const holdTimer = useRef(null);
   const isScrolling = useRef(false);
   const startX = useRef(0);
+  const latestX = useRef(0);
   const startScrollLeft = useRef(0);
   const timerRef = useRef(null);
   const playedConfettiAnimation = useRef(false);
@@ -281,9 +338,6 @@ function Game(){
   const [inspectGameAfterWin, setInspectGameAfterWin] = useState(false);
   const [GameInfoBoxOpen, setGameInfoBoxOpen] = useState(false);
   const [hintBoxOpen, setHintBoxOpen] = useState(false);
-  const [connectionPing, setConnectionPing] = useState("-")
-  const [connectionQuality, setConnectionQuality] = useState("-")
-  const [connectionQualityColor, setConnectionQualityColor] = useState("-")
   const [showChatIconNotif, setShowChatIconNotif] = useState(false)
   const hideChatIconTimeout = useRef(null);
 
@@ -291,13 +345,8 @@ function Game(){
 
   async function loadGame(show_notifications=true) {
       setGame(null);
-      const startDate = Date.now();
 
       const result = await SocketAPI.loadGame();
-
-      const ping = Date.now() - startDate;
-      setConnectionPing(ping)
-      updateConectionQualityFromPing(ping)
 
       if (show_notifications && result.msg) {
           showNotification({
@@ -359,41 +408,7 @@ function Game(){
       navigate("/");
     })
 
-    setInterval(async () => {
-      const ping = await SocketAPI.getPing()
-      setConnectionPing(ping);
-      updateConectionQualityFromPing(ping);
-    }, 10000);
-
   }, []);
-
-
-  function updateConectionQualityFromPing(ping){
-    if (ping < 30) {
-        setConnectionQuality("Excellent");
-        setConnectionQualityColor("#22C55E");
-    }
-    else if (ping < 60) {
-        setConnectionQuality("Great");
-        setConnectionQualityColor("#84CC16");
-    }
-    else if (ping < 100) {
-        setConnectionQuality("Good");
-        setConnectionQualityColor("#EAB308");
-    }
-    else if (ping < 150) {
-        setConnectionQuality("Fair");
-        setConnectionQualityColor("#F59E0B");
-    }
-    else if (ping < 250) {
-        setConnectionQuality("Poor");
-        setConnectionQualityColor("#F97316");
-    }
-    else {
-        setConnectionQuality("Very Poor");
-        setConnectionQualityColor("#EF4444");
-    }
-  }
 
 
   async function sendGameChatMassage() {
@@ -871,12 +886,8 @@ function Game(){
           className="!p-ui-xs"
         >
           <p style={{color:"var(--theme-accent)"}}>Connection:</p>
-          <p><span className="opacity-35">Quality: </span>
-            <span style={{color:connectionQualityColor}}>{connectionQuality}</span>
-          </p>
-          <p><span className="opacity-35">Ping: </span>{connectionPing}ms</p>
+          <ConnectionDetailsComponent />
           
-
           <p style={{color:"var(--theme-accent)"}}>General:</p>
           <p><span className="opacity-35">Time passed: </span><Timer.ElapsedTimeFormatted targetTime={game.created_at} /></p>
           <p><span className="opacity-35">Game Id: </span>{game.id}</p>
@@ -888,7 +899,7 @@ function Game(){
           <p><span className="opacity-35">Base colors: </span>{game.base_colors.join(", ")}</p>
           <p><span className="opacity-35">Wild card stacking: </span>{game.allow_wild_card_stacking ? "YES" : "NO"}</p>
           <p><span className="opacity-35">Can draw when playable: </span>{game.can_draw_when_playable ? " YES" : "NO"}</p>
-          <p><span className="opacity-35">Max Draws Per Turn: </span>{game.max_draws_per_turn}</p>
+          <p><span className="opacity-35">Max Draws Per Turn: </span>{game.max_draws_per_turn ?? "Infinite"}</p>
           <p><span className="opacity-35">Turn timer: </span>{game.turn_timer}</p>
           <p><span className="opacity-35">Wild cards must match: </span>{game.wild_cards_must_match ? "YES" : "NO"}</p>
           <p><span className="opacity-35">Direction: </span>{game.direction == 1 ? "Clockwise" : "Counter-Clockwise"}</p>
@@ -1069,37 +1080,37 @@ function Game(){
         ];
 
         return <motion.div
-            className="w-[70px] aspect-9/16 relative
-                mx-ui-md cursor-pointer !z-1"
-            variants={deckVariants}
-            initial="initial"
-            whileHover="hover"
-            onClick={() => {
-                if (
-                    !thisTurn ||
-                    game.cards_taken_in_this_turn >= game.max_draws_per_turn ||
-                    (!game.can_draw_when_playable && toPlayLen > 0)
-                ) return;
+          className="w-[70px] aspect-9/16 relative
+            mx-ui-md cursor-pointer !z-1"
+          variants={deckVariants}
+          initial="initial"
+          whileHover="hover"
+          onClick={() => {
+            if (
+              !thisTurn ||
+              game.cards_taken_in_this_turn >= (game.max_draws_per_turn ?? Infinity) ||
+              (!game.can_draw_when_playable && toPlayLen > 0)
+            ) return;
 
-                takeCard();
-            }}
+            takeCard();
+          }}
         >
             {cardVariants.map((style, i) => (
-                <RenderCard
-                    key={i}
-                    width="100%"
-                    className={i < 2 ? "!absolute" : ""}
-                    overlay_image="card_back_side.png"
-                    variants={{
-                        initial: style,
-                        hover: hoverCardVariants[i],
-                    }}
-                    transition={{
-                        type: "spring",
-                        stiffness: 300,
-                        damping: 18,
-                    }}
-                />
+              <RenderCard
+                key={i}
+                width="100%"
+                className={i < 2 ? "!absolute" : ""}
+                overlay_image="card_back_side.png"
+                variants={{
+                  initial: style,
+                  hover: hoverCardVariants[i],
+                }}
+                transition={{
+                  type: "spring",
+                  stiffness: 300,
+                  damping: 18,
+                }}
+              />
             ))}
         </motion.div>
         })()}
@@ -1263,24 +1274,30 @@ function Game(){
                 behavior: "smooth"
               });
             }}
-
             onPointerDown={(e) => {
-              const el = e.currentTarget;
+                const el = e.currentTarget;
 
-              startX.current = e.clientX;
-              startScrollLeft.current = el.scrollLeft;
-              isScrolling.current = false;
+                startX.current = e.clientX;
+                latestX.current = e.clientX;
+                startScrollLeft.current = el.scrollLeft;
+                isScrolling.current = false;
 
-              holdTimer.current = setTimeout(() => {
-                isScrolling.current = true;
-                el.setPointerCapture(e.pointerId);
-              }, 100);
+                holdTimer.current = setTimeout(() => {
+                    isScrolling.current = true;
+
+                    // Use the latest recorded pointer position
+                    startX.current = latestX.current;
+
+                    el.setPointerCapture(e.pointerId);
+                }, 100);
             }}
             onPointerMove={(e) => {
-              if (!isScrolling.current) return;
+                latestX.current = e.clientX;
 
-              e.currentTarget.scrollLeft =
-                startScrollLeft.current - (e.clientX - startX.current);
+                if (!isScrolling.current) return;
+
+                const dx = e.clientX - startX.current;
+                e.currentTarget.scrollLeft = startScrollLeft.current - dx;
             }}
             onPointerUp={() => {
               clearTimeout(holdTimer.current);
