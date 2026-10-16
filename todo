@@ -43,15 +43,12 @@ UI features:
 ✅remove name input from game
 ✅add the first card history
 ✅Win screen animation and celebration 
+✅Syncing indicator (disable all the action btns and run animation, run loader after 1sec if server didnt respond)
 
 
-Base color: make the turn indicator ticker and the color of the base color. Add a arrow like at the end of them too 
-polish player hand
-polish take new card
-Try making the active hand curved 
-Place animation 
-Draw animation 
-Syncing indicator (disable all the action btns and run animation, run loader after 1sec if server didnt respond)
+assets rework + svg icons
+
+
 
 
 
@@ -63,11 +60,14 @@ Add sfx
 Add settings
 
 Ideas that could be added:
-Uno btn
-Quick reactions
-chat filtering
-rematch
-Timestamps for chat
-Reduced motion (settings)
-realistic bot chat messages based on game
-random state based play hints
+- make the active hand curved + custom scroll + draggable
+- Place animation 
+- Draw animation
+- Uno btn
+- Quick reactions
+- chat filtering
+- rematch
+- Timestamps for chat
+- Reduced motion (settings)
+- realistic bot chat messages based on game
+- random state based play hints

@@ -187,25 +187,37 @@ function PlayerLabel({player,
                     {status}
                 </div>
             </div>
-            <div className="w-auto shrink-0">
-                <div className="text-sm  
-                    flex flex-row gap-ui-xxs items-center">
-                    <RednerCard 
+
+            <AnimatePresence mode="popLayout">
+
+            <motion.div
+                layout
+                transition={{
+                    layout: {
+                        type: "spring",
+                        stiffness: 300,
+                        damping: 30,
+                    },
+                }}
+                className="w-auto shrink-0"
+            >
+                <div className="text-sm flex flex-row gap-ui-xxs items-center">
+                    <RednerCard
                         className=""
                         width="20px"
-                        overlay_image={"card_back_side.png"}
+                        overlay_image="card_back_side.png"
                     />
                     {player.card_count}
                 </div>
-            </div>
+            </motion.div>
 
-            <AnimatePresence>
             {thisTurn && !winner && (
                 <motion.div
                 key="turn-spinner"
+                layout
                 className="flex flex-inline"
-                initial={{ width: 0, opacity: 0 }}
-                animate={{ width: "auto", opacity: 1 }}
+                initial={{ scale: 0, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0, opacity: 0 }}
                 transition={{
                     type: "spring",

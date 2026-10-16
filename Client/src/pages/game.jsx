@@ -311,6 +311,49 @@ function ConnectionDetailsComponent(){
 }
 
 
+function SyncingIndicator({className}){
+  return (
+    <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 512 512"
+        fill="currentColor"
+        className={"game-syncing-indcator " + className}
+    >
+        <path d="
+            M 129 60
+            C 190 25, 263 13, 329 39
+            C 416 73, 473 151, 480 246
+            C 481 261, 473 267, 464 256
+            L 416 201
+            C 362 147, 287 150, 210 182
+            L 243 231
+            C 248 239, 242 246, 233 244
+            L 39 210
+            C 31 209, 29 205, 32 197
+            L 80 7
+            C 83 -3, 89 -2, 94 6
+            Z
+        "/>
+        <path d="
+            M 383 452
+            C 322 487, 249 499, 183 473
+            C 96 439, 39 361, 32 266
+            C 31 251, 39 245, 48 256
+            L 96 311
+            C 150 365, 225 362, 302 330
+            L 269 281
+            C 264 273, 270 266, 279 268
+            L 473 302
+            C 481 303, 483 307, 480 315
+            L 432 505
+            C 429 515, 423 514, 418 506
+            Z
+        "/>
+    </svg>
+  )
+}
+
+
 
 function Game(){
   const navigate = useNavigate();
@@ -340,6 +383,7 @@ function Game(){
   const [hintBoxOpen, setHintBoxOpen] = useState(false);
   const [showChatIconNotif, setShowChatIconNotif] = useState(false)
   const hideChatIconTimeout = useRef(null);
+  const [showSyncingIndicator, setShowSyncingIndicator] = useState(false);
 
 
 
@@ -466,35 +510,90 @@ function Game(){
 
 
   async function playCard(card_index, choice=undefined) {
+    if (showSyncingIndicator) return
+    setShowSyncingIndicator(true);
+
+    const delayed = setTimeout(() => {
+      const newGame = {...game};
+      const thisCard = thisPlayer.deck[card_index];
+      newGame.current_card = thisCard;
+      if(thisCard.base_color) newGame.base_color = thisCard.base_color;
+      newGame.history.total_placed_cards+=1;
+      handCardIds.current.splice(card_index, 1);
+      thisPlayer.deck.splice(card_index, 1);
+      setGame((prev) => newGame)
+    }, 150);
+
     const result = await SocketAPI.playCard(card_index, choice);
 
-    if (result.error)
+    setShowSyncingIndicator(false);
+    clearTimeout(delayed);
+
+    if (result.error){
       showNotification({
           text: result.msg,
           type: result.error ? "error" : "success",
       });
-    else
-      handCardIds.current.splice(card_index, 1)
+      loadGame();
+    }
   }
 
   async function skipMove() {
+    if (showSyncingIndicator) return
+    setShowSyncingIndicator(true);
+
+    const delayed = setTimeout(() => {
+      setGame((prev)=>({
+        ...prev, 
+        turn:(prev.turn+prev.direction+prev.players.length)%prev.players.length,
+      }))
+    }, 150)
+
     const result = await SocketAPI.skipMove();
 
-    if (result.error)
-    showNotification({
-        text: result.msg,
-        type: result.error ? "error" : "success",
-    });
+    clearTimeout(delayed);
+    setShowSyncingIndicator(false);
+
+    if (result.error){
+      showNotification({
+          text: result.msg,
+          type: result.error ? "error" : "success",
+      });
+      loadGame();
+    }
   }
 
   async function takeCard() {
+    if (showSyncingIndicator) return
+    setShowSyncingIndicator(true);
+
+    const delayed = setTimeout(() => {
+      if (game.cards_to_take > 0){
+        for (let i=0; i<game.cards_to_take; i++){
+          game.players[game.turn].deck.push({
+            overlay_image: "card_back_side.png",
+          })
+        }
+      }
+      else
+        game.players[game.turn].deck.push({
+          overlay_image: "card_back_side.png",
+        })
+      setGame((prev) => ({...prev,}))
+    }, 150)
+
     const result = await SocketAPI.takeCard();
 
-    if (result.error)
-    showNotification({
-        text: result.msg,
-        type: result.error ? "error" : "success",
-    });
+    clearTimeout(delayed)
+    setShowSyncingIndicator(false);
+
+    if (result.error){
+      showNotification({
+          text: result.msg,
+          type: result.error ? "error" : "success",
+      });
+      loadGame();
+    }
   }
 
   function generateId() {
@@ -933,9 +1032,16 @@ function Game(){
       </ui.SideBar.Btn>
       <ui.SideBar.Btn 
         className="shrink-0"
-        onClick={leaveGame}
+        onClick={() => {
+            if(leave_game_loading) return
+            leaveGame()
+          }
+        }
       >
-        Leave Game
+        {leave_game_loading
+          ? <Loader.Spinner />
+          : "Leave Game"
+        }
       </ui.SideBar.Btn>
     </ui.SideBar>
 
@@ -1019,6 +1125,24 @@ function Game(){
         {game.players.length <= 6 &&
           <PlayersCircle game={game} thisPlayer={thisPlayer} />
         }
+
+        <AnimatePresence>
+        {showSyncingIndicator &&
+        <motion.div
+          initial={{opacity:0}}
+          animate={{opacity:1}}
+          transition={{
+              delay: 0.15,
+              duration: 0.8,
+              ease: "easeInOut",
+          }}        >
+          <SyncingIndicator 
+            className="absolute top-3 right-3
+              w-[40px]"
+          />
+        </motion.div>
+        }
+        </AnimatePresence>
 
         <AnimatePresence>
           {thisTurn &&

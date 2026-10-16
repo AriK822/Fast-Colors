@@ -332,3 +332,37 @@
     100% {}
 }
 
+
+.game-syncing-indcator {
+    color: #6ece56;
+    /* border: 1px solid rgb(139 207 145 / 25%); */
+    /* border-radius: 50%; */
+    /* box-shadow:
+        0 2px 6px rgb(0 0 0 / 25%),
+        0 0 8px rgb(105 216 61 / 12%); */
+    filter: drop-shadow(
+        3px 3px 3px rgba(0, 0, 0, 0.384)
+    );
+    animation:
+        game-sync-pulse 3s ease-in-out infinite,
+        game-sync-spin 5s linear infinite;;
+}
+
+@keyframes game-sync-pulse {
+    0%, 100% {
+        opacity: 0.5;
+    }
+    50% {
+        opacity: 1;
+    }
+}
+@keyframes game-sync-spin {
+    from {
+        transform: rotate(0deg) scaleX(-1);
+    }
+    to {
+        transform: rotate(360deg) scaleX(-1);
+    }
+}
+
+
