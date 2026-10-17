@@ -14,6 +14,7 @@ export const CARD_ID_TO_GENERATE_FUNC = {
     "wild_skip_next_player": makeWildSkipNextPlayer,
     "wild_block_selected_player": makeWildBlockSelectedPlayer,
     "wild_rotate_colored": makeWildRotateColored,
+    "wild_spy_eye_colored": makeSpyEyeColored,
 }
 
 export const REGISTERED_CARDS = {
@@ -24,6 +25,7 @@ export const REGISTERED_CARDS = {
     "wild_skip_next_player": makeWildSkipNextPlayer(),
     "wild_block_selected_player": makeWildBlockSelectedPlayer(),
     "wild_rotate_colored": makeWildRotateColored(),
+    "wild_spy_eye_colored": makeSpyEyeColored(),
 }
 
 
@@ -48,10 +50,14 @@ export const card_objects_with_desc = {
         "Player Blocker",
         "Wild card, Select a player to block them in their next turn"
     ],
-    "wild_rotate_colored" :[
+    "wild_rotate_colored": [
         "Rotate Direction",
         "Inverts the current game direction to the opposite direction."
-    ]
+    ],
+    "wild_spy_eye_colored": [
+        "Spy eye",
+        "Select a player to view their deck once. Can be placed only on the same color."
+    ],
 };
 
 export const extended_advanced_card_objects_with_desc = {
@@ -185,8 +191,8 @@ export function makeNormalCards(
                 rednered_text:nn,
                 base_color:this_base_color, // RGB or CSS rendered color value
                 overlay_image:"default_overlay.png",
-                allowed_to_play_func: allowed_to_play_func,
-                place_func: place_func,
+                allowed_to_play_func,
+                place_func,
                 choice:null,
             })
 
@@ -231,8 +237,8 @@ export function makeWildDraw2Colored(
             rednered_text:"+2",
             base_color:card_base_color,
             overlay_image:"wild_plus2_colored.png",
-            allowed_to_play_func: allowed_to_play_func,
-            place_func: place_func,
+            allowed_to_play_func,
+            place_func,
             choice:null,
         })
 
@@ -399,9 +405,79 @@ export function makeWildRotateColored(
             rednered_text:null,
             base_color:card_base_color,
             overlay_image:"wild_rotate_colored.png",
-            allowed_to_play_func: allowed_to_play_func,
-            place_func: place_func,
+            allowed_to_play_func,
+            place_func,
             choice:null,
+        })
+
+        result.push({
+            card: this_card,
+            weight,
+        })
+    })
+
+    return result;
+}
+
+
+export function makeSpyEyeColored(
+    base_colors = config.cards.default_base_colors,
+    weight = 2,
+){
+    const result = [];
+
+    base_colors.forEach(card_base_color => {
+
+        const allowed_to_play_func = (game) => {
+            if (game.cards_to_take > 0) return false;
+            if (game.base_color == card_base_color) return true;
+            return false;
+        }
+
+        const place_func = (game, choice) => {
+            if (choice.random){
+                let i = Math.floor(Math.random() * (game.players.length - 1));
+                if (i >= game.turn) i += 1;
+                choice.player_index = i;
+            }
+
+            (async () => {
+                const receiver_sockets =
+                    await game.io
+                        .in(`player-${game.players[game.turn].id}`)
+                        .fetchSockets();
+
+                for (const receiver_socket of receiver_sockets) {
+                    receiver_socket.emit("game-popup", {
+                        id: "spy-eye-result",
+                        spied_player_index: choice.player_index,
+                        spied_deck: game.players[choice.player_index].deck,
+                    });
+                }
+            })();
+
+            game.base_color = card_base_color;
+            game.turn = (game.turn + game.direction) % game.players.length;
+            game.turn = (game.turn + game.players.length) % game.players.length;
+        }
+
+        const choice = {
+            ui_id:"pick_player",
+            validate: (game, data)=>(
+                data.random || 
+                (game.players[data?.player_index] && game.turn !== data?.player_index)
+            )
+        }
+
+        const this_card = MakeCard({
+            id:`${CardType.wild}-${card_base_color}-spy-eye-colored`,
+            type:CardType.wild,
+            rednered_text:null,
+            base_color:card_base_color,
+            overlay_image:"spy_eye_colored.png",
+            allowed_to_play_func,
+            place_func,
+            choice,
         })
 
         result.push({
@@ -417,3 +493,7 @@ export function makeWildRotateColored(
 // To DO:
 // Wild: +2, +4
 // Magic: Choose new color, skip, rotate
+// joker
+// reverse deck
+// add 1 card to selected player
+// view selected players deck (egle eye)

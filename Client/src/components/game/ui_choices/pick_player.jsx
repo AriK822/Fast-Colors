@@ -23,6 +23,7 @@ export default function({game, onSelect, onClose}){
                 {game.players.map((player, player_index) => (
                     !player.deck &&
                     <game_ui.PlayerStripLabel
+                        key={player.id}
                         player={player}
                         hoverEffect={true}
                         onClick={() => onSelect({player_index})}

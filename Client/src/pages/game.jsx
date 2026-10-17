@@ -14,6 +14,7 @@ import RenderCard from "../components/game/render_card"
 import Loader from "../components/loaders/_loaders"
 import Skeleton from "react-loading-skeleton";
 import UiIdMapper from "../components/game/ui_choices/map_ui_id"
+import PopupMapper from "../components/game/popups/_popups"
 
 import bgLandscape from "../assets_staging/bg1.png"
 import bgMobile from "../assets_staging/bg2.png"
@@ -361,6 +362,7 @@ function Game(){
   const { session, setSession } = useApp();
 
   const [game, setGame] = useState(null);
+  const gameRef = useRef(game);
 
   const [game_chat_input, setGameChatInput] = useState("");
   const [game_chat_sending, setGameChatSending] = useState(false);
@@ -369,6 +371,7 @@ function Game(){
   const [playerInfoBoxOpen, setPlayerInfoBoxOpen] = useState(true);
   const [leave_game_loading, setLeaveGameLoading] = useState(false);
   const [choiceComponent, setChoiceComponent] = useState(null);
+  const [popupComponent, setPopupComponent] = useState(null);
   const handCardIds = useRef([]);
   const holdTimer = useRef(null);
   const isScrolling = useRef(false);
@@ -452,7 +455,24 @@ function Game(){
       navigate("/");
     })
 
+    SocketAPI.listenForGamePopup((data) => {
+      const ThisPopup = PopupMapper[data.id];
+      if (data.id == "spy-eye-result") 
+        setPopupComponent(
+          <ThisPopup 
+            onClose={() => setPopupComponent(null)}
+            game={gameRef.current}
+            {...data}
+          />
+        )
+    })
+
   }, []);
+
+
+  useEffect(() => {
+    gameRef.current = game;
+  }, [game]);
 
 
   async function sendGameChatMassage() {
@@ -526,6 +546,7 @@ function Game(){
 
     const result = await SocketAPI.playCard(card_index, choice);
 
+    thisPlayer.deck.splice(card_index, 1);
     setShowSyncingIndicator(false);
     clearTimeout(delayed);
 
@@ -1104,6 +1125,8 @@ function Game(){
 
       {!game.winner && choiceComponent}
 
+      {!game.winner && popupComponent}
+
       {game.players.length > 6 &&
       <div
         className="w-full flex-2 flex 
@@ -1432,7 +1455,7 @@ function Game(){
               isScrolling.current = false;
             }}
           >
-            <div className="flex h-full w-max min-w-full flex-row justify-center items-center px-[100px]">
+            <div className="relative flex h-full w-max min-w-full flex-row justify-center items-center px-[100px]">
               <AnimatePresence mode="popLayout">
                 {thisPlayer.deck.map((card, i) => {
                   if (handCardIds.current.length < thisPlayer.deck.length)
@@ -1442,7 +1465,7 @@ function Game(){
                     <motion.div
                       key={handCardIds.current[i]}
                       layout="position"
-                      className="shrink-0"
+                      className="relative shrink-0"
                       style={{
                         marginLeft: `-${Math.min(25, thisPlayer.deck.length * 3)}px`,
                         zIndex: i,

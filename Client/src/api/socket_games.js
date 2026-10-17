@@ -101,3 +101,12 @@ export async function getPing() {
 }
 
 
+export function listenForGamePopup(callback) {
+    socket.on("game-popup", callback);
+
+    return () => {
+        socket.off("game-popup", callback);
+    };
+}
+
+

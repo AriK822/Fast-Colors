@@ -12,7 +12,7 @@ export const Player_To_Game = new Map();
 export const DELETE_GAME_TIMEOUTS = new Map();
 
 
-export function createGameFromLobby(lobby){
+export function createGameFromLobby(lobby, io=undefined){
     const this_players = []
     Object.entries(lobby.players).forEach(([p_id, p_desc]) => {
         this_players.push({id:p_id, type:"player"})
@@ -74,6 +74,8 @@ export function createGameFromLobby(lobby){
         turn_timer:lobby.game_options.turn_timer,
     })
 
+    this_game.io = io;
+
     GameChat.addBotStartGameMsg(this_game);
 
     GAMES[this_game.id] = this_game;
@@ -89,6 +91,7 @@ export function hiddenGameForClient(player_id){
 
     return {
         ...this_game,
+        io: undefined,
         card_objects: undefined,
         players: this_game.players.map(player => ({
             ...player,

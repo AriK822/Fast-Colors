@@ -8,6 +8,7 @@ import skipNextPlaye from "../../assets_staging/skip_next_player.png"
 import cardBackSide from "../../assets_staging/card_back_side.png"
 import blockSelectedPlayer from "../../assets_staging/block_selected_player.png"
 import wildRotateColored from "../../assets_staging/wild_rotate_colored.png"
+import SpyEyeColored from "../../assets_staging/spy_eye_colored.png"
 
 
 const ovrelayMap = {
@@ -18,6 +19,7 @@ const ovrelayMap = {
     "card_back_side.png": cardBackSide,
     "block_selected_player.png": blockSelectedPlayer,
     "wild_rotate_colored.png": wildRotateColored,
+    "spy_eye_colored.png": SpyEyeColored,
 }
 
 
