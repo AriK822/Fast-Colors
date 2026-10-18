@@ -5,10 +5,8 @@
 ✅join lobby UI
 ✅lobby UI
 ✅game UI
-
-UI features (bellow)
-
-add more cards
+✅UI features (bellow)
+✅add more cards
 
 run tests and find bugs
 add docs
@@ -30,8 +28,7 @@ Card plugins:
 ✅joker
 ✅reverse deck
 ✅add 1 card to selected player
-
-golden rose (instant win)
+✅golden rose (instant win)
 
 
 
@@ -62,8 +59,8 @@ UI features:
 ✅add the first card history
 ✅Win screen animation and celebration 
 ✅Syncing indicator (disable all the action btns and run animation, run loader after 1sec if server didnt respond)
+✅add more cards
 
-add more cards
 assets rework + svg icons
 
 

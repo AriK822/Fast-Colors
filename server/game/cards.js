@@ -20,6 +20,7 @@ export const CARD_ID_TO_GENERATE_FUNC = {
     "wild_wild_joker": makeWildJoker,
     "wild_reverse_colored": makeReverseColored,
     "wild_selected_draw_1": makeWildSelectedDraw1,
+    "wild_golden_rose": makeGoldenRose,
 }
 
 export const REGISTERED_CARDS = {
@@ -35,6 +36,7 @@ export const REGISTERED_CARDS = {
     "wild_wild_joker": makeWildJoker(),
     "wild_reverse_colored": makeReverseColored(),
     "wild_selected_draw_1": makeWildSelectedDraw1(),
+    "wild_golden_rose": makeGoldenRose(),
 }
 
 
@@ -82,6 +84,11 @@ export const card_objects_with_desc = {
     "wild_selected_draw_1": [
         "Selected +1",
         "Wild card, Select a player to add 1 random card to their deck.",
+    ],
+    "wild_golden_rose": [
+        "Golden Rose",
+        "Wild card, removes 3 random cards from the deck of the player placing it."+
+        "If the player has less than 3 cards, they instantly win!",
     ],
 };
 
@@ -703,6 +710,52 @@ export function makeWildSelectedDraw1(
             allowed_to_play_func,
             place_func,
             choice,
+        })
+
+        result.push({
+            card: this_card,
+            weight,
+        })
+    })
+
+    return result;
+}
+
+
+export function makeGoldenRose(
+    base_colors = config.cards.default_base_colors,
+    weight = 2,
+){
+    const result = [];
+
+    base_colors.forEach(card_base_color => {
+
+        const allowed_to_play_func = (game) => {
+            if (game.cards_to_take > 0) return false;
+            if (game.base_color == card_base_color) return true;
+            return false;
+        }
+
+        const place_func = (game) => {
+            const thisDeck = game.players[game.turn].deck
+            if(thisDeck.length < 3) thisDeck = [];
+            else 
+                for (let i=0; i<3; i++)
+                    thisDeck.splice(Math.floor(Math.random() * thisDeck.length), 1)
+    
+            game.base_color = card_base_color;
+            game.turn = (game.turn + game.direction) % game.players.length;
+            game.turn = (game.turn + game.players.length) % game.players.length;
+        }
+
+        const this_card = MakeCard({
+            id:`${CardType.wild}-${card_base_color}-golden-rose`,
+            type:CardType.wild,
+            rednered_text:null,
+            base_color:card_base_color,
+            overlay_image:"golden_rose.png",
+            allowed_to_play_func,
+            place_func,
         })
 
         result.push({

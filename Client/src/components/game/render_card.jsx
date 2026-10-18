@@ -13,6 +13,7 @@ import WildDraw4 from "../../assets_staging/wild_plus4.png"
 import Joker from "../../assets_staging/joker.png"
 import Reverse from "../../assets_staging/reverse.png"
 import SelectedDraw1 from "../../assets_staging/selected_draw_1.png"
+import GoldenRose from "../../assets_staging/golden_rose.png"
 
 
 const ovrelayMap = {
@@ -28,6 +29,7 @@ const ovrelayMap = {
     "joker.png": Joker,
     "reverse.png": Reverse,
     "selected_draw_1.png": SelectedDraw1,
+    "golden_rose.png": GoldenRose,
 }
 
 
