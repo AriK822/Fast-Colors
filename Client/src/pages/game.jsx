@@ -372,7 +372,6 @@ function Game(){
   const [leave_game_loading, setLeaveGameLoading] = useState(false);
   const [choiceComponent, setChoiceComponent] = useState(null);
   const [popupComponent, setPopupComponent] = useState(null);
-  const handCardIds = useRef([]);
   const holdTimer = useRef(null);
   const isScrolling = useRef(false);
   const startX = useRef(0);
@@ -539,16 +538,14 @@ function Game(){
       newGame.current_card = thisCard;
       if(thisCard.base_color) newGame.base_color = thisCard.base_color;
       newGame.history.total_placed_cards+=1;
-      handCardIds.current.splice(card_index, 1);
       thisPlayer.deck.splice(card_index, 1);
       setGame((prev) => newGame)
     }, 150);
 
     const result = await SocketAPI.playCard(card_index, choice);
 
-    thisPlayer.deck.splice(card_index, 1);
-    setShowSyncingIndicator(false);
     clearTimeout(delayed);
+    setShowSyncingIndicator(false);
 
     if (result.error){
       showNotification({
@@ -1458,12 +1455,9 @@ function Game(){
             <div className="relative flex h-full w-max min-w-full flex-row justify-center items-center px-[100px]">
               <AnimatePresence mode="popLayout">
                 {thisPlayer.deck.map((card, i) => {
-                  if (handCardIds.current.length < thisPlayer.deck.length)
-                    handCardIds.current.push(generateId())
-                  
                   return(
                     <motion.div
-                      key={handCardIds.current[i]}
+                      key={card.uuid}
                       layout="position"
                       className="relative shrink-0"
                       style={{
@@ -1475,7 +1469,6 @@ function Game(){
                       }}
                     >
                     <RenderCard 
-                      key={handCardIds.current[i]}
                       className="shrink-0"
                       base_color={card.base_color} 
                       overlay_image={card.overlay_image} 

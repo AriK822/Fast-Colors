@@ -17,6 +17,15 @@ export default function ({ game, onSelect, onClose }) {
     }
 
     function getSlicePath(index) {
+        if (count === 1) {
+            return [
+                `M ${center} ${center - radius}`,
+                `A ${radius} ${radius} 0 1 1 ${center} ${center + radius}`,
+                `A ${radius} ${radius} 0 1 1 ${center} ${center - radius}`,
+                "Z",
+            ].join(" ");
+        }
+
         const startAngle = (index / count) * 360 - 90;
         const endAngle = ((index + 1) / count) * 360 - 90;
 
@@ -34,7 +43,7 @@ export default function ({ game, onSelect, onClose }) {
 
     return (
         <div className="absolute inset-0 size-full bg-overlay text-text
-            flex justify-center items-center z-10"
+            flex justify-center items-center z-90"
             onClick={onClose}
         >
             <motion.div

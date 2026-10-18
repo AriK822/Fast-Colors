@@ -18,6 +18,23 @@ make public
 
 
 
+Card plugins:
+✅norm
+✅wild +2, 
+✅wild +4
+✅Choose new color
+✅skip
+✅block selected
+✅rotate
+✅view selected players deck (spy eye)
+
+joker
+reverse deck
+add 1 card to selected player
+
+
+
+
 UI features:
 ✅Animate open choice box 
 ✅polish timer

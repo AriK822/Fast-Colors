@@ -6,7 +6,7 @@ import { motion } from "motion/react";
 export default function({game, onSelect, onClose}){
     return (
         <div className="absolute inset-0 size-full bg-overlay text-text
-            flex justify-center items-center z-10"
+            flex justify-center items-center z-90"
             onClick={onClose}
         >
         <motion.div

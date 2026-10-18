@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import config from "../config/config.js"
 
 
@@ -15,6 +16,7 @@ export const CARD_ID_TO_GENERATE_FUNC = {
     "wild_block_selected_player": makeWildBlockSelectedPlayer,
     "wild_rotate_colored": makeWildRotateColored,
     "wild_spy_eye_colored": makeSpyEyeColored,
+    "wild_wild_draw_4": makeWildDraw4,
 }
 
 export const REGISTERED_CARDS = {
@@ -26,6 +28,7 @@ export const REGISTERED_CARDS = {
     "wild_block_selected_player": makeWildBlockSelectedPlayer(),
     "wild_rotate_colored": makeWildRotateColored(),
     "wild_spy_eye_colored": makeSpyEyeColored(),
+    "wild_wild_draw_4": makeWildDraw4(),
 }
 
 
@@ -58,6 +61,10 @@ export const card_objects_with_desc = {
         "Spy eye",
         "Select a player to view their deck once. Can be placed only on the same color."
     ],
+    "wild_wild_draw_4": [
+        "Draw 4",
+        "Wild card, adds +4 cards to the next person's hand",
+    ]
 };
 
 export const extended_advanced_card_objects_with_desc = {
@@ -115,7 +122,10 @@ function generate_random_card(card_objects) {
     for (const item of card_objects) {
         random -= item.weight;
         if (random <= 0) {
-            return item.card;
+            return {
+                ...item.card,
+                uuid:randomUUID(),
+            };
         }
     }
 
@@ -490,10 +500,41 @@ export function makeSpyEyeColored(
 }
 
 
-// To DO:
-// Wild: +2, +4
-// Magic: Choose new color, skip, rotate
-// joker
-// reverse deck
-// add 1 card to selected player
-// view selected players deck (egle eye)
+export function makeWildDraw4(
+    base_colors = config.cards.default_base_colors,
+    weight = 16,
+){
+    const allowed_to_play_func = (game) => {
+        if (!game.allow_wild_card_stacking && game.cards_to_take > 0) return false;
+        return true;
+    }
+
+    const place_func = (game, choice) => {
+        if (choice.random)
+            choice.base_color = game.base_colors[Math.floor(Math.random() * game.base_colors.length)]
+        
+        game.base_color = choice.base_color;
+        game.turn = (game.turn + game.direction) % game.players.length;
+        game.turn = (game.turn + game.players.length) % game.players.length;
+        game.cards_to_take += 4;
+    }
+
+    const choice = {
+        ui_id:"pick_color",
+        validate: (game, data)=>(data.random || game.base_colors.includes(data?.base_color ?? ""))
+    }
+
+    const this_card = MakeCard({
+        id:`${CardType.wild}-draw+4`,
+        type:CardType.wild,
+        rednered_text:"+4",
+        base_color:null,
+        overlay_image:"wild_plus4.png",
+        allowed_to_play_func,
+        place_func,
+        choice,
+    })
+
+    return [{card:this_card, weight}];
+}
+

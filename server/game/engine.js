@@ -1,6 +1,7 @@
 import { REGISTERED_CARDS, EFFECTS } from "./cards.js";
 import * as PlayerstateHandler from "../game/player_states.js"
 import * as GameChatHandler from "./game_chat.js"
+import { randomUUID } from "node:crypto";
 import config from "../config/config.js"
 
 
@@ -80,7 +81,10 @@ function generate_random_card(card_objects) {
     for (const item of card_objects) {
         random -= item.weight;
         if (random <= 0) {
-            return item.card;
+            return {
+                ...item.card,
+                uuid:randomUUID(),
+            };
         }
     }
 
