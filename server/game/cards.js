@@ -19,6 +19,7 @@ export const CARD_ID_TO_GENERATE_FUNC = {
     "wild_wild_draw_4": makeWildDraw4,
     "wild_wild_joker": makeWildJoker,
     "wild_reverse_colored": makeReverseColored,
+    "wild_selected_draw_1": makeWildSelectedDraw1,
 }
 
 export const REGISTERED_CARDS = {
@@ -33,6 +34,7 @@ export const REGISTERED_CARDS = {
     "wild_wild_draw_4": makeWildDraw4(),
     "wild_wild_joker": makeWildJoker(),
     "wild_reverse_colored": makeReverseColored(),
+    "wild_selected_draw_1": makeWildSelectedDraw1(),
 }
 
 
@@ -76,6 +78,10 @@ export const card_objects_with_desc = {
     "wild_reverse_colored": [
         "Reverse",
         "Wild card, Select a player to swap your deck with theirs.",
+    ],
+    "wild_selected_draw_1": [
+        "Selected +1",
+        "Wild card, Select a player to add 1 random card to their deck.",
     ],
 };
 
@@ -637,6 +643,63 @@ export function makeReverseColored(
             rednered_text:null,
             base_color:card_base_color,
             overlay_image:"reverse.png",
+            allowed_to_play_func,
+            place_func,
+            choice,
+        })
+
+        result.push({
+            card: this_card,
+            weight,
+        })
+    })
+
+    return result;
+}
+
+
+export function makeWildSelectedDraw1(
+    base_colors = config.cards.default_base_colors,
+    weight = 2,
+){
+    const result = [];
+
+    base_colors.forEach(card_base_color => {
+
+        const allowed_to_play_func = (game) => {
+            if (game.cards_to_take > 0) return false;
+            if (game.base_color == card_base_color) return true;
+            return false;
+        }
+
+        const place_func = (game, choice) => {
+            if (choice.random){
+                let i = Math.floor(Math.random() * (game.players.length - 1));
+                if (i >= game.turn) i += 1;
+                choice.player_index = i;
+            }
+
+            add_cards_to_player(game, choice.player_index, 1);
+
+            game.base_color = card_base_color;
+            game.turn = (game.turn + game.direction) % game.players.length;
+            game.turn = (game.turn + game.players.length) % game.players.length;
+        }
+
+        const choice = {
+            ui_id:"pick_player",
+            validate: (game, data)=>(
+                data.random || 
+                (game.players[data?.player_index] && game.turn !== data?.player_index)
+            )
+        }
+
+        const this_card = MakeCard({
+            id:`${CardType.wild}-${card_base_color}-selected-player+1`,
+            type:CardType.wild,
+            rednered_text:"+1",
+            base_color:card_base_color,
+            overlay_image:"selected_draw_1.png",
             allowed_to_play_func,
             place_func,
             choice,
