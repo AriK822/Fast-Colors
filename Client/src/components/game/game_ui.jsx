@@ -82,7 +82,7 @@ function PlayerStripLabel({player, className,
                             border:`1px solid #ffffff5b`,
                             }}
                         width="25px"
-                        overlay_image={"card_back_side.png"}
+                        overlay_image={["card_back_side"]}
 
                         initial={{opacity:0,scale:0.7,y:-20}}
                         animate={{opacity:1,scale:1,y:0}}
@@ -205,7 +205,7 @@ function PlayerLabel({player,
                     <RednerCard
                         className=""
                         width="20px"
-                        overlay_image="card_back_side.png"
+                        overlay_image={["card_back_side"]}
                     />
                     {player.card_count}
                 </div>

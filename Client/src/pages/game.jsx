@@ -589,13 +589,13 @@ function Game(){
       if (game.cards_to_take > 0){
         for (let i=0; i<game.cards_to_take; i++){
           game.players[game.turn].deck.push({
-            overlay_image: "card_back_side.png",
+            overlay_image: ["card_back_side"],
           })
         }
       }
       else
         game.players[game.turn].deck.push({
-          overlay_image: "card_back_side.png",
+          overlay_image: ["card_back_side"],
         })
       setGame((prev) => ({...prev,}))
     }, 150)
@@ -1246,7 +1246,7 @@ function Game(){
                 key={i}
                 width="100%"
                 className={i < 2 ? "!absolute" : ""}
-                overlay_image="card_back_side.png"
+                overlay_image={["card_back_side"]}
                 variants={{
                   initial: style,
                   hover: hoverCardVariants[i],

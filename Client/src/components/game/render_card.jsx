@@ -17,19 +17,19 @@ import GoldenRose from "../../assets_staging/golden_rose.png"
 
 
 const ovrelayMap = {
-    "default_overlay.png": defaultOverlay,
-    "wild_plus2_colored.png": wildPlus2Colored,
-    "choose_base_color.png": chooseBaseColor,
-    "skip_next_player.png": skipNextPlaye,
-    "card_back_side.png": cardBackSide,
-    "block_selected_player.png": blockSelectedPlayer,
-    "wild_rotate_colored.png": wildRotateColored,
-    "spy_eye_colored.png": SpyEyeColored,
-    "wild_plus4.png": WildDraw4,
-    "joker.png": Joker,
-    "reverse.png": Reverse,
-    "selected_draw_1.png": SelectedDraw1,
-    "golden_rose.png": GoldenRose,
+    "default_overlay": defaultOverlay,
+    "wild_plus2_colored": wildPlus2Colored,
+    "choose_base_color": chooseBaseColor,
+    "skip_next_player": skipNextPlaye,
+    "card_back_side": cardBackSide,
+    "block_selected_player": blockSelectedPlayer,
+    "wild_rotate_colored": wildRotateColored,
+    "spy_eye_colored": SpyEyeColored,
+    "wild_plus4": WildDraw4,
+    "joker": Joker,
+    "reverse": Reverse,
+    "selected_draw_1": SelectedDraw1,
+    "golden_rose": GoldenRose,
 }
 
 
@@ -67,8 +67,15 @@ function card({
 
             {...props}
         >
-            {overlay_image &&
-            <img src={ovrelayMap[overlay_image]} alt="card-image" />
+            {overlay_image.map((overlay_id, i) => (
+                <img 
+                    key={i}
+                    src={ovrelayMap[overlay_id]} 
+                    alt="card-image"
+                    className="w-full"
+                    style={{zIndex:i+1}}
+                />
+            ))
             }
 
             <span 
