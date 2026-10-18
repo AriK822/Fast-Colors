@@ -17,6 +17,7 @@ export const CARD_ID_TO_GENERATE_FUNC = {
     "wild_rotate_colored": makeWildRotateColored,
     "wild_spy_eye_colored": makeSpyEyeColored,
     "wild_wild_draw_4": makeWildDraw4,
+    "wild_wild_joker": makeWildJoker,
 }
 
 export const REGISTERED_CARDS = {
@@ -29,6 +30,7 @@ export const REGISTERED_CARDS = {
     "wild_rotate_colored": makeWildRotateColored(),
     "wild_spy_eye_colored": makeSpyEyeColored(),
     "wild_wild_draw_4": makeWildDraw4(),
+    "wild_wild_joker": makeWildJoker(),
 }
 
 
@@ -55,16 +57,20 @@ export const card_objects_with_desc = {
     ],
     "wild_rotate_colored": [
         "Rotate Direction",
-        "Inverts the current game direction to the opposite direction."
+        "Wild card, Inverts the current game direction to the opposite direction."
     ],
     "wild_spy_eye_colored": [
         "Spy eye",
-        "Select a player to view their deck once. Can be placed only on the same color."
+        "Wild card, Select a player to view their deck once. Can be placed only on the same color."
     ],
     "wild_wild_draw_4": [
         "Draw 4",
         "Wild card, adds +4 cards to the next person's hand",
-    ]
+    ],
+    "wild_wild_joker": [
+        "Joker",
+        "Wild card, swaps all player decks with their next player's deck in game direction.",
+    ],
 };
 
 export const extended_advanced_card_objects_with_desc = {
@@ -533,6 +539,48 @@ export function makeWildDraw4(
         allowed_to_play_func,
         place_func,
         choice,
+    })
+
+    return [{card:this_card, weight}];
+}
+
+
+export function makeWildJoker(
+    base_colors = config.cards.default_base_colors,
+    weight = 1,
+){
+    const allowed_to_play_func = (game) => {
+        if (game.cards_to_take > 0) return false;
+        return true;
+    }
+
+    const place_func = (game) => {
+        const f_this_deck = game.players[0].deck;
+        const l_this_deck = game.players[game.players.length-1].deck;
+        if (game.direction == -1)
+            for (let i=0; i<game.players.length; i++){
+                game.players[i].deck = 
+                    game.players[i+1]?.deck ?? f_this_deck;
+            }
+        if (game.direction == 1)
+            for (let i=game.players.length-1; i>=0; i--){
+                game.players[i].deck = 
+                    game.players[i-1]?.deck ?? l_this_deck;
+            }
+        
+        game.turn = (game.turn + game.direction) % game.players.length;
+        game.turn = (game.turn + game.players.length) % game.players.length;
+    }
+
+    const this_card = MakeCard({
+        id:`${CardType.wild}-Joker`,
+        type:CardType.wild,
+        rednered_text:null,
+        base_color:null,
+        overlay_image:"joker.png",
+        allowed_to_play_func,
+        place_func,
+        choice:null,
     })
 
     return [{card:this_card, weight}];

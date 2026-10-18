@@ -1149,25 +1149,27 @@ function Game(){
         <AnimatePresence>
         {showSyncingIndicator &&
         <motion.div
+          className="absolute top-3 right-3"
+
           initial={{opacity:0}}
           animate={{opacity:1}}
           transition={{
               delay: 0.15,
               duration: 0.8,
               ease: "easeInOut",
-          }}        >
+          }}        
+        >
           <SyncingIndicator 
-            className="absolute top-3 right-3
-              w-[40px]"
+            className="w-[40px]"
           />
         </motion.div>
         }
         </AnimatePresence>
 
         <AnimatePresence>
-          {thisTurn &&
+          {(thisTurn || game.winner) &&
           <ui.Game.PlayerStripLabel
-            player={game.players[thisIdx]}
+            player={thisPlayer}
             thisTurn={true}
             winner={game.winner}
             showTimer={game.turn_timer !== "infinite"}
