@@ -11,6 +11,7 @@ import wildRotateColored from "../../assets_staging/wild_rotate_colored.png"
 import SpyEyeColored from "../../assets_staging/spy_eye_colored.png"
 import WildDraw4 from "../../assets_staging/wild_plus4.png"
 import Joker from "../../assets_staging/joker.png"
+import Reverse from "../../assets_staging/reverse.png"
 
 
 const ovrelayMap = {
@@ -24,6 +25,7 @@ const ovrelayMap = {
     "spy_eye_colored.png": SpyEyeColored,
     "wild_plus4.png": WildDraw4,
     "joker.png": Joker,
+    "reverse.png": Reverse,
 }
 
 
