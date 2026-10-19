@@ -115,6 +115,7 @@ export function MakeCard({
 
     choice=null,
     effects=[],
+    middleWare=[],
 }){
     return {
         id, // Ids should follow: type-uniqueID, For CardType.norm: norm-{color}&{number}
@@ -130,6 +131,7 @@ export function MakeCard({
 
         choice, // {ui_id:"pick_color/pick_player/...", validate:(game, data)=>(bool)}
         effects, // Array([string...]) of ids of effects
+        middleWare:[cardUuidMiddleWare, ...middleWare], // DO NOT modify shared info!
     }
 
 }
@@ -140,21 +142,25 @@ export function MakeCard({
 
 
 // ---   UTILS   ---
-function generate_random_card(card_objects) {
+function createGameCardInstance(card, game){
+    const thisCard = {...card};
+    for (const middleWareFunc of thisCard.middleWare)
+        middleWareFunc(thisCard, game)
+    return thisCard;
+}
+
+
+export function generate_random_card(card_objects, game=null) {
     const totalWeight = card_objects.reduce((sum, item) => sum + item.weight, 0);
     let random = Math.random() * totalWeight;
 
     for (const item of card_objects) {
         random -= item.weight;
-        if (random <= 0) {
-            return {
-                ...item.card,
-                uuid:randomUUID(),
-            };
-        }
+        if (random <= 0)
+            return createGameCardInstance(item.card, game)
     }
 
-    return card_objects[card_objects.length - 1].card;
+    return createGameCardInstance(card_objects[card_objects.length - 1].card, game);
 }
 
 
@@ -162,7 +168,7 @@ function add_cards_to_player(game, player_index, count=1){
     const target_player = game.players[player_index];
     if (!target_player) return false;
     for (let i = 0; i < count; i++){
-        target_player.deck.push(generate_random_card(game.card_objects));
+        target_player.deck.push(generate_random_card(game.card_objects, game));
     }
     return true;
 }
@@ -182,6 +188,15 @@ export function effectSkipBlockedTurns(game){
         game.cards_taken_in_this_turn = 0;
     }
     return true;
+}
+
+
+
+
+// ---   MiddleWares   ---
+// card is copied from game_objects, game is null at game init
+function cardUuidMiddleWare(card, game){
+    card.uuid = randomUUID();
 }
 
 

@@ -1,7 +1,7 @@
 import { REGISTERED_CARDS, EFFECTS } from "./cards.js";
 import * as PlayerstateHandler from "../game/player_states.js"
 import * as GameChatHandler from "./game_chat.js"
-import { randomUUID } from "node:crypto";
+import { generate_random_card } from "./cards.js"
 import config from "../config/config.js"
 
 
@@ -34,7 +34,7 @@ export function makeNewGame({
     const start_base_color = get_start_base_color(start_card, base_colors);
     const players_initiated = init_players(players, init_deck_size, card_objects);
     const effects = generateGameEffects(card_objects);
-    const history = {played_cards:[[start_card, 0]], total_placed_cards:0,};
+    const history = {played_cards:[start_card], total_placed_cards:0,};
 
     return {
         id,
@@ -72,25 +72,6 @@ function get_start_base_color(start_card, base_colors){
     if (start_card.base_color) return start_card.base_color;
     return base_colors[Math.floor(Math.random() * base_colors.length)][0];
 }
-
-
-function generate_random_card(card_objects) {
-    const totalWeight = card_objects.reduce((sum, item) => sum + item.weight, 0);
-    let random = Math.random() * totalWeight;
-
-    for (const item of card_objects) {
-        random -= item.weight;
-        if (random <= 0) {
-            return {
-                ...item.card,
-                uuid:randomUUID(),
-            };
-        }
-    }
-
-    return card_objects[card_objects.length - 1].card;
-}
-
 
 
 function init_players(player_init_info, init_deck_size, card_objects) {
@@ -219,10 +200,7 @@ export function place_card(game, card, choice_data=null){
 
 export function updateHistoryCard(game, card_object){
     game.history.total_placed_cards += 1;
-    game.history.played_cards.push([
-        card_object,
-        game.history.total_placed_cards,
-    ]);
+    game.history.played_cards.push(card_object);
     if (game.history.played_cards.length > config.game.max_history_cards)
         game.history.played_cards.splice(0, 1);
 }

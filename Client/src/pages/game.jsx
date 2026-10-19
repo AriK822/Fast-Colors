@@ -1266,9 +1266,9 @@ function Game(){
         >
           <AnimatePresence mode="popLayout">
 
-          {game.history.played_cards.slice(0, -1).map(([card, c_id], i) => (
+          {game.history.played_cards.slice(0, -1).map((card, i) => (
             <RenderCard 
-              key={c_id}
+              key={card.uuid}
               className="!absolute"
               width="100%"
               base_color={card.base_color} 
