@@ -1,7 +1,7 @@
 const config = {
     app:{
         port:8080,
-        expose_host: false, // localhost or 0.0.0.0
+        expose_host: true, // localhost or 0.0.0.0
         debug:true,
         test_delay:100,
     },

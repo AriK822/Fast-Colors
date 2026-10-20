@@ -37,6 +37,7 @@ export const SocketStatusModes = Object.freeze({
 export const AppProvider = ({ children }) => {
 
     const [session, setSession] = useState(null);
+    const [serverTimerOffset, setServerTimerOffset] = useState(0);
 
     const [socketStatus, setSocketStatus] = useState(
         socket.connected ? SocketStatusModes.CONNECTED : SocketStatusModes.CONNECTING
@@ -83,7 +84,10 @@ export const AppProvider = ({ children }) => {
 
 
     const runSyncSession = async () => {
-        const new_session = await SocketAPI.syncSession()
+        const start = performance.now();
+        const new_session = await SocketAPI.syncSession();
+        const end = performance.now();
+        setServerTimerOffset(new_session.server_time - (Date.now() - (end - start) / 2));
         console.log("NEW SESSION: ", new_session)
         setSession(new_session);
     }
@@ -107,6 +111,7 @@ export const AppProvider = ({ children }) => {
         session,
         setSession,
         runSyncSession,
+        serverTimerOffset,
 
         socketStatus,
         SocketStatusModes,

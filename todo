@@ -60,8 +60,11 @@ UI features:
 ✅Win screen animation and celebration 
 ✅Syncing indicator (disable all the action btns and run animation, run loader after 1sec if server didnt respond)
 ✅add more cards
+✅assets rework
 
-assets rework + svg icons
+fix timer (independent of client timer)
+svg icons
+
 
 
 

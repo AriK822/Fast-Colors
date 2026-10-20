@@ -359,7 +359,7 @@ function SyncingIndicator({className}){
 function Game(){
   const navigate = useNavigate();
   const { showNotification } = useNotification();
-  const { session, setSession } = useApp();
+  const { session, setSession, serverTimerOffset } = useApp();
 
   const [game, setGame] = useState(null);
   const gameRef = useRef(game);
@@ -649,7 +649,7 @@ function Game(){
     if (!game || game.turn_timer === "infinite") return;
 
     const duration = game.turn_timer * 1000;
-    const elapsed = Date.now() - game.last_move_time;
+    const elapsed = Date.now() + serverTimerOffset - game.last_move_time;
     const remaining = Math.max(0, duration - elapsed);
 
     document.documentElement.style.setProperty("--timer-duration", `${remaining}ms`);
@@ -1020,6 +1020,7 @@ function Game(){
           <p><span className="opacity-35">Turn timer: </span>{game.turn_timer}</p>
           <p><span className="opacity-35">Wild cards must match: </span>{game.wild_cards_must_match ? "YES" : "NO"}</p>
           <p><span className="opacity-35">Direction: </span>{game.direction == 1 ? "Clockwise" : "Counter-Clockwise"}</p>
+          <p><span className="opacity-35">ServerTimerOffset: </span>{serverTimerOffset}</p>
         </ui.Frame.SubBox>
         </motion.div>
         }

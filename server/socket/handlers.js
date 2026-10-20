@@ -66,6 +66,7 @@ io.on("connection", async (socket) => {
             player_id,
             player_name: PlayerstateHandler.getPlayerName(player_id),
             active_position,
+            server_time:Date.now(),
         });
     });
 

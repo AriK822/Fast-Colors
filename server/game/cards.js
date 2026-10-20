@@ -753,7 +753,7 @@ export function makeGoldenRose(
 
         const place_func = (game) => {
             const thisDeck = game.players[game.turn].deck
-            if(thisDeck.length < 3) thisDeck = [];
+            if(thisDeck.length < 3) game.players[game.turn].deck = [];
             else 
                 for (let i=0; i<3; i++)
                     thisDeck.splice(Math.floor(Math.random() * thisDeck.length), 1)
