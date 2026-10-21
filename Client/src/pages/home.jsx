@@ -8,16 +8,16 @@ import { useNotification } from "../utils/context/notification";
 import ui from "../components/shared/_ui"
 import Skeleton from "react-loading-skeleton";
 import Loader from "../components/loaders/_loaders";
-import bgLandscape from "../assets_staging/bg1.png"
-import bgMobile from "../assets_staging/bg2.png"
-import mainLogo from "../assets_staging/logo1.1.png"
-import paintTexture from "../assets_staging/t1.jpg"
+import bgLandscape from "../assets/images/bg1.jpg"
+import bgMobile from "../assets/images/bg2.jpg"
+import mainLogo from "../assets/images/home-logo.png"
+import paintTexture from "../assets/images/sidebar-texture.jpg"
 
 
 function Home() {
   const navigate = useNavigate();
   const { showNotification } = useNotification();
-  const { session, setSession } = useApp();
+  const { session, setSession, runSyncSession } = useApp();
 
   const [nameInputValue, setNameInputValue] = useState(session.player_name);
   const isNameInputInitLoad = useRef(true);
@@ -76,6 +76,7 @@ function Home() {
         active_position: null,
       });
     }
+    if(result.error) runSyncSession();
   }
 
   async function leaveLobbyBtn() {
@@ -96,6 +97,7 @@ function Home() {
         active_position: null,
       });
     }
+    if(result.error) runSyncSession();
   }
   
 
@@ -121,8 +123,14 @@ function Home() {
         />
         <ui.SideBar.Divider />
 
-        <ui.SideBar.Btn>Home</ui.SideBar.Btn>
-        <ui.SideBar.Btn>Settings</ui.SideBar.Btn>
+        <ui.SideBar.Btn>
+          <ui.Logo id="home" />&nbsp;
+          Home
+        </ui.SideBar.Btn>
+        <ui.SideBar.Btn>
+          <ui.Logo id="settings" />&nbsp;
+          Settings
+        </ui.SideBar.Btn>
 
       </ui.SideBar>
 
@@ -173,13 +181,15 @@ function Home() {
                 className="w-full" 
                 onClick={() => navigate("/lobby")} 
               >
+                <ui.Logo id="create_lobby" />&nbsp;
                 Create Lobby
               </ui.Button>
               <ui.Button 
                 className="w-full" 
                 onClick={() => navigate("/joinlobby")} 
               >
-                Join Lobby
+                Join Lobby &nbsp;
+                <ui.Logo id="arrow_right" className="pt-[3px]" /> 
               </ui.Button>
             </>}
 
@@ -189,14 +199,21 @@ function Home() {
                 onClick={() => navigate("/lobby")} 
                 disabled={leaveLobbyLoading}
               >
-                Continue To Lobby
+                Continue To Lobby &nbsp;
+                <ui.Logo id="arrow_right" className="pt-[3px]" /> 
               </ui.Button>
               <ui.Button 
                 className="w-full" 
                 onClick={leaveLobbyBtn} 
                 disabled={leaveLobbyLoading}
               >
-                {leaveLobbyLoading ? <Loader.Spinner /> : "Leave Lobby"}
+                {leaveLobbyLoading 
+                  ? <Loader.Spinner /> : 
+                  <>
+                    Leave Lobby &nbsp;
+                    <ui.Logo id="leave" /> 
+                  </>
+                }
               </ui.Button>
             </>}
 
@@ -206,14 +223,21 @@ function Home() {
                 onClick={() => navigate("/game")} 
                 disabled={leaveGameLoading}
               >
-                Continue To Game
+                Continue To Game &nbsp;
+                <ui.Logo id="arrow_right" className="pt-[3px]" />
               </ui.Button>
               <ui.Button 
                 className="w-full" 
                 onClick={leaveGameBtn} 
                 disabled={leaveGameLoading}
               >
-                {leaveGameLoading ? <Loader.Spinner /> : "Leave Game"}
+                {leaveGameLoading 
+                  ? <Loader.Spinner /> 
+                  : <>
+                    Leave Game &nbsp;
+                    <ui.Logo id="leave" /> 
+                  </>
+                }
               </ui.Button>
             </>}
 

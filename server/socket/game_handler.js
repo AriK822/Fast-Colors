@@ -155,6 +155,13 @@ socket.on("leave_active_game", async (data, ack) => {
         "msg": "Game successfully left",
         "redirect": "/",
     })
+
+    Engine.mainGameCycle(
+        active_game,
+        Engine.GameCycleReasonMode.BOT_PLAY,
+        {},
+        EngineServices,
+    )
     broadCastHiddenGame(active_game)
     socket.leave(active_game.id);
 

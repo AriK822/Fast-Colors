@@ -11,15 +11,19 @@ import lobby_ui from "../components/lobby/lobby_ui"
 import Loader from "../components/loaders/_loaders";
 import Skeleton from "react-loading-skeleton";
 
-import bgLandscape from "../assets_staging/bg1.png"
-import bgMobile from "../assets_staging/bg2.png"
-import paintTexture from "../assets_staging/t1.jpg"
+import bgLandscape from "../assets/images/bg1.jpg"
+import bgMobile from "../assets/images/bg2.jpg"
+import paintTexture from "../assets/images/sidebar-texture.jpg"
+
+
+
+Object.assign(ui, {Lobby:lobby_ui})
 
 
 function Lobby() {
   const navigate = useNavigate();
   const { showNotification } = useNotification();
-  const { session, setSession } = useApp();
+  const { session, setSession, runSyncSession } = useApp();
 
   const [lobby, setLobby] = useState(null);
 
@@ -55,6 +59,8 @@ function Lobby() {
         active_position: "lobby",
       });
     }
+
+    if(result.error) runSyncSession();
 
     if (result.redirect) {
       navigate(result.redirect, {replace:true});
@@ -283,9 +289,6 @@ function Lobby() {
 
     return `${Date.now()}-${Math.random().toString(36).slice(2)}`;
   }
-
-
-  Object.assign(ui, {Lobby:lobby_ui})
   
   
   if (!lobby){
@@ -501,7 +504,13 @@ function Lobby() {
             onClick={startGame}
             disabled={!startGameValidation()[0] || start_game_btn_loading}
           >
-            {start_game_btn_loading ? <Loader.Spinner/> : "Start Game"}
+            {start_game_btn_loading 
+              ? <Loader.Spinner/> 
+              : <>
+                {(!startGameValidation()[0] || start_game_btn_loading) && <><ui.Logo id="locked" />&nbsp;</>}
+                Start Game
+              </>
+            }
           </ui.Lobby.Start>
   
           {
@@ -536,19 +545,24 @@ function Lobby() {
           onClick={() => {navigate("/")}}
           className="shrink-0"
         >
-          Home
+          <ui.Logo id="home" /> Home
         </ui.SideBar.Btn>
         <ui.SideBar.Btn
           className="shrink-0"
         >
-          Settings
+          <ui.Logo id="settings" /> Settings
         </ui.SideBar.Btn>
         <ui.SideBar.Btn 
           onClick={leaveLobbyBtn}
           disabled={leave_lobby_loading}
           className="shrink-0"
         >
-          {leave_lobby_loading ? <Loader.Spinner /> : "Leave Lobby"}
+          {leave_lobby_loading 
+            ? <Loader.Spinner /> 
+            : <>
+                <ui.Logo id="leave" /> Leave Lobby
+              </>
+          }
         </ui.SideBar.Btn>
       </ui.SideBar>
 
@@ -584,7 +598,12 @@ function Lobby() {
             >
 
             <ui.Frame.Box
-              header="Players"
+              header={
+                <>
+                  <ui.Logo id="players" />
+                  Players
+                </>
+              }
               className="md:flex-1 min-h-auto lg:min-h-0
                 md:hidden"
               insideBoxClassName="h-full game-theme-scrollbar 
@@ -642,7 +661,12 @@ function Lobby() {
             </ui.Frame.Box>
 
             <ui.Frame.Box
-              header="Chat"
+              header={
+                <>
+                <ui.Logo id="chat" />
+                  Chat
+                </>
+              }
               className="flex-1 min-h-auto lg:min-h-0
                 lg:max-h-[100%] max-h-100 relative"
               insideBoxClassName="h-full game-theme-scrollbar
@@ -670,10 +694,18 @@ function Lobby() {
                   }}
                 />
                 <ui.Frame.Btn
+                  className="relative"
                   onClick={addLobbyMsg} 
                   disabled={lobby_chat_sending || lobby_chat_input.trim() == ""}                
                 >
-                  {lobby_chat_sending ? <Loader.Spinner/> : "Send"}
+                  <span className="opacity-0">...</span>
+                  {lobby_chat_sending 
+                    ? <Loader.Spinner/> 
+                    : <ui.Logo 
+                        id="send" 
+                        className="absolute top-1/2 left-1/2 -translate-1/2 !h-[1.5rem]" 
+                      />
+                  }
                 </ui.Frame.Btn>
               </div>
 
@@ -682,13 +714,21 @@ function Lobby() {
             </div>
 
             <ui.Frame.Box
-              header="Settings"
+              header={
+                <>
+                  <ui.Logo id="settings" />
+                  Settings
+                </>
+              }
               className="flex-2 min-h-auto lg:min-h-0 lg:min-w-0"
               insideBoxClassName="h-full game-theme-scrollbar
                 flex flex-col gap-ui-xs"
             >
               <ui.Frame.SubBox>
-                <h1 className="text-lg p-ui-xxs">Bots:</h1>
+                <h1 className="text-lg p-ui-xxs">
+                  <ui.Logo id="bot_avatar" />
+                  Bots:
+                </h1>
                 <ui.Frame.hr className="mb-ui-xs" />
 
                 <div className="flex flex-col gap-ui-xxs">
@@ -722,7 +762,9 @@ function Lobby() {
                 </div>
 
                 {lobby.game_options.bots.length == 0 &&
-                  <p className="px-ui-md">Empty!</p>
+                  <p className="px-ui-md">
+                    <ui.Logo id="empty" /> Empty!
+                  </p>
                 }
 
                 {lobby.owner == session.player_id && <>
@@ -731,7 +773,7 @@ function Lobby() {
 
                 <h1 className="text-lg p-ui-xxs">Add bot:</h1>
                 
-                <div className="flex flex-row">
+                <div className="flex flex-row gap-ui-xs">
                 <ui.Frame.ContrastInput
                   placeholder="bot name"
                   value={bot_name_input}
@@ -755,7 +797,7 @@ function Lobby() {
                 />
 
                 <ui.Frame.ContrastBtn
-                  className="shrink-0"
+                  className="shrink-0 relative"
                   onClick={() => {
                     const this_bot = {name:bot_name_input, id:generateId()};
                     setBotNameInput("");
@@ -770,7 +812,11 @@ function Lobby() {
                     >= limits.max_total_game_players
                   }
                 >
-                Add Bot
+                  <ui.Logo 
+                    id="add_bot" 
+                    className="!h-[1.5rem] absolute top-1/2 left-1/2 -translate-1/2" 
+                  />
+                  <span className="opacity-0">.....</span>
                 </ui.Frame.ContrastBtn>
                 </div>
 
@@ -790,14 +836,20 @@ function Lobby() {
                 className="!p-ui-xs"
               >
 
-                <h1 className="text-lg">Game options:</h1>
+                <h1 className="text-lg">
+                  <ui.Logo id="game_options" />
+                  Game options:
+                </h1>
                 <ui.Frame.hr className="mb-ui-xs" />
 
                 {/* --- BASIC SETTINGS   --- */}
                 <>
 
                 {!lobby.game_options.use_advanced_options && 
-                  <p className="text-lg m-ui-md">Selected Cards (Qick Play):</p>
+                  <p className="text-lg m-ui-md">
+                    <ui.Logo id="card" />
+                    Selected Cards (Qick Play):
+                  </p>
                 }
 
                 <div
@@ -863,7 +915,9 @@ function Lobby() {
                   <ui.Frame.hr />
 
                   {lobby.game_options.base_colors.length == 0 &&
-                    <p className="px-ui-md">Empty!</p>
+                    <p className="px-ui-md">
+                      <ui.Logo id="empty" /> Empty!
+                    </p>
                   }
 
                   <div className="grid grid-cols-2 gap-ui-xs
@@ -966,7 +1020,9 @@ function Lobby() {
                   <ui.Frame.hr />
 
                   {lobby.game_options.advanced_card_objects.length == 0 &&
-                    <p className="px-ui-md">Empty!</p>
+                    <p className="px-ui-md">
+                      <ui.Logo id="empty" /> Empty!
+                    </p>
                   }
 
                   <div className="flex flex-col gap-ui-xs">
@@ -1258,7 +1314,9 @@ function Lobby() {
                     <ui.Frame.hr />
 
                     {lobby.game_options.base_colors.length == 0 &&
-                      <p className="px-ui-md">Empty!</p>
+                      <p className="px-ui-md">
+                        <ui.Logo id="empty" /> Empty!
+                      </p>
                     }
 
                     <div className="grid grid-cols-2 gap-ui-xs xl:grid-cols-3">
@@ -1299,7 +1357,9 @@ function Lobby() {
                     <ui.Frame.hr />
 
                     {lobby.game_options.advanced_card_objects.length == 0 &&
-                      <p className="px-ui-md">Empty!</p>
+                      <p className="px-ui-md">
+                        <ui.Logo id="empty" /> Empty!
+                      </p>
                     }
 
                     <div className="flex flex-col gap-ui-xs">
@@ -1377,8 +1437,14 @@ function Lobby() {
                     }}
                   >
                     {lobby.game_options.use_advanced_options 
-                      ? "Disable advanced options" 
-                      : "Enable advanced options"
+                      ? <>
+                        Disable advanced options
+                        <ui.Logo id="three_dots" className="pt-[3px]" />
+                      </>
+                      : <>
+                        Enable advanced options
+                        <ui.Logo id="three_dots" className="pt-[3px]" />
+                      </>
                     }
                   </ui.Frame.ContrastBtn>
                 </div>
@@ -1389,7 +1455,10 @@ function Lobby() {
               <ui.Frame.SubBox 
                 className="!p-ui-xs"
               >
-                <h1 className="text-lg">Game Rules:</h1>
+                <h1 className="text-lg">
+                  <ui.Logo id="game_rules" />
+                  Game Rules:
+                </h1>
                 <ui.Frame.hr className="mb-ui-xs" />
 
 
@@ -1631,7 +1700,13 @@ function Lobby() {
                 onClick={startGame}
                 disabled={!startGameValidation()[0] || start_game_btn_loading}
               >
-                {start_game_btn_loading ? <Loader.Spinner/> : "Start Game"}
+                {start_game_btn_loading 
+                  ? <Loader.Spinner/> 
+                  : <>
+                    {(!startGameValidation()[0] || start_game_btn_loading) && <><ui.Logo id="locked" />&nbsp;</>}
+                    Start Game
+                  </>
+                }
               </ui.Lobby.Start>
 
               {

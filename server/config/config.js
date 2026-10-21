@@ -50,7 +50,7 @@ const config = {
     },
 
     cards:{
-        default_base_colors:["#f76c57", "#58ed80", "#34a8eb", "#ede158"],
+        default_base_colors:["#f76c57", "#27a549", "#34a8eb", "#ede158"],
     }
 }
 

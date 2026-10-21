@@ -3,7 +3,6 @@ import RednerCard from "./render_card"
 import { AnimatePresence, motion } from "motion/react"
 import Loaders from "../loaders/_loaders";
 import ui from "../shared/_ui";
-import blockedPlayer from "../../assets_staging/blocked.png"
 
 
 function PlayerStripLabel({player, className, 
@@ -41,12 +40,21 @@ function PlayerStripLabel({player, className,
 
             <div className="flex flex-col truncate">
                 <h1 className="text-md truncate">
-                    {player.name} 
+                    {player.name}
+                    {winner?.id == player.id && 
+                        <>&nbsp;<ui.Logo id="winner_crown" /></>
+                    }
                 </h1>
                 <p
                     className="text-xs truncate"
                     style={{color:`var(${status_color})`}}
-                >{status}</p>
+                >
+                    <ui.Logo 
+                        id={player.type == "player" ? "player_avatar" : "bot_avatar"}
+                        color={`var(${status_color})`} 
+                    />
+                    {status}
+                </p>
             </div>
     
             <div
@@ -95,11 +103,17 @@ function PlayerStripLabel({player, className,
                     flex justify-end -translate-y-1/2"
             >
                 {Array.from({length:blockedCount}).map((_, i) => (
-                    <img 
+                    <ui.Logo 
                         key={i}
-                        src={blockedPlayer} 
-                        className="h-5 w-5 -ml-3 shrink-0" 
+                        id="blocked" 
+                        className="!h-5 !w-5 -ml-3 shrink-0" 
+                        color="var(--theme-highlight)"
                     />
+                    // <img 
+                    //     key={i}
+                    //     src={blockedPlayer} 
+                    //     className="h-5 w-5 -ml-3 shrink-0" 
+                    // />
                 ))}
             </div>
         </motion.div>
@@ -176,6 +190,7 @@ function PlayerLabel({player,
                     <ui.Frame.Shimmer
                         className="!p-1 ml-1 !text-xs"
                     >
+                        <ui.Logo id="winner_crown" />
                         Winner
                     </ui.Frame.Shimmer>
                     }
@@ -184,6 +199,10 @@ function PlayerLabel({player,
                     className="text-xs opacity-80"
                     style={{color:`var(${status_color})`}}
                 >
+                    <ui.Logo 
+                        id={player.type == "player" ? "player_avatar" : "bot_avatar"}
+                        color={`var(${status_color})`} 
+                    />
                     {status}
                 </div>
             </div>

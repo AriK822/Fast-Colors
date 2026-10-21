@@ -16,11 +16,9 @@ import Skeleton from "react-loading-skeleton";
 import UiIdMapper from "../components/game/ui_choices/map_ui_id"
 import PopupMapper from "../components/game/popups/_popups"
 
-import bgLandscape from "../assets_staging/bg1.png"
-import bgMobile from "../assets_staging/bg2.png"
-import paintTexture from "../assets_staging/t1.jpg"
-import chatIcon from "../assets_staging/chat-icon.png"
-import BlockedIcon from "../assets_staging/blocked.png"
+import bgLandscape from "../assets/images/bg1.jpg"
+import bgMobile from "../assets/images/bg2.jpg"
+import paintTexture from "../assets/images/sidebar-texture.jpg"
 
 
 Object.assign(ui, {Game: game_ui})
@@ -30,7 +28,7 @@ function PlayersStrip({game, sideLength=2}){
   const labels = []
   for (let i=-sideLength; i<=sideLength; i++){
     const thisPlayer = game.players[
-      ((game.turn + game.direction * i) % game.players.length
+      ((game.turn - i) % game.players.length
       + game.players.length) % game.players.length
     ];
   
@@ -247,13 +245,22 @@ function PlayersCircle({game, thisPlayer}){
 
 
 
-function GameDirectionIndicator({game}){
+function GameDirectionIndicator({ game }) {
   return (
-    <div className="direction">
-      <div className="arc arc-one"></div>
-      <div className="arc arc-two"></div>
-    </div>
-  )
+    <motion.div
+      className="absolute"
+      initial={{ rotateY: game.direction === -1 ? 180 : 0 }}
+      animate={{ rotateY: game.direction === -1 ? 180 : 0 }}
+      transition={{ duration: 0.5, ease: "easeInOut" }}
+      style={{ transformStyle: "preserve-3d" }}
+    >
+      <ui.Logo
+        id="GameDirectionArrow"
+        className="direction !h-[18rem]"
+        color="var(--game-base-color)"
+      />
+    </motion.div>
+  );
 }
 
 
@@ -359,7 +366,7 @@ function SyncingIndicator({className}){
 function Game(){
   const navigate = useNavigate();
   const { showNotification } = useNotification();
-  const { session, setSession, serverTimerOffset } = useApp();
+  const { session, setSession, serverTimerOffset, runSyncSession } = useApp();
 
   const [game, setGame] = useState(null);
   const gameRef = useRef(game);
@@ -407,6 +414,8 @@ function Game(){
             active_position: "game",
         });
       }
+
+      if(result.error) runSyncSession();
 
       if (result.redirect) {
         navigate(result.redirect, {replace:true});
@@ -898,7 +907,10 @@ function Game(){
           w-full mb-ui-md"
         onClick={() => setPlayerInfoBoxOpen(prev => !prev)}
       >
-        {playerInfoBoxOpen ? "Players 🠅" : "Players 🠇"}
+        {playerInfoBoxOpen 
+          ? <><ui.Logo id="player_avatar" /> Players <ui.Logo id="expand" /></>
+          : <><ui.Logo id="player_avatar" /> Players <ui.Logo id="expand" className="rotate-180" /></>
+        }
       </ui.Frame.Btn>
 
       <AnimatePresence>
@@ -928,7 +940,10 @@ function Game(){
           w-full mb-ui-md"
         onClick={() => setChatBoxOpen(prev => !prev)}
       >
-        {chatBoxOpen ? "Chat 🠅" : "Chat 🠇"}
+        {chatBoxOpen
+          ? <><ui.Logo id="chat" /> Chat <ui.Logo id="expand" /></>
+          : <><ui.Logo id="chat" /> Chat <ui.Logo id="expand" className="rotate-180" /></>
+        }
       </ui.Frame.Btn>
 
       <AnimatePresence>
@@ -966,10 +981,17 @@ function Game(){
             }}
           />
           <ui.Frame.ContrastBtn
+            className="relative"
             onClick={sendGameChatMassage} 
             disabled={game_chat_sending || game_chat_input.trim() == ""}                
           >
-            {game_chat_sending ? <Loader.Spinner/> : "Send"}
+            {game_chat_sending 
+              ? <Loader.Spinner/> 
+              : <>
+                <ui.Logo id="send" className="absolute top-1/2 left-1/2 -translate-1/2 !h-[1.5rem]" />
+                <span className="opacity-0">.....</span>
+                </>
+            }
           </ui.Frame.ContrastBtn>
 
         </div>
@@ -988,7 +1010,10 @@ function Game(){
             w-full mb-ui-md"
           onClick={() => setGameInfoBoxOpen(prev => !prev)}
         >
-          {GameInfoBoxOpen ? "Game info 🠅" : "Game info 🠇"}
+          {GameInfoBoxOpen
+          ? <><ui.Logo id="info" className="!h-[1.5rem] -mb-[2px]" /> Game Info <ui.Logo id="expand" /></>
+          : <><ui.Logo id="info" className="!h-[1.5rem] -mb-[2px]" /> Game Info <ui.Logo id="expand" className="rotate-180" /></>
+          }
         </ui.Frame.Btn>
 
         <AnimatePresence>
@@ -1033,6 +1058,7 @@ function Game(){
         onClick={() => {navigate("/")}}
         className="shrink-0"
       >
+        <ui.Logo id="home" /> 
         Home
       </ui.SideBar.Btn>
       {!hintBoxOpen &&
@@ -1040,12 +1066,13 @@ function Game(){
         onClick={() => {setHintBoxOpen(true)}}
         className="shrink-0"
       >
-        Show hints
+        ? Show hints
       </ui.SideBar.Btn>
       }
       <ui.SideBar.Btn
         className="shrink-0"
       >
+        <ui.Logo id="settings" /> 
         Settings
       </ui.SideBar.Btn>
       <ui.SideBar.Btn 
@@ -1058,7 +1085,10 @@ function Game(){
       >
         {leave_game_loading
           ? <Loader.Spinner />
-          : "Leave Game"
+          : <>
+            <ui.Logo id="leave" /> 
+            Leave Game
+            </>
         }
       </ui.SideBar.Btn>
     </ui.SideBar>
@@ -1095,7 +1125,10 @@ function Game(){
               {
                 game.winner.id == thisPlayer.id 
                 ? `YOU WON!`
-                : `${game.winner?.name} WON!`
+                : <>
+                  {game.winner?.name} WON!
+                  <ui.Logo id="winner_crown" />
+                </>
               }
             </p>
             <p>
@@ -1105,6 +1138,7 @@ function Game(){
             <ui.Frame.ContrastBtn
               onClick={() => setInspectGameAfterWin(true)}
             >
+              <ui.Logo id="clock" />&nbsp;
               Inspect
             </ui.Frame.ContrastBtn>
             <ui.Frame.ContrastBtn
@@ -1112,7 +1146,10 @@ function Game(){
             >
               {leave_game_loading
               ? <Loader.Spinner />
-              : "Leave Game"
+              : <>
+                <ui.Logo id="leave" />&nbsp;
+                Leave Game
+                </>
               }
             </ui.Frame.ContrastBtn>
           </ui.Frame.SubBox>
@@ -1194,13 +1231,16 @@ function Game(){
             exit={{ opacity:0}}
           >
             <ui.Frame.Label
-              className="!p-1 
+              className="!p-1 relative
                 flex justify-center items-center
                 md:hidden cursor-pointer w-[40px] h-[40px]"
             >
-              <img
-                className="w-full"
-                src={chatIcon} 
+              &nbsp;
+              &nbsp;
+              &nbsp;
+              <ui.Logo 
+                id="chat"
+                className="!h-[1.5rem] absolute top-1/2 left-1/2 -translate-1/2"
               />
             </ui.Frame.Label>
           </motion.div>
@@ -1311,7 +1351,8 @@ function Game(){
           className="w-[65px] aspect-1/1 mx-ui-sm !z-1"
         >
           <ui.Frame.Btn 
-            className="w-full h-full cursor-pointer !rounded-[100%]"
+            className="w-full h-full cursor-pointer !rounded-[100%]
+              flex justify-center items-center"
             onClick={skipMove}
             disabled={
               !thisTurn ||
@@ -1320,7 +1361,7 @@ function Game(){
               (!game.can_draw_when_playable && toPlayLen>0)
             }
           >
-            Skip
+            <ui.Logo id="skip" className="!h-[1.75rem]" />
           </ui.Frame.Btn>
         </div>
 
@@ -1368,14 +1409,14 @@ function Game(){
                 exit={{x:-200}}
               >
                 <div
-                  className="w-auto h-[30px] flex"
+                  className="w-auto h-[30px] flex relative"
                 >
                   {Array.from({length:game.effects_data?.skip_blocked_players?.[thisIdx]}).map((_, i) => (
-                    <img 
+                    <ui.Logo 
                       key={i}
-                      className="w-full drop-shadow-img"
-                      style={{marginLeft:i==0?0:-15}}
-                      src={BlockedIcon} 
+                      id="blocked" 
+                      className="!h-full !w-full drop-shadow-img relative"
+                      color="var(--theme-highlight)" 
                     />
                   ))}
                 </div>
@@ -1412,7 +1453,7 @@ function Game(){
           </div>
 
           <div
-            className="h-full overflow-x-scroll scrollbar-none"
+            className="h-full overflow-x-scroll !overflow-y-hidden scrollbar-none"
             onWheel={(e) => {
               const el = e.currentTarget;
               el.scrollBy({
@@ -1471,7 +1512,8 @@ function Game(){
                       }}
                     >
                     <RenderCard 
-                      className="shrink-0"
+                      className="shrink-0 
+                        [@media(max-height:600px)]:max-w-[65px]"
                       base_color={card.base_color} 
                       overlay_image={card.overlay_image} 
                       rednered_text={card.rednered_text} 

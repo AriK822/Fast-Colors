@@ -5,9 +5,10 @@ import { AnimatePresence, easeIn, easeOut, motion } from "motion/react";
 import interactive from "./interactive"
 
 import "./style/sidebar.css"
-import topLeftLeaves from "../../assets_staging/s4.1.png";
-import bottomLeftLeaves from "../../assets_staging/s3.png";
-import sidebarLogo from "../../assets_staging/sidebar-logo.png"
+import topLeftLeaves from "../../assets/images/s4.png";
+import bottomLeftLeaves from "../../assets/images/s3.png";
+import sidebarLogo from "../../assets/images/sidebar-logo.png"
+import { Logo } from "./logos"
 
 
 
@@ -118,7 +119,10 @@ function SideBar({
                 `}
                 onClick={() => setOpen(true)}
             >
-                Open
+                &nbsp;
+                <Logo id="sidebar" />
+                &nbsp;
+                {/* Open */}
             </interactive.Button>
 
             <AnimatePresence>

@@ -1,4 +1,5 @@
 import "./style/socket_connection_overlay.css";
+import ui from "../shared/_ui";
 
 
 const SocketConnectionOverlay = ({ socketStatus, SocketStatusModes, display = true }) => {
@@ -14,7 +15,10 @@ const SocketConnectionOverlay = ({ socketStatus, SocketStatusModes, display = tr
         <div className="socket-loader-overlay">
             <div className="socket-loader-container">
                 <div className="socket-loader-icon">
-                    {isDisconnected ? "📡" : "🔄"}
+                    {isDisconnected 
+                        ? <ui.Logo id="disconnected" /> 
+                        : <ui.Logo id="reconnecting" /> 
+                    }
                 </div>
 
                 <h2 className="socket-loader-title">

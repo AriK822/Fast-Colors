@@ -62,41 +62,7 @@ UI features:
 ✅add more cards
 ✅assets rework
 ✅fix timer (independent of client timer)
-
-svg icons:
-    home settings
-    leave
-    continue
-    bot avatar
-    player avatar
-    small circle (online/offline/left)
-    chat
-    game options
-    game rules
-    card object (simple white rectangle with slight roration clockwise)
-    game-info
-    skip
-    send
-    add bot
-    empty
-    remove
-    kick
-    create lobby
-    join lobby
-    profile
-    notification
-    host crown (is emoi fine?)
-    refresh
-    more options (advanced options)
-    github
-    locked
-    collaps / uncollaps arrow
-    win / defeat
-    loading / reconnecting / connecting / disconnected / syncing
-    close x button
-    timer (clock)
-    blocked
-
+✅svg icons
 
 
 
@@ -121,3 +87,5 @@ Ideas that could be added:
 - Reduced motion (settings)
 - realistic bot chat messages based on game
 - random state based play hints
+- left players play as bots after 30 seconds
+

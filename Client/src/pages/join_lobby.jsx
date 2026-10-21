@@ -10,9 +10,12 @@ import ui from "../components/shared/_ui"
 import lobby_ui from "../components/lobby/lobby_ui";
 import Loader from "../components/loaders/_loaders";
 import Skeleton from "react-loading-skeleton";
-import bgLandscape from "../assets_staging/bg1.png"
-import bgMobile from "../assets_staging/bg2.png"
-import paintTexture from "../assets_staging/t1.jpg"
+import bgLandscape from "../assets/images/bg1.jpg"
+import bgMobile from "../assets/images/bg2.jpg"
+import paintTexture from "../assets/images/sidebar-texture.jpg"
+
+
+Object.assign(ui, {Lobby:lobby_ui})
 
 
 function JoinLobby() {
@@ -109,9 +112,6 @@ function JoinLobby() {
     };
 
   }, [nameInputValue]);
-
-
-  Object.assign(ui, {Lobby:lobby_ui})
   
 
   return (
@@ -137,8 +137,14 @@ function JoinLobby() {
 
         <ui.SideBar.Btn
           onClick={() => navigate("/")}
-        >Home</ui.SideBar.Btn>
-        <ui.SideBar.Btn>Settings</ui.SideBar.Btn>
+        >
+          <ui.Logo id="home" />&nbsp;
+          Home
+        </ui.SideBar.Btn>
+        <ui.SideBar.Btn>
+          <ui.Logo id="settings" />&nbsp;
+          Settings
+        </ui.SideBar.Btn>
 
       </ui.SideBar>
 
@@ -167,6 +173,7 @@ function JoinLobby() {
             className="w-full"
             onClick={() => navigate("/lobby", {replace:true})}
           >
+            <ui.Logo id="players" />&nbsp;
             Create Lobby
           </ui.Frame.Btn>
           
@@ -175,13 +182,20 @@ function JoinLobby() {
               <div className="flex flex-row 
               justify-between items-center">
                 <h1 className="text-2xl">
+                  <ui.Logo id="door" />&nbsp;
                   Available Lobbies:
                 </h1>
                 <ui.Frame.Btn
                   onClick={loadJoinLobby}
                   disabled={refresh_lobbies_loading}  
                 >
-                  {refresh_lobbies_loading ? <Loader.Spinner /> : "Refresh"}
+                  {refresh_lobbies_loading 
+                    ? <Loader.Spinner /> 
+                    : <>
+                      <ui.Logo id="syncing" />&nbsp;
+                      Refresh
+                    </>
+                  }
                 </ui.Frame.Btn>
               </div>
             }
@@ -214,8 +228,9 @@ function JoinLobby() {
             </AnimatePresence>
 
             {lobbies && Object.entries(lobbies).length == 0 &&
-              <div className="text-lg">
-                No lobbies found.
+              <div className="text-lg opacity-70">
+                <ui.Logo id="empty" />&nbsp;
+                No lobbies found!
               </div>
             }
             {!lobbies &&

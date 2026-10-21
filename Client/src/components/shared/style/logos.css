@@ -1,0 +1,6 @@
+
+.game-logo {
+  filter:
+    drop-shadow(-2px 2px 0 rgb(0 0 0 / 17%))
+    drop-shadow(3px 4px 4px rgb(1 3 0 / 31%));
+}

@@ -1,4 +1,5 @@
 import { createContext, useContext, useRef, useState } from "react";
+import ui from "../../components/shared/_ui"
 import "./style/notification.css"
 
 
@@ -69,6 +70,7 @@ export function useNotification() {
 
 
 function Notification({ text, type, color, timeout }) {
+    const [close, setClose] = useState(false)
     const typeColors = {
         warning: "var(--theme-warning)",
         success: "var(--theme-success)",
@@ -79,7 +81,11 @@ function Notification({ text, type, color, timeout }) {
         typeColors[type] ?? color ?? "var(--theme-accent)";
 
     return (
-        <div className="notification-shadow">
+        <div 
+            className={`notification-shadow 
+                ${close ? "!hidden" : ""}`}
+            onClick={() => setClose(true)}
+        >
         <div
             className="game-notification p-ui-sm px-ui-lg"
             style={{
@@ -88,6 +94,7 @@ function Notification({ text, type, color, timeout }) {
             }}
         >
             <div className="ui-text text-lg game-notification-text">
+                <ui.Logo id="notification" />&nbsp;
                 {text}
             </div>
 

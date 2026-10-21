@@ -57,17 +57,20 @@ function PlayerLabel({player,
                         className="text-xs opacity-80 "
                         style={{color:`var(--theme-bot-text)`}}
                     >
-                        Bot
+                        <ui.Logo id="bot_avatar" color="var(--theme-bot-text)" /> Bot
                     </div>
                 </div>
 
                 {botKick && 
                     <button
-                        className="player-kick-btn 
-                        p-ui-xxs text-sm"
+                        className="player-kick-btn shrink-0 
+                        p-ui-xxs text-sm flex flex-inline"
                         onClick={botKick}
                     >
+                        &nbsp;
+                        <ui.Logo id="x" className="mt-[3px]" /> &nbsp;
                         Remove
+                        &nbsp;
                     </button>
                 }
             </ui.Frame.Label>
@@ -102,6 +105,7 @@ function PlayerLabel({player,
                     className="text-xs opacity-80 "
                     style={{color:`var(${connection_status_token})`}}
                 >
+                    <ui.Logo id="player_avatar" color={`var(${connection_status_token})`} />
                     {player.connection_status}
                     {player.disconnect_expires_at && ", "}
                     <KickTimer target_time={player.disconnect_expires_at} />
@@ -110,12 +114,15 @@ function PlayerLabel({player,
 
             {hasKick && 
                 <button
-                    className="player-kick-btn 
+                    className="player-kick-btn shrink-0
                     p-ui-xxs text-sm"
                     onClick={kickFunc}
                     disabled={kickDisabled}
                 >
-                    {kickContent}
+                    &nbsp;
+                    <ui.Logo id="kick_player" />
+                    Kick
+                    &nbsp;
                 </button>
             }
         </ui.Frame.Label>
@@ -176,8 +183,14 @@ function FrameJoinLobbyInfo({
                         </span>
                     </p>
                     <div className="flex flex-row gap-ui-xxs truncate">
-                        <p className="frame-label-soft">👤{lobby.players}</p>
-                        <p className="frame-label-soft">🤖{lobby.bots}</p>
+                        <p className="frame-label-soft">
+                            <ui.Logo id="player_avatar" />
+                            {lobby.players}
+                        </p>
+                        <p className="frame-label-soft">
+                            <ui.Logo id="bot_avatar" />
+                            {lobby.bots}
+                        </p>
                     </div>
                 </div>
                 <div>
@@ -211,7 +224,7 @@ function BasicCardObj({
             {...props}    
         >
             <button className="w-full cursor-pointer" >
-                {card_title}
+                <ui.Logo id="card" /> {card_title}
             </button>
             <button
                 className="lobby-show-card-desc shrink-0"

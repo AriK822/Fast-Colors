@@ -6,7 +6,7 @@ import Home from "./pages/Home"
 import Lobby from "./pages/lobby"
 import JoinLobby from "./pages/join_lobby"
 import Game from "./pages/game"
-import Test from "./pages/test"
+// import Test from "./pages/test"
 
 // Context
 import { AppProvider } from "./utils/context/app_provider"
@@ -38,7 +38,7 @@ function App() {
 
         <Route path="/game" element={<Game />} />
 
-        <Route path="/test" element={<Test />} />
+        {/* <Route path="/test" element={<Test />} /> */}
 
         <Route path="*" element={<Navigate to="/" replace />} />
 
