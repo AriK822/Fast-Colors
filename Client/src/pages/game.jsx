@@ -144,7 +144,7 @@ function PlayersCircle({game, thisPlayer}){
         showTimer={game.turn_timer !== "infinite"}
         blockedCount={game.effects_data?.skip_blocked_players?.[(thisIdx+2)%playersLen] ?? 0}
         className="w-[150px] lg:w-[250px] shrink-0
-          !absolute left-[50%] top-[7%] -translate-x-1/2"
+          !absolute left-[50%] top-[2%] sm:top-[7%] -translate-x-1/2"
       />
       <ui.Game.PlayerStripLabel
         player={game.players[(thisIdx+3)%playersLen]}
@@ -164,7 +164,7 @@ function PlayersCircle({game, thisPlayer}){
         winner={game.winner}
         showTimer={game.turn_timer !== "infinite"}
         blockedCount={game.effects_data?.skip_blocked_players?.[(thisIdx+1)%playersLen] ?? 0}
-        className="w-[150px] lg:w-[250px] shrink-0
+        className="w-[125px] xs:w-[150px] lg:w-[250px] shrink-0
           !absolute left-[5%] top-[22%]"
       />
       <ui.Game.PlayerStripLabel
@@ -173,7 +173,7 @@ function PlayersCircle({game, thisPlayer}){
         winner={game.winner}
         showTimer={game.turn_timer !== "infinite"}
         blockedCount={game.effects_data?.skip_blocked_players?.[(thisIdx+2)%playersLen] ?? 0}
-        className="w-[150px] lg:w-[250px] shrink-0
+        className="w-[125px] xs:w-[150px] lg:w-[250px] shrink-0
           !absolute left-[33%] top-[7%] -translate-x-1/2"
       />
       <ui.Game.PlayerStripLabel
@@ -182,7 +182,7 @@ function PlayersCircle({game, thisPlayer}){
         winner={game.winner}
         showTimer={game.turn_timer !== "infinite"}
         blockedCount={game.effects_data?.skip_blocked_players?.[(thisIdx+3)%playersLen] ?? 0}
-        className="w-[150px] lg:w-[250px] shrink-0
+        className="w-[125px] xs:w-[150px] lg:w-[250px] shrink-0
           !absolute left-[66%] top-[7%] -translate-x-1/2"
       />
       <ui.Game.PlayerStripLabel
@@ -191,7 +191,7 @@ function PlayersCircle({game, thisPlayer}){
         winner={game.winner}
         showTimer={game.turn_timer !== "infinite"}
         blockedCount={game.effects_data?.skip_blocked_players?.[(thisIdx+4)%playersLen] ?? 0}
-        className="w-[150px] lg:w-[250px] shrink-0
+        className="w-[125px] xs:w-[150px] lg:w-[250px] shrink-0
           !absolute right-[5%] top-[22%]"
       />
     </>)
@@ -203,7 +203,7 @@ function PlayersCircle({game, thisPlayer}){
         winner={game.winner}
         showTimer={game.turn_timer !== "infinite"}
         blockedCount={game.effects_data?.skip_blocked_players?.[(thisIdx+1)%playersLen] ?? 0}
-        className="w-[150px] lg:w-[250px] shrink-0
+        className="w-[125px] xs:w-[150px] lg:w-[250px] shrink-0
           !absolute left-[5%] top-[66%]"
       />
       <ui.Game.PlayerStripLabel
@@ -212,8 +212,8 @@ function PlayersCircle({game, thisPlayer}){
         winner={game.winner}
         showTimer={game.turn_timer !== "infinite"}
         blockedCount={game.effects_data?.skip_blocked_players?.[(thisIdx+2)%playersLen] ?? 0}
-        className="w-[150px] lg:w-[250px] shrink-0
-          !absolute left-[8%] top-[24%]"
+        className="w-[125px] xs:w-[150px] lg:w-[250px] shrink-0
+          !absolute left-[5%] top-[18%]"
       />
       <ui.Game.PlayerStripLabel
         player={game.players[(thisIdx+3)%playersLen]}
@@ -221,8 +221,8 @@ function PlayersCircle({game, thisPlayer}){
         winner={game.winner}
         showTimer={game.turn_timer !== "infinite"}
         blockedCount={game.effects_data?.skip_blocked_players?.[(thisIdx+3)%playersLen] ?? 0}
-        className="w-[150px] lg:w-[250px] shrink-0
-          !absolute left-[50%] top-[7%] -translate-x-1/2"
+        className="w-[125px] xs:w-[150px] lg:w-[250px] shrink-0
+          !absolute left-[50%] top-[3%] -translate-x-1/2"
       />
       <ui.Game.PlayerStripLabel
         player={game.players[(thisIdx+4)%playersLen]}
@@ -230,8 +230,8 @@ function PlayersCircle({game, thisPlayer}){
         winner={game.winner}
         showTimer={game.turn_timer !== "infinite"}
         blockedCount={game.effects_data?.skip_blocked_players?.[(thisIdx+4)%playersLen] ?? 0}
-        className="w-[150px] lg:w-[250px] shrink-0
-          !absolute right-[8%] top-[24%]"
+        className="w-[125px] xs:w-[150px] lg:w-[250px] shrink-0
+          !absolute right-[5%] top-[18%]"
       />
       <ui.Game.PlayerStripLabel
         player={game.players[(thisIdx+5)%playersLen]}
@@ -239,7 +239,7 @@ function PlayersCircle({game, thisPlayer}){
         winner={game.winner}
         showTimer={game.turn_timer !== "infinite"}
         blockedCount={game.effects_data?.skip_blocked_players?.[(thisIdx+5)%playersLen] ?? 0}
-        className="w-[150px] lg:w-[250px] shrink-0
+        className="w-[125px] xs:w-[150px] lg:w-[250px] shrink-0
           !absolute right-[5%] top-[66%]"
       />
     </>)
@@ -1020,7 +1020,6 @@ function Game(){
           <p><span className="opacity-35">Turn timer: </span>{game.turn_timer}</p>
           <p><span className="opacity-35">Wild cards must match: </span>{game.wild_cards_must_match ? "YES" : "NO"}</p>
           <p><span className="opacity-35">Direction: </span>{game.direction == 1 ? "Clockwise" : "Counter-Clockwise"}</p>
-          <p><span className="opacity-35">ServerTimerOffset: </span>{serverTimerOffset}</p>
         </ui.Frame.SubBox>
         </motion.div>
         }
@@ -1487,7 +1486,7 @@ function Game(){
                       rainbow={thisTurn && card.type == "wild" && card.allowed_to_play}
 
                       initial={{scale:0.7 ,opacity:0.7, y:20}}
-                      animate={{opacity:card.allowed_to_play?1:0.9, y:card.allowed_to_play?-2:3, scale: 1,}}
+                      animate={{opacity:card.allowed_to_play?1:0.8, y:card.allowed_to_play?-2:10, scale: 1,}}
                       exit={{scale:0.7, opacity:0.7, y:20}}
                       whileHover={{y:card.allowed_to_play ? -10 : 3,}}
                       transition={{ duration: 0.2, ease: "easeOut" }}

@@ -1,16 +1,18 @@
 import { useState, useEffect } from "react";
+import { useApp } from "../context/app_provider"
 
 export function Countdown({targetTime}) {
+    const { serverTimerOffset }  = useApp();
     const [timeLeft, setTimeLeft] = useState(() => {
         if (!targetTime) return null;
-        return Math.ceil((targetTime - Date.now()) / 1000);
+        return Math.ceil((targetTime - (Date.now() + serverTimerOffset)) / 1000);
     });
 
     useEffect(() => {
         if (!targetTime || timeLeft <= 0) return;
 
         const interval = setInterval(() => {
-            const remaining = Math.ceil((targetTime - Date.now()) / 1000);
+            const remaining = Math.ceil((targetTime - (Date.now() + serverTimerOffset)) / 1000);
             setTimeLeft(remaining > 0 ? remaining : 0);
         }, 1000);
 
@@ -22,16 +24,17 @@ export function Countdown({targetTime}) {
 
 
 export function ElapsedTime({ targetTime }) {
+    const { serverTimerOffset }  = useApp();
     const [timePassed, setTimePassed] = useState(() => {
         if (!targetTime) return null;
-        return Math.floor((Date.now() - targetTime) / 1000);
+        return Math.floor((Date.now() + serverTimerOffset - targetTime) / 1000);
     });
 
     useEffect(() => {
         if (!targetTime) return;
 
         const interval = setInterval(() => {
-            const elapsed = Math.floor((Date.now() - targetTime) / 1000);
+            const elapsed = Math.floor((Date.now() + serverTimerOffset - targetTime) / 1000);
             setTimePassed(elapsed);
         }, 1000);
 
@@ -43,9 +46,10 @@ export function ElapsedTime({ targetTime }) {
 
 
 export function ElapsedTimeFormatted({ targetTime }) {
+    const { serverTimerOffset }  = useApp();
     const [timePassed, setTimePassed] = useState(() => {
         if (!targetTime) return null;
-        return Math.floor((Date.now() - targetTime) / 1000);
+        return Math.floor((Date.now() + serverTimerOffset - targetTime) / 1000);
     });
     const hours = Math.floor(timePassed / 3600);
     const minutes = Math.floor((timePassed % 3600) / 60);
@@ -55,7 +59,7 @@ export function ElapsedTimeFormatted({ targetTime }) {
         if (!targetTime) return;
 
         const interval = setInterval(() => {
-            const elapsed = Math.floor((Date.now() - targetTime) / 1000);
+            const elapsed = Math.floor((Date.now() + serverTimerOffset - targetTime) / 1000);
             setTimePassed(elapsed);
         }, 1000);
 

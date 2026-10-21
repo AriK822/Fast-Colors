@@ -92,6 +92,8 @@
 
 
 @theme {
+    --breakpoint-xs: 30rem;
+
     --color-background: var(--theme-background);
     --color-text: var(--theme-text);
     --color-overlay: var(--theme-overlay);

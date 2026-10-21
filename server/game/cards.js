@@ -45,33 +45,33 @@ export const card_objects_with_desc = {
         "Base Cards",
         "Default UNO 4 color cards (Red, Green, Blue, Yellow) numbered 0-9 plus action cards"
     ],
+    "wild_choose_base_color": [
+        "Color Picker",
+        "Wild card, Allows the player to choose a new base color for the game"
+    ],
     "wild_base_draw_2_colored": [
         "Draw Two",
         "Wild card, adds +2 cards to the next person's hand"
     ],
-    "wild_choose_base_color": [
-        "Color Picker",
-        "Wild card, Allows the player to choose a new base color for the game"
+    "wild_wild_draw_4": [
+        "Draw 4",
+        "Wild card, adds +4 cards to the next person's hand",
     ],
     "wild_skip_next_player": [
         "Skip",
         "Wild card, skips the next person's turn"
     ],
-    "wild_block_selected_player": [
-        "Player Blocker",
-        "Wild card, Select a player to block them in their next turn"
-    ],
     "wild_rotate_colored": [
         "Rotate Direction",
         "Wild card, Inverts the current game direction to the opposite direction."
     ],
+    "wild_block_selected_player": [
+        "Player Blocker",
+        "Wild card, Select a player to block them in their next turn"
+    ],
     "wild_spy_eye_colored": [
         "Spy eye",
         "Wild card, Select a player to view their deck once. Can be placed only on the same color."
-    ],
-    "wild_wild_draw_4": [
-        "Draw 4",
-        "Wild card, adds +4 cards to the next person's hand",
     ],
     "wild_wild_joker": [
         "Joker",

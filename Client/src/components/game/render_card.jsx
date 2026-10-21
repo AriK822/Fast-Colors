@@ -59,7 +59,7 @@ function card({
                 width,
                 aspectRatio: "9/16",
                 // height: width * (1280/720),
-                filter: grayscale ? "grayscale(60%)" : "",
+                filter: grayscale ? "grayscale(0%)" : "",
                 // transform: grayscale ? "translateY(10px)" : "",
                 ...style
             }}
