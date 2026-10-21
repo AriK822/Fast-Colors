@@ -18,6 +18,17 @@ import { SkeletonTheme } from "react-loading-skeleton";
 
 
 
+// Remove index loading
+import tabLogo from "./assets/images/main-tab-logo.png";
+const favicon = document.querySelector<HTMLLinkElement>(
+  'link[rel="icon"]'
+);
+if (favicon) {
+  favicon.href = tabLogo;
+  favicon.type = "image/png";
+}
+
+
 function App() {
 
   return (

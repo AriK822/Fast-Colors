@@ -181,7 +181,7 @@ function JoinLobby() {
             header={
               <div className="flex flex-row 
               justify-between items-center">
-                <h1 className="text-2xl">
+                <h1 className="text-xl">
                   <ui.Logo id="door" />&nbsp;
                   Available Lobbies:
                 </h1>
@@ -205,6 +205,7 @@ function JoinLobby() {
             insideBoxClassName={`
               flex flex-col gap-ui-md
               game-theme-scrollbar h-full
+              !overflow-x-hidden
             `}
           >
             
