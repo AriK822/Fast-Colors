@@ -2,8 +2,6 @@ import express from 'express';
 import { createServer } from "http";
 import { attachSocketIO, getIO } from './socket/socket_init.js';
 import config from "./config/config.js"
-import dotenv from 'dotenv';
-dotenv.config();
 
 // Middleware
 import cookieParser from 'cookie-parser';
@@ -21,7 +19,7 @@ const port = config.app.port;
 const host = config.app.expose_host ? "0.0.0.0" : "localhost";
 
 const sessionMiddleware = session({
-    secret: process.env.SESSION_SECRET,
+    secret: config.app.sessionSecret,
     resave: true,
     saveUninitialized: true,
     cookie: {

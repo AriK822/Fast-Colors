@@ -63,6 +63,8 @@ UI features:
 ✅assets rework
 ✅fix timer (independent of client timer)
 ✅svg icons
+✅play when player is offline and timer is infinite
+✅play when player is offline and passed 30s from being offline
 
 
 

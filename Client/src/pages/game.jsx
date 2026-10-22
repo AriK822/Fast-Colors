@@ -460,7 +460,7 @@ function Game(){
         active_position: null,
       });
 
-      navigate("/");
+      navigate("/", {replace:true});
     })
 
     SocketAPI.listenForGamePopup((data) => {
@@ -929,6 +929,9 @@ function Game(){
             thisTurn={!game.winner && game.turn == i}
             winner={game.winner}
             activePlayer={player.id==thisPlayer.id}
+            disconnected_at={player.disconnected_at}
+            play_as_offline_after={game.play_as_offline_after}
+            timerIsInfinite={game.turn_timer=="infinite"}
           />
         </motion.div>
       ))}

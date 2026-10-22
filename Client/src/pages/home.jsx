@@ -32,30 +32,30 @@ function Home() {
       return;
     }
 
-  const timeout = setTimeout(async () => {
-    if (nameInputValue.trim().length < 4) return
+    const timeout = setTimeout(async () => {
+      if (nameInputValue.trim().length < 4) return
 
-    setNameInputLoading(true);
-    const result = await SocketAPI.setPlayerName(nameInputValue);
-    setNameInputLoading(false);
+      setNameInputLoading(true);
+      const result = await SocketAPI.setPlayerName(nameInputValue);
+      setNameInputLoading(false);
 
-    showNotification({
-      text: result.msg,
-      type: result.error ? "error" : "success"
-    });
-
-    if (!result.error){
-      setSession({
-        ...session,
-        player_name: nameInputValue,
+      showNotification({
+        text: result.msg,
+        type: result.error ? "error" : "success"
       });
-    }
 
-  }, 700);
+      if (!result.error){
+        setSession({
+          ...session,
+          player_name: nameInputValue,
+        });
+      }
 
-  return () => {
-      clearTimeout(timeout);
-  };
+    }, 700);
+
+    return () => {
+        clearTimeout(timeout);
+    };
 
   }, [nameInputValue]);
 

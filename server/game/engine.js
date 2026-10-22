@@ -29,6 +29,7 @@ export function makeNewGame({
     state=GameStateModes.INITIALIZING,
     winner=null, // {id:..., name:...}
     finished_game_delete_timeout=config.game.finished_game_delete_timeout,
+    play_as_offline_after=config.game.play_as_offline_after,
 }){
     const start_card = generate_random_card(card_objects);
     const start_base_color = get_start_base_color(start_card, base_colors);
@@ -63,6 +64,7 @@ export function makeNewGame({
         last_move_time:Date.now(),
         created_at:Date.now(),
         finished_game_delete_timeout,
+        play_as_offline_after,
     }
 }
 
@@ -70,7 +72,7 @@ export function makeNewGame({
 
 function get_start_base_color(start_card, base_colors){
     if (start_card.base_color) return start_card.base_color;
-    return base_colors[Math.floor(Math.random() * base_colors.length)][0];
+    return base_colors[Math.floor(Math.random() * base_colors.length)];
 }
 
 
@@ -95,6 +97,7 @@ function init_players(player_init_info, init_deck_size, card_objects) {
                 get connection_status() {return PlayerstateHandler.getPlayerState(player.id);},
                 get name() {return PlayerstateHandler.getPlayerName(player.id);},
                 game_status: "playing",
+                disconnected_at:null,
 
                 deck: Array.from({ length: init_deck_size }, () => generate_random_card(card_objects)),
             })
@@ -326,7 +329,15 @@ export function setGameNextCycleTimeout(game, services){
 
     const this_player = game.players[game.turn];
 
-    if (this_player.type == "bot" || this_player.game_status == "left"){
+    if (
+        this_player.type == "bot" 
+        || this_player.game_status == "left"
+        || (this_player.connection_status == "offline" && game.turn_timer == "infinite")
+        || (
+            this_player.connection_status == "offline" && 
+            (Date.now() - this_player.disconnected_at > config.game.play_as_offline_after)
+            )
+    ){
         const this_timeout = setTimeout(() => {
             mainGameCycle(game, GameCycleReasonMode.BOT_PLAY, {}, services);
         }, config.game.bot_play_delay);

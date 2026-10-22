@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { useApp } from "../context/app_provider"
 
-export function Countdown({targetTime}) {
+export function Countdown({targetTime, 
+    startExtend=null, endExtend=null, nullIfZero=false}) {
     const { serverTimerOffset }  = useApp();
     const [timeLeft, setTimeLeft] = useState(() => {
         if (!targetTime) return null;
@@ -19,7 +20,8 @@ export function Countdown({targetTime}) {
         return () => clearInterval(interval);
     }, [targetTime]);
 
-    return <span>{timeLeft}</span>;
+    if (nullIfZero && timeLeft<=0) return
+    return <>{startExtend}<span>{timeLeft}</span>{endExtend}</>
 }
 
 

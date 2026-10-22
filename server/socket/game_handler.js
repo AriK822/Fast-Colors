@@ -261,7 +261,23 @@ socket.on("disconnecting", () => {
     const active_game = GameHandler.Player_To_Game[socket.request.session.player_id]
     if (active_game){
         GameHandler.handlePlayerDisconnection(active_game);
-        broadCastHiddenGame(active_game, "players")
+        const thisPlayer = active_game.players.find(
+            player => player.id == socket.request.session.player_id
+        );
+        thisPlayer.disconnected_at = Date.now();
+        broadCastHiddenGame(active_game, "players");
+
+        if (
+            active_game.turn_timer == "infinite"
+            && active_game.turn == active_game.players.indexOf(thisPlayer)
+        ){
+            Engine.mainGameCycle(
+                active_game,
+                Engine.GameCycleReasonMode.BOT_PLAY,
+                {},
+                EngineServices,
+            )
+        }
     }
 });
 

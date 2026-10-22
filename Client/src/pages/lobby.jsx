@@ -1727,7 +1727,7 @@ function Lobby() {
             }
             {lobby.owner !== session.player_id &&
             <p
-              className="ui-text text-center
+              className="ui-text text-center pb-ui-md
                text-lg opacity-70 md:hidden"
             >
               Waiting for owner to start the game

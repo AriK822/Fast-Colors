@@ -1,15 +1,20 @@
+import { randomUUID } from "crypto"
+
+
 const config = {
     app:{
         port:8080,
         expose_host: true, // localhost or 0.0.0.0
         debug:true,
-        test_delay:1500,
+        test_delay:100,
+        sessionSecret: randomUUID(),
     },
 
     game:{
         bot_play_delay:1500,
         finished_game_delete_timeout:30*1000,
         empty_game_delete_timeout:30*1000,
+        play_as_offline_after:30*1000,
         max_history_cards:5,
     },
 

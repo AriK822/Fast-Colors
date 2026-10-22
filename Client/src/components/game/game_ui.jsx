@@ -3,6 +3,8 @@ import RednerCard from "./render_card"
 import { AnimatePresence, motion } from "motion/react"
 import Loaders from "../loaders/_loaders";
 import ui from "../shared/_ui";
+import * as Timer from "../../utils/hooks/timer_hooks"
+import { useApp } from "../../utils/context/app_provider";
 
 
 function PlayerStripLabel({player, className, 
@@ -146,9 +148,13 @@ function ChatMsg({msg, className, ...props}){
 }
 
 
-function PlayerLabel({player, 
-    className, thisTurn, activePlayer=false,
-    winner=false, ...props}){
+function PlayerLabel({
+    player, 
+    className, thisTurn, activePlayer=false, 
+    disconnected_at=null, play_as_offline_after, timerIsInfinite,
+    winner=false, ...props
+}){
+    const { serverTimerOffset } = useApp();
     const first_letter = String(player.name[0]).toLocaleUpperCase();
     let status = "";
     let status_color = null;
@@ -156,7 +162,20 @@ function PlayerLabel({player,
     if (player.type=="bot"){status="Bot"; status_color="--theme-bot-text"}
     else if (player.game_status=="left"){status = "Left"; status_color="--theme-left-text"}
     else if (player.connection_status=="online"){status = "Online"; status_color="--theme-online-text"}
-    else if (player.connection_status=="offline"){status = "Offline"; status_color="--theme-offline-text"}
+    else if (player.connection_status=="offline"){
+        status = <>
+            Offline
+            {!winner && !timerIsInfinite &&
+            <Timer.Countdown 
+                targetTime={disconnected_at+play_as_offline_after} 
+                nullIfZero={true}
+                startExtend={<>,&nbsp;auto play in </>}
+                endExtend="s"
+            />
+            }
+        </>; 
+        status_color="--theme-offline-text"
+    }
 
     return (
         <ui.Frame.Label 
