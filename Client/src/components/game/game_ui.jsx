@@ -59,7 +59,7 @@ function PlayerStripLabel({player, className,
     
             <div
                 className={`game-strip-label-card-count
-                flex justify-center items-center !text-lg
+                flex justify-center items-center !text-lg shrink-0
                 ${thisTurn && !winner && showTimer &&"game-strip-label-card-count-timer"}`}
             >
                 {player.card_count}

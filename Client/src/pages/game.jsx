@@ -546,7 +546,6 @@ function Game(){
       const thisCard = thisPlayer.deck[card_index];
       newGame.current_card = thisCard;
       if(thisCard.base_color) newGame.base_color = thisCard.base_color;
-      newGame.history.total_placed_cards+=1;
       thisPlayer.deck.splice(card_index, 1);
       setGame((prev) => newGame)
     }, 150);
@@ -573,6 +572,7 @@ function Game(){
       setGame((prev)=>({
         ...prev, 
         turn:(prev.turn+prev.direction+prev.players.length)%prev.players.length,
+        last_move_time:Date.now()+serverTimerOffset,
       }))
     }, 150)
 
@@ -599,6 +599,7 @@ function Game(){
         for (let i=0; i<game.cards_to_take; i++){
           game.players[game.turn].deck.push({
             overlay_image: ["card_back_side"],
+            uuid:generateId(),
           })
         }
       }
