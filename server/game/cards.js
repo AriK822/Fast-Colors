@@ -312,9 +312,6 @@ export function makeWildChooseColor(
     }
 
     const place_func = (game, choice) => {
-        if (choice.random)
-            choice.base_color = game.base_colors[Math.floor(Math.random() * game.base_colors.length)]
-        
         game.base_color = choice.base_color;
         game.turn = (game.turn + game.direction) % game.players.length;
         game.turn = (game.turn + game.players.length) % game.players.length;
@@ -322,7 +319,8 @@ export function makeWildChooseColor(
 
     const choice = {
         ui_id:"pick_color",
-        validate: (game, data)=>(data.random || game.base_colors.includes(data?.base_color ?? ""))
+        validate: (game, data)=>(data.random || game.base_colors.includes(data?.base_color ?? "")),
+        random: (game)=>({base_color: game.base_colors[Math.floor(Math.random() * game.base_colors.length)]}),
     }
 
     const this_card = MakeCard({
@@ -350,9 +348,6 @@ export function makeWildSkipNextPlayer(
     }
 
     const place_func = (game, choice) => {
-        if (choice.random)
-            choice.base_color = game.base_colors[Math.floor(Math.random() * game.base_colors.length)]
-        
         game.base_color = choice.base_color;
         game.turn = (game.turn + game.direction*2) % game.players.length;
         game.turn = (game.turn + game.players.length) % game.players.length;
@@ -360,7 +355,8 @@ export function makeWildSkipNextPlayer(
 
     const choice = {
         ui_id:"pick_color",
-        validate: (game, data)=>(data.random || game.base_colors.includes(data?.base_color ?? ""))
+        validate: (game, data)=>(data.random || game.base_colors.includes(data?.base_color ?? "")),
+        random: (game)=>({base_color: game.base_colors[Math.floor(Math.random() * game.base_colors.length)]}),
     }
 
     const this_card = MakeCard({
@@ -388,12 +384,6 @@ export function makeWildBlockSelectedPlayer(
     }
 
     const place_func = (game, choice) => {
-        if (choice.random){
-            let i = Math.floor(Math.random() * (game.players.length - 1));
-            if (i >= game.turn) i += 1;
-            choice.player_index = i;
-        }
-
         game.effects_data.skip_blocked_players ??= {};
         game.effects_data.skip_blocked_players[choice.player_index] ??= 0;
         game.effects_data.skip_blocked_players[choice.player_index] += 1;
@@ -407,7 +397,12 @@ export function makeWildBlockSelectedPlayer(
         validate: (game, data)=>(
             data.random || 
             (game.players[data?.player_index] && game.turn !== data?.player_index)
-        )
+        ),
+        random: (game)=>{
+            let i = Math.floor(Math.random() * (game.players.length - 1));
+            if (i >= game.turn) i += 1;
+            return {player_index: i}
+        },
     }
 
     const effects = ["skip_blocked_players"]
@@ -485,12 +480,6 @@ export function makeSpyEyeColored(
         }
 
         const place_func = (game, choice) => {
-            if (choice.random){
-                let i = Math.floor(Math.random() * (game.players.length - 1));
-                if (i >= game.turn) i += 1;
-                choice.player_index = i;
-            }
-
             (async () => {
                 const receiver_sockets =
                     await game.io
@@ -516,7 +505,12 @@ export function makeSpyEyeColored(
             validate: (game, data)=>(
                 data.random || 
                 (game.players[data?.player_index] && game.turn !== data?.player_index)
-            )
+            ),
+            random: (game)=>{
+                let i = Math.floor(Math.random() * (game.players.length - 1));
+                if (i >= game.turn) i += 1;
+                return {player_index: i}
+            },
         }
 
         const this_card = MakeCard({
@@ -550,9 +544,6 @@ export function makeWildDraw4(
     }
 
     const place_func = (game, choice) => {
-        if (choice.random)
-            choice.base_color = game.base_colors[Math.floor(Math.random() * game.base_colors.length)]
-        
         game.base_color = choice.base_color;
         game.turn = (game.turn + game.direction) % game.players.length;
         game.turn = (game.turn + game.players.length) % game.players.length;
@@ -561,7 +552,8 @@ export function makeWildDraw4(
 
     const choice = {
         ui_id:"pick_color",
-        validate: (game, data)=>(data.random || game.base_colors.includes(data?.base_color ?? ""))
+        validate: (game, data)=>(data.random || game.base_colors.includes(data?.base_color ?? "")),
+        random: (game)=>({base_color: game.base_colors[Math.floor(Math.random() * game.base_colors.length)]}),
     }
 
     const this_card = MakeCard({
@@ -636,12 +628,6 @@ export function makeReverseColored(
         }
 
         const place_func = (game, choice) => {
-            if (choice.random){
-                let i = Math.floor(Math.random() * (game.players.length - 1));
-                if (i >= game.turn) i += 1;
-                choice.player_index = i;
-            }
-
             const this_deck = game.players[game.turn].deck;
             game.players[game.turn].deck = game.players[choice.player_index].deck;
             game.players[choice.player_index].deck = this_deck;
@@ -656,7 +642,12 @@ export function makeReverseColored(
             validate: (game, data)=>(
                 data.random || 
                 (game.players[data?.player_index] && game.turn !== data?.player_index)
-            )
+            ),
+            random: (game)=>{
+                let i = Math.floor(Math.random() * (game.players.length - 1));
+                if (i >= game.turn) i += 1;
+                return {player_index: i}
+            },
         }
 
         const this_card = MakeCard({
@@ -695,12 +686,6 @@ export function makeWildSelectedDraw1(
         }
 
         const place_func = (game, choice) => {
-            if (choice.random){
-                let i = Math.floor(Math.random() * (game.players.length - 1));
-                if (i >= game.turn) i += 1;
-                choice.player_index = i;
-            }
-
             add_cards_to_player(game, choice.player_index, 1);
 
             game.base_color = card_base_color;
@@ -713,7 +698,12 @@ export function makeWildSelectedDraw1(
             validate: (game, data)=>(
                 data.random || 
                 (game.players[data?.player_index] && game.turn !== data?.player_index)
-            )
+            ),
+            random: (game)=>{
+                let i = Math.floor(Math.random() * (game.players.length - 1));
+                if (i >= game.turn) i += 1;
+                return {player_index: i}
+            },
         }
 
         const this_card = MakeCard({
