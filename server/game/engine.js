@@ -270,7 +270,7 @@ export function randomMoveProcess(game){
     allowed_cards = possible_cards_to_play(game);
     if (allowed_cards.length > 0){
         const rand_card = allowed_cards[Math.floor(Math.random() * allowed_cards.length)]
-        return place_card(game, rand_card, rand_card.choice.random(game))
+        return place_card(game, rand_card, rand_card.choice?.random(game))
     }
 
     if (game.cards_to_take > 0)
@@ -280,7 +280,7 @@ export function randomMoveProcess(game){
     allowed_cards = possible_cards_to_play(game);
     if (allowed_cards.length > 0){
         const rand_card = allowed_cards[Math.floor(Math.random() * allowed_cards.length)]
-        return place_card(game, rand_card, rand_card.choice.random(game))
+        return place_card(game, rand_card, rand_card.choice?.random(game))
     }
     return skip_turn(game);
 }
