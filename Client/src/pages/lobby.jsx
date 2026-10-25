@@ -698,13 +698,15 @@ function Lobby() {
                   onClick={addLobbyMsg} 
                   disabled={lobby_chat_sending || lobby_chat_input.trim() == ""}                
                 >
-                  <span className="opacity-0">...</span>
                   {lobby_chat_sending 
                     ? <Loader.Spinner/> 
-                    : <ui.Logo 
-                        id="send" 
-                        className="absolute top-1/2 left-1/2 -translate-1/2 !h-[1.5rem]" 
-                      />
+                    : <>
+                        <span className="opacity-0">...</span>
+                        <ui.Logo 
+                          id="send" 
+                          className="absolute top-1/2 left-1/2 -translate-1/2 !h-[1.5rem]" 
+                        />
+                      </>
                   }
                 </ui.Frame.Btn>
               </div>

@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
-import { useApp } from "../context/app_provider"
+import { useApp } from "../../utils/context/app_provider"
 
-export function Countdown({targetTime, 
+function Countdown({targetTime, 
     startExtend=null, endExtend=null, nullIfZero=false}) {
     const { serverTimerOffset }  = useApp();
     const [timeLeft, setTimeLeft] = useState(() => {
@@ -25,7 +25,7 @@ export function Countdown({targetTime,
 }
 
 
-export function ElapsedTime({ targetTime }) {
+function ElapsedTime({ targetTime }) {
     const { serverTimerOffset }  = useApp();
     const [timePassed, setTimePassed] = useState(() => {
         if (!targetTime) return null;
@@ -47,7 +47,7 @@ export function ElapsedTime({ targetTime }) {
 }
 
 
-export function ElapsedTimeFormatted({ targetTime }) {
+function ElapsedTimeFormatted({ targetTime }) {
     const { serverTimerOffset }  = useApp();
     const [timePassed, setTimePassed] = useState(() => {
         if (!targetTime) return null;
@@ -75,4 +75,13 @@ export function ElapsedTimeFormatted({ targetTime }) {
             {seconds}s
         </span>
     )
+}
+
+
+export default {
+    Timer: {
+        Countdown,
+        ElapsedTime,
+        ElapsedTimeFormatted,
+    },
 }

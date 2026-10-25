@@ -3,7 +3,6 @@ import RednerCard from "./render_card"
 import { AnimatePresence, motion } from "motion/react"
 import Loaders from "../loaders/_loaders";
 import ui from "../shared/_ui";
-import * as Timer from "../../utils/hooks/timer_hooks"
 import { useApp } from "../../utils/context/app_provider";
 
 
@@ -166,7 +165,7 @@ function PlayerLabel({
         status = <>
             Offline
             {!winner && !timerIsInfinite &&
-            <Timer.Countdown 
+            <ui.Timer.Countdown 
                 targetTime={disconnected_at+play_as_offline_after} 
                 nullIfZero={true}
                 startExtend={<>,&nbsp;auto play in </>}

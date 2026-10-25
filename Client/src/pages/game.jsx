@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 import * as SocketAPI from "../api/socket_handler"
 import { useNotification } from "../utils/context/notification";
 import { useApp } from "../utils/context/app_provider"
-import * as Timer from "../utils/hooks/timer_hooks"
 
 import { motion, AnimatePresence, scale } from "motion/react";
 import confetti from "canvas-confetti";
@@ -883,7 +882,7 @@ function Game(){
                 Game over.<br />
                 {game.winner.name} has won. <br />
                 Game will be deleted after&nbsp;
-                <Timer.Countdown
+                <ui.Timer.Countdown
                     targetTime={
                         game.last_move_time +
                         game.finished_game_delete_timeout
@@ -1035,7 +1034,7 @@ function Game(){
           <ConnectionDetailsComponent />
           
           <p style={{color:"var(--theme-accent)"}}>General:</p>
-          <p><span className="opacity-35">Time passed: </span><Timer.ElapsedTimeFormatted targetTime={game.created_at} /></p>
+          <p><span className="opacity-35">Time passed: </span><ui.Timer.ElapsedTimeFormatted targetTime={game.created_at} /></p>
           <p><span className="opacity-35">Game Id: </span>{game.id}</p>
           <p><span className="opacity-35">Game State: </span>{game.state}</p>
           <p><span className="opacity-35">Total Placed Cards: </span>{game.history.total_placed_cards}</p>
