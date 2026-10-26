@@ -2,6 +2,14 @@
 This roadmap tracks completed work and planned features for Fast Colors. Priorities may change as development progresses.
 
 
+## Fix
+
+
+### done
+- ✅ wild cards must match
+- ✅ Map()-s in playerState
+
+
 ## Features
 
 ### Higher Priority

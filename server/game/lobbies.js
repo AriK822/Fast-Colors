@@ -4,10 +4,10 @@ import config from "../config/config.js";
 import * as PlayerstateHandler from "./player_states.js"
 
 
-export const LOBBIES = new Map();
-export const Player_To_Lobby = new Map();
+export const LOBBIES = {};
+export const Player_To_Lobby = {};
 
-const KICK_FROM_LOBBY_TIMEOUTS = new Map();
+const KICK_FROM_LOBBY_TIMEOUTS = {};
 
 
 let io = null;
@@ -85,7 +85,7 @@ export function createNewLobby(owner_id){
         id: lobby_id,
         game_options: game_options,
         owner:owner_id,
-        players: new Map(),
+        players: {},
 
         chat: [["server-log", `Lobby created by: ${PlayerstateHandler.getPlayerName(owner_id)}`]],
     }
@@ -177,27 +177,27 @@ export function setKickFromLobbyTimeout(
     const start_time = Date.now();
 
     const this_timeout = setTimeout(() => {
-        KICK_FROM_LOBBY_TIMEOUTS.delete(player_id);
+        delete KICK_FROM_LOBBY_TIMEOUTS[player_id];
         callback();
     }, timeout);
 
-    KICK_FROM_LOBBY_TIMEOUTS.set(player_id, {
+    KICK_FROM_LOBBY_TIMEOUTS[player_id] = {
         timeout: this_timeout,
         start_time,
         duration: timeout
-    });
+    };
 }
 
 export function clearKickFromLobbyTimeout(player_id) {
-    const player_timeout = KICK_FROM_LOBBY_TIMEOUTS.get(player_id);
+    const player_timeout = KICK_FROM_LOBBY_TIMEOUTS[player_id];
     if (player_timeout) {
         clearTimeout(player_timeout.timeout);
-        KICK_FROM_LOBBY_TIMEOUTS.delete(player_id);
+        delete KICK_FROM_LOBBY_TIMEOUTS[player_id];
     }
 }
 
 export function getKickFromLobbyTimeout(player_id) {
-    const player_timeout = KICK_FROM_LOBBY_TIMEOUTS.get(player_id);
+    const player_timeout = KICK_FROM_LOBBY_TIMEOUTS[player_id];
     if (!player_timeout) return null;
     return player_timeout.start_time + player_timeout.duration;
 }

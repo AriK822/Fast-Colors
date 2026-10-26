@@ -1375,16 +1375,15 @@ function Game(){
               <motion.div
                 className="game-side-pannel-info !px-ui-sm"
 
-                initial={{x:-100}}
+                initial={{x:"-100%"}}
                 animate={{x:0}}
-                exit={{x:-100}}
+                exit={{x:"-100%"}}
               >
                 <p style={{color:"#d04040"}}>Danger!</p>
                 Cards to take: &nbsp; {game.cards_to_take}
               </motion.div>
             }
-            {game.max_draws_per_turn > 0 &&
-              game.cards_taken_in_this_turn > 0 &&
+            {game.cards_taken_in_this_turn > 0 &&
               thisTurn && !game.winner &&
               <motion.div
                 className="game-side-pannel-info"
@@ -1394,12 +1393,15 @@ function Game(){
                 exit={{x:-200}}
               >
                 Cards taken: &nbsp;
-                <span  style={{color:
+                {game.max_draws_per_turn
+                ? <span  style={{color:
                   game.cards_taken_in_this_turn == game.max_draws_per_turn
                   ? "#d04040" : ""}}>
                   {game.cards_taken_in_this_turn}/
                   {game.max_draws_per_turn}
                 </span>
+                : <span>{game.cards_taken_in_this_turn}</span>
+                }
               </motion.div>
             }
             {(game.effects_data?.skip_blocked_players?.[thisIdx] ?? 0) > 0 &&

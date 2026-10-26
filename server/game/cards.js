@@ -267,9 +267,13 @@ export function makeWildDraw2Colored(
     const result = [];
 
     base_colors.forEach(card_base_color => {
+        const id = `${CardType.wild}-${card_base_color}-draw+2-colored`;
 
         const allowed_to_play_func = (game) => {
             if (!game.allow_wild_card_stacking && game.cards_to_take > 0) return false;
+            if (game.cards_to_take > 0 && game.wild_cards_must_match)
+                if (game.current_card.id != id)
+                    return false
             if (game.base_color == card_base_color) return true;
             return false;
         }
@@ -282,7 +286,7 @@ export function makeWildDraw2Colored(
         }
 
         const this_card = MakeCard({
-            id:`${CardType.wild}-${card_base_color}-draw+2-colored`,
+            id,
             type:CardType.wild,
             rednered_text:"+2",
             base_color:card_base_color,
@@ -538,8 +542,12 @@ export function makeWildDraw4(
     base_colors = config.cards.default_base_colors,
     weight = 16,
 ){
+    const id = `${CardType.wild}-draw+4`;
+
     const allowed_to_play_func = (game) => {
         if (!game.allow_wild_card_stacking && game.cards_to_take > 0) return false;
+        if (game.cards_to_take > 0 && game.wild_cards_must_match)
+            if (game.current_card.id != id) return false
         return true;
     }
 
@@ -557,7 +565,7 @@ export function makeWildDraw4(
     }
 
     const this_card = MakeCard({
-        id:`${CardType.wild}-draw+4`,
+        id,
         type:CardType.wild,
         rednered_text:"+4",
         base_color:null,

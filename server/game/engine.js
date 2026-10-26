@@ -363,7 +363,7 @@ export function runEffectsProcess(game){
 
 
 
-export const GAME_CYCLE_TIMEOUTS = new Map();
+export const GAME_CYCLE_TIMEOUTS = {};
 
 export const GameCycleReasonMode = Object.freeze({
     PLACE_CARD:0,

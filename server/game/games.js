@@ -6,10 +6,10 @@ import * as GameChat from "./game_chat.js"
 import config from "../config/config.js";
 
 
-export const GAMES = new Map();
-export const Player_To_Game = new Map();
+export const GAMES = {};
+export const Player_To_Game = {};
 
-export const DELETE_GAME_TIMEOUTS = new Map();
+export const DELETE_GAME_TIMEOUTS = {};
 
 
 export function createGameFromLobby(lobby, io=undefined){
