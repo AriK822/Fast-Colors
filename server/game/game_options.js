@@ -24,11 +24,12 @@ export const game_options = {
     ],
     bots: [],
     init_deck_size:7, 
-    can_draw_when_playable:true, // Allows players to take cards even if they have a card to play
+    turn_timer: 20, // seconds
     max_draws_per_turn:1, // How many crads is a player allowed to take in their turn
+    can_draw_when_playable:true, // Allows players to take cards even if they have a card to play
     allow_wild_card_stacking:true, // wild cards can be placed on top of eachother
     wild_cards_must_match: false, // wild cards can stack only if their type is the same
-    turn_timer: 20, // seconds
+    allow_same_type_placement: false,
 
     // advanced_options
     use_advanced_options: false,
@@ -70,7 +71,8 @@ export function validateGameOptions(new_options) {
     if (
         typeof new_options.can_draw_when_playable !== "boolean" ||
         typeof new_options.allow_wild_card_stacking !== "boolean" ||
-        typeof new_options.wild_cards_must_match !== "boolean"
+        typeof new_options.wild_cards_must_match !== "boolean" ||
+        typeof new_options.allow_same_type_placement !== "boolean"
     ) return false;
 
     if (!Array.isArray(new_options.selected_card_objects)) return false;

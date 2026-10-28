@@ -267,7 +267,7 @@ export function makeWildDraw2Colored(
     const result = [];
 
     base_colors.forEach(card_base_color => {
-        const id = `${CardType.wild}-${card_base_color}-draw+2-colored`;
+        const id = `${CardType.wild}-draw+2-colored`;
 
         const allowed_to_play_func = (game) => {
             if (!game.allow_wild_card_stacking && game.cards_to_take > 0) return false;
@@ -275,6 +275,7 @@ export function makeWildDraw2Colored(
                 if (game.current_card.id != id)
                     return false
             if (game.base_color == card_base_color) return true;
+            if (game.allow_same_type_placement && game.current_card.id == id) return true;
             return false;
         }
 
@@ -310,8 +311,11 @@ export function makeWildChooseColor(
     base_colors = config.cards.default_base_colors,
     weight = 16,
 ){
+    const id = `${CardType.wild}-chooseBaseColor`;
+
     const allowed_to_play_func = (game) => {
         if (game.cards_to_take > 0) return false;
+        if (game.allow_same_type_placement && game.current_card.id == id) return true;
         return true;
     }
 
@@ -328,7 +332,7 @@ export function makeWildChooseColor(
     }
 
     const this_card = MakeCard({
-        id:`${CardType.wild}-chooseBaseColor`,
+        id,
         type:CardType.wild,
         rednered_text:null,
         base_color:null,
@@ -346,8 +350,11 @@ export function makeWildSkipNextPlayer(
     base_colors = config.cards.default_base_colors,
     weight = 16,
 ){
+    const id = `${CardType.wild}-skipNextPlayer`;
+
     const allowed_to_play_func = (game) => {
         if (game.cards_to_take > 0) return false;
+        if (game.allow_same_type_placement && game.current_card.id == id) return true;
         return true;
     }
 
@@ -364,7 +371,7 @@ export function makeWildSkipNextPlayer(
     }
 
     const this_card = MakeCard({
-        id:`${CardType.wild}-skipNextPlayer`,
+        id,
         type:CardType.wild,
         rednered_text:null,
         base_color:null,
@@ -382,8 +389,11 @@ export function makeWildBlockSelectedPlayer(
     base_colors = config.cards.default_base_colors,
     weight = 4,
 ){
+    const id = `${CardType.wild}-blockSelectedPlayer`;
+
     const allowed_to_play_func = (game) => {
         if (game.cards_to_take > 0) return false;
+        if (game.allow_same_type_placement && game.current_card.id == id) return true;
         return true;
     }
 
@@ -412,7 +422,7 @@ export function makeWildBlockSelectedPlayer(
     const effects = ["skip_blocked_players"]
 
     const this_card = MakeCard({
-        id:`${CardType.wild}-blockSelectedPlayer`,
+        id,
         type:CardType.wild,
         rednered_text:null,
         base_color:null,
@@ -432,12 +442,14 @@ export function makeWildRotateColored(
     weight = 4,
 ){
     const result = [];
+    const id = `${CardType.wild}-rotate-colored`;
 
     base_colors.forEach(card_base_color => {
 
         const allowed_to_play_func = (game) => {
             if (game.cards_to_take > 0) return false;
             if (game.base_color == card_base_color) return true;
+            if (game.allow_same_type_placement && game.current_card.id == id) return true;
             return false;
         }
 
@@ -449,7 +461,7 @@ export function makeWildRotateColored(
         }
 
         const this_card = MakeCard({
-            id:`${CardType.wild}-${card_base_color}-rotate-colored`,
+            id,
             type:CardType.wild,
             rednered_text:null,
             base_color:card_base_color,
@@ -474,12 +486,14 @@ export function makeSpyEyeColored(
     weight = 2,
 ){
     const result = [];
+    const id = `${CardType.wild}-spy-eye-colored`;
 
     base_colors.forEach(card_base_color => {
 
         const allowed_to_play_func = (game) => {
             if (game.cards_to_take > 0) return false;
             if (game.base_color == card_base_color) return true;
+            if (game.allow_same_type_placement && game.current_card.id == id) return true;
             return false;
         }
 
@@ -518,7 +532,7 @@ export function makeSpyEyeColored(
         }
 
         const this_card = MakeCard({
-            id:`${CardType.wild}-${card_base_color}-spy-eye-colored`,
+            id,
             type:CardType.wild,
             rednered_text:null,
             base_color:card_base_color,
@@ -546,8 +560,8 @@ export function makeWildDraw4(
 
     const allowed_to_play_func = (game) => {
         if (!game.allow_wild_card_stacking && game.cards_to_take > 0) return false;
-        if (game.cards_to_take > 0 && game.wild_cards_must_match)
-            if (game.current_card.id != id) return false
+        if (game.cards_to_take > 0 && game.wild_cards_must_match && game.current_card.id != id) return false;
+        if (game.allow_same_type_placement && game.current_card.id == id) return true;
         return true;
     }
 
@@ -583,8 +597,11 @@ export function makeWildJoker(
     base_colors = config.cards.default_base_colors,
     weight = 1,
 ){
+    const id = `${CardType.wild}-Joker`;
+
     const allowed_to_play_func = (game) => {
         if (game.cards_to_take > 0) return false;
+        if (game.allow_same_type_placement && game.current_card.id == id) return true;
         return true;
     }
 
@@ -607,7 +624,7 @@ export function makeWildJoker(
     }
 
     const this_card = MakeCard({
-        id:`${CardType.wild}-Joker`,
+        id,
         type:CardType.wild,
         rednered_text:null,
         base_color:null,
@@ -626,12 +643,14 @@ export function makeReverseColored(
     weight = 2,
 ){
     const result = [];
+    const id = `${CardType.wild}-reverse-colored`;
 
     base_colors.forEach(card_base_color => {
 
         const allowed_to_play_func = (game) => {
             if (game.cards_to_take > 0) return false;
             if (game.base_color == card_base_color) return true;
+            if (game.allow_same_type_placement && game.current_card.id == id) return true;
             return false;
         }
 
@@ -659,7 +678,7 @@ export function makeReverseColored(
         }
 
         const this_card = MakeCard({
-            id:`${CardType.wild}-${card_base_color}-reverse-colored`,
+            id,
             type:CardType.wild,
             rednered_text:null,
             base_color:card_base_color,
@@ -684,12 +703,14 @@ export function makeWildSelectedDraw1(
     weight = 2,
 ){
     const result = [];
+    const id = `${CardType.wild}-selected-player+1`;
 
     base_colors.forEach(card_base_color => {
 
         const allowed_to_play_func = (game) => {
             if (game.cards_to_take > 0) return false;
             if (game.base_color == card_base_color) return true;
+            if (game.allow_same_type_placement && game.current_card.id == id) return true;
             return false;
         }
 
@@ -715,7 +736,7 @@ export function makeWildSelectedDraw1(
         }
 
         const this_card = MakeCard({
-            id:`${CardType.wild}-${card_base_color}-selected-player+1`,
+            id,
             type:CardType.wild,
             rednered_text:"+1",
             base_color:card_base_color,
@@ -740,12 +761,14 @@ export function makeGoldenRose(
     weight = 2,
 ){
     const result = [];
+    const id = `${CardType.wild}-golden-rose`;
 
     base_colors.forEach(card_base_color => {
 
         const allowed_to_play_func = (game) => {
             if (game.cards_to_take > 0) return false;
             if (game.base_color == card_base_color) return true;
+            if (game.allow_same_type_placement && game.current_card.id == id) return true;
             return false;
         }
 
@@ -762,7 +785,7 @@ export function makeGoldenRose(
         }
 
         const this_card = MakeCard({
-            id:`${CardType.wild}-${card_base_color}-golden-rose`,
+            id,
             type:CardType.wild,
             rednered_text:null,
             base_color:card_base_color,

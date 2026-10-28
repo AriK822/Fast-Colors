@@ -1,16 +1,10 @@
-# Roadmap
-This roadmap tracks completed work and planned features for Fast Colors. Priorities may change as development progresses.
-
+# Fast Color's Roadmap
 
 ## Fix
 
-
-### done
-- ✅ wild cards must match
-- ✅ Map()-s in playerState
-
-
 ## Features
+
+### In Queue
 
 ### Higher Priority
 - Add themes
@@ -47,19 +41,9 @@ This roadmap tracks completed work and planned features for Fast Colors. Priorit
 - ✅ Run tests and find bugs
 - ✅ Add docs
 
-### Card Objects
-- ✅ Norm
-- ✅ Wild +2
-- ✅ Wild +4
-- ✅ Choose new color
-- ✅ Skip
-- ✅ Block selected
-- ✅ Rotate
-- ✅ View selected players deck (spy eye)
-- ✅ Joker
-- ✅ Reverse deck
-- ✅ Add 1 card to selected player
-- ✅ Golden rose (instant win)
+### Fix
+- ✅ wild cards must match
+- ✅ Map()-s in playerState
 
 
 ### UI
@@ -97,3 +81,20 @@ This roadmap tracks completed work and planned features for Fast Colors. Priorit
 - ✅ Left players play as bots after 30 seconds
 - ✅ Play when player is offline and timer is infinite
 - ✅ Play when player is offline and passed 30s from being offline
+- ✅ Add allow same type placement option (sam card type can be placed on top regardless of color, false by default)
+
+
+### Card Objects
+- ✅ Norm
+- ✅ Wild +2
+- ✅ Wild +4
+- ✅ Choose new color
+- ✅ Skip
+- ✅ Block selected
+- ✅ Rotate
+- ✅ View selected players deck (spy eye)
+- ✅ Joker
+- ✅ Reverse deck
+- ✅ Add 1 card to selected player
+- ✅ Golden rose (instant win)
+

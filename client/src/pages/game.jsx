@@ -100,6 +100,8 @@ function PlayersCircle({game, thisPlayer}){
         blockedCount={game.effects_data?.skip_blocked_players?.[(thisIdx+1)%playersLen] ?? 0}
         className="w-[150px] lg:w-[250px] shrink-0
           !absolute left-[50%] top-[7%] -translate-x-1/2"
+        drag
+        dragSnapToOrigin
       />
     </>)
   if (game.players.length == 3)
@@ -112,6 +114,8 @@ function PlayersCircle({game, thisPlayer}){
         blockedCount={game.effects_data?.skip_blocked_players?.[(thisIdx+1)%playersLen] ?? 0}
         className="w-[150px] lg:w-[250px] shrink-0
           !absolute left-[5%] top-[12%]"
+        drag
+        dragSnapToOrigin
       />
       <ui.Game.PlayerStripLabel
         player={game.players[(thisIdx+2)%playersLen]}
@@ -121,6 +125,8 @@ function PlayersCircle({game, thisPlayer}){
         blockedCount={game.effects_data?.skip_blocked_players?.[(thisIdx+2)%playersLen] ?? 0}
         className="w-[150px] lg:w-[250px] shrink-0
           !absolute right-[5%] top-[12%]"
+        drag
+        dragSnapToOrigin
       />
     </>)
   if (game.players.length == 4)
@@ -133,6 +139,8 @@ function PlayersCircle({game, thisPlayer}){
         blockedCount={game.effects_data?.skip_blocked_players?.[(thisIdx+1)%playersLen] ?? 0}
         className="w-[150px] lg:w-[250px] shrink-0
           !absolute left-[5%] top-[15%]"
+        drag
+        dragSnapToOrigin
       />
       <ui.Game.PlayerStripLabel
         player={game.players[(thisIdx+2)%playersLen]}
@@ -142,6 +150,8 @@ function PlayersCircle({game, thisPlayer}){
         blockedCount={game.effects_data?.skip_blocked_players?.[(thisIdx+2)%playersLen] ?? 0}
         className="w-[150px] lg:w-[250px] shrink-0
           !absolute left-[50%] top-[2%] sm:top-[7%] -translate-x-1/2"
+        drag
+        dragSnapToOrigin
       />
       <ui.Game.PlayerStripLabel
         player={game.players[(thisIdx+3)%playersLen]}
@@ -151,6 +161,8 @@ function PlayersCircle({game, thisPlayer}){
         blockedCount={game.effects_data?.skip_blocked_players?.[(thisIdx+3)%playersLen] ?? 0}
         className="w-[150px] lg:w-[250px] shrink-0
           !absolute right-[5%] top-[15%]"
+        drag
+        dragSnapToOrigin
       />
     </>)
   if (game.players.length == 5)
@@ -163,6 +175,8 @@ function PlayersCircle({game, thisPlayer}){
         blockedCount={game.effects_data?.skip_blocked_players?.[(thisIdx+1)%playersLen] ?? 0}
         className="w-[125px] xs:w-[150px] lg:w-[250px] shrink-0
           !absolute left-[5%] top-[22%]"
+        drag
+        dragSnapToOrigin
       />
       <ui.Game.PlayerStripLabel
         player={game.players[(thisIdx+2)%playersLen]}
@@ -172,6 +186,8 @@ function PlayersCircle({game, thisPlayer}){
         blockedCount={game.effects_data?.skip_blocked_players?.[(thisIdx+2)%playersLen] ?? 0}
         className="w-[125px] xs:w-[150px] lg:w-[250px] shrink-0
           !absolute left-[33%] top-[7%] -translate-x-1/2"
+        drag
+        dragSnapToOrigin
       />
       <ui.Game.PlayerStripLabel
         player={game.players[(thisIdx+3)%playersLen]}
@@ -181,6 +197,8 @@ function PlayersCircle({game, thisPlayer}){
         blockedCount={game.effects_data?.skip_blocked_players?.[(thisIdx+3)%playersLen] ?? 0}
         className="w-[125px] xs:w-[150px] lg:w-[250px] shrink-0
           !absolute left-[66%] top-[7%] -translate-x-1/2"
+        drag
+        dragSnapToOrigin
       />
       <ui.Game.PlayerStripLabel
         player={game.players[(thisIdx+4)%playersLen]}
@@ -190,6 +208,8 @@ function PlayersCircle({game, thisPlayer}){
         blockedCount={game.effects_data?.skip_blocked_players?.[(thisIdx+4)%playersLen] ?? 0}
         className="w-[125px] xs:w-[150px] lg:w-[250px] shrink-0
           !absolute right-[5%] top-[22%]"
+        drag
+        dragSnapToOrigin
       />
     </>)
   if (game.players.length == 6)
@@ -202,6 +222,8 @@ function PlayersCircle({game, thisPlayer}){
         blockedCount={game.effects_data?.skip_blocked_players?.[(thisIdx+1)%playersLen] ?? 0}
         className="w-[125px] xs:w-[150px] lg:w-[250px] shrink-0
           !absolute left-[5%] top-[66%]"
+        drag
+        dragSnapToOrigin
       />
       <ui.Game.PlayerStripLabel
         player={game.players[(thisIdx+2)%playersLen]}
@@ -211,6 +233,8 @@ function PlayersCircle({game, thisPlayer}){
         blockedCount={game.effects_data?.skip_blocked_players?.[(thisIdx+2)%playersLen] ?? 0}
         className="w-[125px] xs:w-[150px] lg:w-[250px] shrink-0
           !absolute left-[5%] top-[18%]"
+        drag
+        dragSnapToOrigin
       />
       <ui.Game.PlayerStripLabel
         player={game.players[(thisIdx+3)%playersLen]}
@@ -220,6 +244,8 @@ function PlayersCircle({game, thisPlayer}){
         blockedCount={game.effects_data?.skip_blocked_players?.[(thisIdx+3)%playersLen] ?? 0}
         className="w-[125px] xs:w-[150px] lg:w-[250px] shrink-0
           !absolute left-[50%] top-[3%] -translate-x-1/2"
+        drag
+        dragSnapToOrigin
       />
       <ui.Game.PlayerStripLabel
         player={game.players[(thisIdx+4)%playersLen]}
@@ -229,6 +255,8 @@ function PlayersCircle({game, thisPlayer}){
         blockedCount={game.effects_data?.skip_blocked_players?.[(thisIdx+4)%playersLen] ?? 0}
         className="w-[125px] xs:w-[150px] lg:w-[250px] shrink-0
           !absolute right-[5%] top-[18%]"
+        drag
+        dragSnapToOrigin
       />
       <ui.Game.PlayerStripLabel
         player={game.players[(thisIdx+5)%playersLen]}
@@ -238,6 +266,8 @@ function PlayersCircle({game, thisPlayer}){
         blockedCount={game.effects_data?.skip_blocked_players?.[(thisIdx+5)%playersLen] ?? 0}
         className="w-[125px] xs:w-[150px] lg:w-[250px] shrink-0
           !absolute right-[5%] top-[66%]"
+        drag
+        dragSnapToOrigin
       />
     </>)
 }
@@ -1042,10 +1072,11 @@ function Game(){
           
           <p style={{color:"var(--theme-accent)"}}>Settings:</p>
           <p><span className="opacity-35">Base colors: </span>{game.base_colors.join(", ")}</p>
-          <p><span className="opacity-35">Wild card stacking: </span>{game.allow_wild_card_stacking ? "YES" : "NO"}</p>
-          <p><span className="opacity-35">Can draw when playable: </span>{game.can_draw_when_playable ? " YES" : "NO"}</p>
-          <p><span className="opacity-35">Max Draws Per Turn: </span>{game.max_draws_per_turn ?? "Infinite"}</p>
           <p><span className="opacity-35">Turn timer: </span>{game.turn_timer}</p>
+          <p><span className="opacity-35">Max Draws Per Turn: </span>{game.max_draws_per_turn ?? "Infinite"}</p>
+          <p><span className="opacity-35">Wild card stacking: </span>{game.allow_wild_card_stacking ? "YES" : "NO"}</p>
+          <p><span className="opacity-35">Same card type placement: </span>{game.allow_same_type_placement ? "YES" : "NO"}</p>
+          <p><span className="opacity-35">Can draw when playable: </span>{game.can_draw_when_playable ? " YES" : "NO"}</p>
           <p><span className="opacity-35">Wild cards must match: </span>{game.wild_cards_must_match ? "YES" : "NO"}</p>
           <p><span className="opacity-35">Direction: </span>{game.direction == 1 ? "Clockwise" : "Counter-Clockwise"}</p>
         </ui.Frame.SubBox>

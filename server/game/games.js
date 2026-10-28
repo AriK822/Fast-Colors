@@ -72,6 +72,7 @@ export function createGameFromLobby(lobby, io=undefined){
         allow_wild_card_stacking:lobby.game_options.allow_wild_card_stacking,
         wild_cards_must_match:lobby.game_options.wild_cards_must_match,
         turn_timer:lobby.game_options.turn_timer,
+        allow_same_type_placement: lobby.game_options.allow_same_type_placement,
     })
 
     this_game.io = io;

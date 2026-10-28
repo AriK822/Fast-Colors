@@ -24,6 +24,7 @@ export function makeNewGame({
     allow_wild_card_stacking=true,
     wild_cards_must_match=false,
     turn_timer=20, // seconds
+    allow_same_type_placement=false,
     effects_data={},
     chat=[["server-log", "Game started"]],
     state=GameStateModes.INITIALIZING,
@@ -61,6 +62,7 @@ export function makeNewGame({
         allow_wild_card_stacking,
         wild_cards_must_match,
         turn_timer,
+        allow_same_type_placement,
         last_move_time:Date.now(),
         created_at:Date.now(),
         finished_game_delete_timeout,

@@ -1500,17 +1500,26 @@ function Lobby() {
                     className="w-full flex flex-row 
                       justify-between !p-ui-xs !px-ui-lg"
                   >
-                    Can draw when playable:
+                    Turn timer:
 
-                    <ui.Frame.CheckBox
-                      checked={lobby.game_options.can_draw_when_playable}
-                      onChange={(e) =>
+                    <ui.Frame.Select
+                      value={lobby.game_options.turn_timer}
+                      onChange={(e) => {
+                        const value = e.target.value;
+
                         setGameOptions(
-                          "can_draw_when_playable",
-                          e.target.checked
-                        )
-                      }
-                    />
+                          "turn_timer",
+                          value === "infinite" ? "infinite" : Number(value)
+                        );
+                      }}
+                    >
+                      <option value="infinite">Infinite</option>
+                      {limits.turn_timers.map(seconds => (
+                        <option key={seconds} value={seconds}>
+                          {seconds} Seconds
+                        </option>
+                      ))}
+                    </ui.Frame.Select>
                   </ui.Frame.Label>
 
 
@@ -1542,6 +1551,24 @@ function Lobby() {
                         ))
                       }
                     </ui.Frame.Select>
+                  </ui.Frame.Label>
+
+
+                  <ui.Frame.Label 
+                    className="w-full flex flex-row 
+                      justify-between !p-ui-xs !px-ui-lg"
+                  >
+                    Can draw when playable:
+
+                    <ui.Frame.CheckBox
+                      checked={lobby.game_options.can_draw_when_playable}
+                      onChange={(e) =>
+                        setGameOptions(
+                          "can_draw_when_playable",
+                          e.target.checked
+                        )
+                      }
+                    />
                   </ui.Frame.Label>
 
 
@@ -1585,26 +1612,17 @@ function Lobby() {
                     className="w-full flex flex-row 
                       justify-between !p-ui-xs !px-ui-lg"
                   >
-                    Turn timer:
+                    Allow same card type placement:
 
-                    <ui.Frame.Select
-                      value={lobby.game_options.turn_timer}
-                      onChange={(e) => {
-                        const value = e.target.value;
-
+                    <ui.Frame.CheckBox
+                      checked={lobby.game_options.allow_same_type_placement}
+                      onChange={(e) =>
                         setGameOptions(
-                          "turn_timer",
-                          value === "infinite" ? "infinite" : Number(value)
-                        );
-                      }}
-                    >
-                      <option value="infinite">Infinite</option>
-                      {limits.turn_timers.map(seconds => (
-                        <option key={seconds} value={seconds}>
-                          {seconds} Seconds
-                        </option>
-                      ))}
-                    </ui.Frame.Select>
+                          "allow_same_type_placement",
+                          e.target.checked
+                        )
+                      }
+                    />
                   </ui.Frame.Label>
 
                 </div>
@@ -1634,11 +1652,8 @@ function Lobby() {
                     className="w-full flex flex-row 
                       justify-between !p-ui-xs !px-ui-lg"
                   >
-                    Can draw when playable:
-                    <ui.Frame.CheckBox
-                      checked={lobby.game_options.can_draw_when_playable}
-                      disabled={true}
-                    />
+                    <p>Turn timer:</p>
+                    <p>{lobby.game_options.turn_timer} Seconds</p>
                   </ui.Frame.Label>
 
 
@@ -1648,6 +1663,18 @@ function Lobby() {
                   >
                     <p>Max draw per turn:</p>
                     <p>{lobby.game_options.max_draws_per_turn} Draws</p>
+                  </ui.Frame.Label>
+
+
+                  <ui.Frame.Label 
+                    className="w-full flex flex-row 
+                      justify-between !p-ui-xs !px-ui-lg"
+                  >
+                    Can draw when playable:
+                    <ui.Frame.CheckBox
+                      checked={lobby.game_options.can_draw_when_playable}
+                      disabled={true}
+                    />
                   </ui.Frame.Label>
 
 
@@ -1679,9 +1706,13 @@ function Lobby() {
                     className="w-full flex flex-row 
                       justify-between !p-ui-xs !px-ui-lg"
                   >
-                    <p>Turn timer:</p>
-                    <p>{lobby.game_options.turn_timer} Seconds</p>
+                    Allow same card type placement::
+                    <ui.Frame.CheckBox
+                      checked={lobby.game_options.allow_same_type_placement}
+                      disabled={true}
+                    />
                   </ui.Frame.Label>
+
 
                 </div>
                 
