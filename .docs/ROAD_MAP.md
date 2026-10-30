@@ -7,9 +7,8 @@
 ### In Queue
 
 ### Higher Priority
-- Add themes
 - Add sfx
-- Add settings (music, themes, fullscreen)
+- Add settings (music, fullscreen)
 - Release
 
 ### Lower Priority and Ideas
@@ -39,7 +38,7 @@
 - ✅ UI features (below)
 - ✅ Add more cards
 - ✅ Run tests and find bugs
-- ✅ Add docs
+- ✅ Add themes
 
 ### Fix
 - ✅ wild cards must match

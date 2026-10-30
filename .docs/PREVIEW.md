@@ -3,6 +3,9 @@
 ### Game UI
 ![game ui](./assets/game_ui.jpg)
 
+### Themes for everyone!
+![game ui](./assets/themes.jpg)
+
 ### Phone UI
 ![phone ui](./assets/mobile_ui.jpg)
 

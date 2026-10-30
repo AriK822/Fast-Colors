@@ -55,6 +55,8 @@
   - Set the turn timer to any duration or disable it entirely
 
 ## User Interface & Accessibility
+- Various themes to choose from
+- Dont like out themes? Make your own under 2 minutes!
 - Colorful visuals and smooth animations
 - Responsive interface
 - Loading animations and indicators
