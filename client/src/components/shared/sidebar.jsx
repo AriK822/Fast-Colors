@@ -5,9 +5,7 @@ import { AnimatePresence, easeIn, easeOut, motion } from "motion/react";
 import interactive from "./interactive"
 
 import "./style/sidebar.css"
-import topLeftLeaves from "../../assets/images/s4.png";
-import bottomLeftLeaves from "../../assets/images/s3.png";
-import sidebarLogo from "../../assets/images/sidebar-logo.png"
+import { Assets } from "./assets";
 import { Logo } from "./logos"
 
 
@@ -24,6 +22,7 @@ function SideBar({
     const { width, setWidth } = useApp();
     const [open, setOpen] = useState(false);
     const resizing = useRef(false);
+    const assets = Assets();
 
     useEffect(() => {
         if (!width) setWidth(defaultWidth);
@@ -81,7 +80,7 @@ function SideBar({
                 />
 
                 <img
-                    src={sidebarLogo}
+                    src={assets.sidebarLogo}
                     alt=""
                     className="
                         pointer-events-none
@@ -92,23 +91,26 @@ function SideBar({
                 />
 
                 <img
-                    src={topLeftLeaves}
+                    src={assets.sideBarTopLeft}
                     alt=""
                     className="
                         pointer-events-none
-                        fixed -top-15 -left-10
-                        scale-80 drop-shadow-img-soft
+                        fixed top-0 left-0
+                        drop-shadow-img-soft
+                        absolute
                     "
+                    style={{width:width/2}}
                 />
 
                 <img
-                    src={bottomLeftLeaves}
+                    src={assets.sideBarBottomLeft}
                     alt=""
                     className="
                         pointer-events-none
-                        fixed -bottom-15 -left-10
-                        scale-80 drop-shadow-img-soft
+                        fixed bottom-0 left-0
+                        drop-shadow-img-soft
                     "
+                    style={{width:width/2}}
                 />
             </aside>
 
@@ -158,7 +160,7 @@ function SideBar({
                         {children}
 
                     <img
-                        src={sidebarLogo}
+                        src={assets.sidebarLogo}
                         alt=""
                         className="
                             pointer-events-none
@@ -171,23 +173,25 @@ function SideBar({
 
 
                     <img
-                        src={topLeftLeaves}
+                        src={assets.sideBarTopLeft}
                         alt=""
                         className="
                             pointer-events-none
-                            absolute -top-15 -left-10 z-1001
-                            scale-80 drop-shadow-img-soft
+                            absolute top-0 left-0 z-1001
+                            drop-shadow-img-soft
                         "
+                        style={{width:width/2}}
                     />
 
                     <img
-                        src={bottomLeftLeaves}
+                        src={assets.sideBarBottomLeft}
                         alt=""
                         className="
                             pointer-events-none
-                            absolute -bottom-15 -left-10 z-1001
-                            scale-80 drop-shadow-img-soft
+                            absolute bottom-0 left-0 z-1001
+                            drop-shadow-img-soft
                         "
+                        style={{width:width/2}}
                     />
 
                     <div

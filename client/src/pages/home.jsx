@@ -2,23 +2,21 @@ import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 import * as SocketAPI from "../api/socket_handler"
-import { useApp, AppProvider } from "../utils/context/app_provider"
+import { useApp } from "../utils/context/app_provider"
 import { useNotification } from "../utils/context/notification";
 
 import ui from "../components/shared/_ui"
 import Skeleton from "react-loading-skeleton";
 import Loader from "../components/loaders/_loaders";
-import bgLandscape from "../assets/images/bg1.jpg"
-import bgMobile from "../assets/images/bg2.jpg"
-import mainLogo from "../assets/images/home-logo.png"
-import paintTexture from "../assets/images/sidebar-texture.jpg"
 
 
 function Home() {
   const navigate = useNavigate();
   const { showNotification } = useNotification();
   const { session, setSession, runSyncSession } = useApp();
+  const assets = ui.Assets();
 
+  const [showSettings, setShowSettings] = useState(false);
   const [nameInputValue, setNameInputValue] = useState(session.player_name);
   const isNameInputInitLoad = useRef(true);
   const [nameInputLoading, setNameInputLoading] = useState(false);
@@ -99,14 +97,13 @@ function Home() {
     }
     if(result.error) runSyncSession();
   }
-  
 
 
   return (
     <ui.FullScreen className="flex">
 
       <ui.SideBar 
-        style={{"--bg-paint-texture": `url(${paintTexture})`,}}
+        style={{"--bg-paint-texture": `url(${assets.sideBarTexture})`,}}
       >
         <h1 className="ui-text text-2xl truncate">
           Play as: &nbsp;
@@ -127,7 +124,9 @@ function Home() {
           <ui.Logo id="home" />&nbsp;
           Home
         </ui.SideBar.Btn>
-        <ui.SideBar.Btn>
+        <ui.SideBar.Btn
+          onClick={() => setShowSettings(true)}
+        >
           <ui.Logo id="settings" />&nbsp;
           Settings
         </ui.SideBar.Btn>
@@ -144,10 +143,15 @@ function Home() {
           md:bg-[image:var(--bg-desktop)]
         "
         style={{
-          "--bg-mobile": `url(${bgMobile})`,
-          "--bg-desktop": `url(${bgLandscape})`,
+          "--bg-mobile": `url(${assets.bgMobile})`,
+          "--bg-desktop": `url(${assets.bgLandscape})`,
         }}
       >
+
+        {showSettings &&
+        <ui.Settings onClose={() => setShowSettings(false)} />
+        }
+
         <div className="
           relative z-10
           flex flex-col
@@ -157,14 +161,14 @@ function Home() {
         ">
           <div className="flex flex-col items-center">
             <img
-              src={mainLogo}
+              src={assets.mainLogo}
               alt="Fast Colors"
               className="w-100 drop-shadow-img"
             />
 
             <h5 className="ui-text text-3xl">
               <span>Think Fast! </span>
-              <span className="text-[#9acdfc]">
+              <span className="text-[var(--theme-text-home-secondary)]">
                 Play Together.
               </span>
             </h5>

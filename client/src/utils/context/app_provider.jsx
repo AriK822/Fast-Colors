@@ -7,6 +7,7 @@ import React, {
 
 import socket from "../../api/socket_init";
 import * as SocketAPI from "../../api/socket_handler"
+import * as Cookies from "./cookie_handler"
 
 import SocketConnectionOverlay from "../../components/loaders/socket_connection_overlay"
 import Loader from "../../components/loaders/_loaders"
@@ -44,6 +45,8 @@ export const AppProvider = ({ children }) => {
     );
 
     const [width, setWidth] = useState(null);
+
+    const [theme, setTheme] = useState(Cookies.getCookie("theme") ?? "default");
 
 
     useEffect(() => {
@@ -106,6 +109,13 @@ export const AppProvider = ({ children }) => {
 
     }, []);
 
+    useEffect(() => {
+        document.documentElement.classList.toggle(theme);
+    }, []);
+    useEffect(() => {
+        Cookies.setCookie("theme", theme);
+    }, [theme]);
+
 
     const value = {
         session,
@@ -118,6 +128,9 @@ export const AppProvider = ({ children }) => {
 
         width,
         setWidth,
+
+        theme,
+        setTheme,
     };
 
 

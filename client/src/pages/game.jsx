@@ -15,10 +15,6 @@ import Skeleton from "react-loading-skeleton";
 import UiIdMapper from "../components/game/ui_choices/map_ui_id"
 import PopupMapper from "../components/game/popups/_popups"
 
-import bgLandscape from "../assets/images/bg1.jpg"
-import bgMobile from "../assets/images/bg2.jpg"
-import paintTexture from "../assets/images/sidebar-texture.jpg"
-
 
 Object.assign(ui, {Game: game_ui})
 
@@ -396,10 +392,12 @@ function Game(){
   const navigate = useNavigate();
   const { showNotification } = useNotification();
   const { session, setSession, serverTimerOffset, runSyncSession } = useApp();
+  const assets = ui.Assets();
 
   const [game, setGame] = useState(null);
   const gameRef = useRef(game);
 
+  const [showSettings, setShowSettings] = useState(false);
   const [game_chat_input, setGameChatInput] = useState("");
   const [game_chat_sending, setGameChatSending] = useState(false);
   const chat_container = useRef(null);
@@ -757,7 +755,7 @@ function Game(){
     return (
       <ui.FullScreen className="flex overflow-hidden">
         <ui.SideBar
-          style={{ "--bg-paint-texture": `url(${paintTexture})` }}
+          style={{ "--bg-paint-texture": `url(${assets.sideBarTexture})` }}
           className="flex flex-col gap-ui-md p-ui-md"
         >
 
@@ -790,8 +788,8 @@ function Game(){
             md:bg-[image:var(--bg-desktop)]
           "
           style={{
-            "--bg-mobile": `url(${bgMobile})`,
-            "--bg-desktop": `url(${bgLandscape})`,
+            "--bg-mobile": `url(${assets.bgMobile})`,
+            "--bg-desktop": `url(${assets.bgLandscape})`,
           }}
         >
           <div className="absolute top-[8%] flex gap-ui-md">
@@ -864,7 +862,7 @@ function Game(){
   <ui.FullScreen className="flex">
 
     <ui.SideBar 
-      style={{"--bg-paint-texture": `url(${paintTexture})`,}}
+      style={{"--bg-paint-texture": `url(${assets.sideBarTexture})`,}}
     >
 
       {hintBoxOpen && <>
@@ -1105,8 +1103,9 @@ function Game(){
       }
       <ui.SideBar.Btn
         className="shrink-0"
+        onClick={() => setShowSettings(true)}
       >
-        <ui.Logo id="settings" /> 
+        <ui.Logo id="settings" />&nbsp;
         Settings
       </ui.SideBar.Btn>
       <ui.SideBar.Btn 
@@ -1137,10 +1136,14 @@ function Game(){
         md:bg-[image:var(--bg-desktop)]
       "
       style={{
-        "--bg-mobile": `url(${bgMobile})`,
-        "--bg-desktop": `url(${bgLandscape})`,
+        "--bg-mobile": `url(${assets.bgMobile})`,
+        "--bg-desktop": `url(${assets.bgLandscape})`,
       }}
     >
+
+      {showSettings &&
+      <ui.Settings onClose={() => setShowSettings(false)} />
+      }
 
       <AnimatePresence>
       {game.winner && !inspectGameAfterWin &&

@@ -10,9 +10,6 @@ import ui from "../components/shared/_ui"
 import lobby_ui from "../components/lobby/lobby_ui";
 import Loader from "../components/loaders/_loaders";
 import Skeleton from "react-loading-skeleton";
-import bgLandscape from "../assets/images/bg1.jpg"
-import bgMobile from "../assets/images/bg2.jpg"
-import paintTexture from "../assets/images/sidebar-texture.jpg"
 
 
 Object.assign(ui, {Lobby:lobby_ui})
@@ -22,7 +19,9 @@ function JoinLobby() {
   const navigate = useNavigate();
   const { showNotification } = useNotification();
   const { session, setSession } = useApp();
+  const assets = ui.Assets();
 
+  const [showSettings, setShowSettings] = useState(false);
   const [lobbies, setLobbies] = useState(null);
   const [joiningLoading, setJoiningLoading] = useState(false);
   const [refresh_lobbies_loading, setRefreshLobbiesLoading] = useState(false);
@@ -118,7 +117,7 @@ function JoinLobby() {
     <ui.FullScreen className="flex">
 
       <ui.SideBar 
-        style={{"--bg-paint-texture": `url(${paintTexture})`,}}
+        style={{"--bg-paint-texture": `url(${assets.sideBarTexture})`,}}
       >
         <h1 className="ui-text text-2xl truncate">
           Play as: &nbsp;
@@ -141,7 +140,9 @@ function JoinLobby() {
           <ui.Logo id="home" />&nbsp;
           Home
         </ui.SideBar.Btn>
-        <ui.SideBar.Btn>
+        <ui.SideBar.Btn
+          onClick={() => setShowSettings(true)}
+        >
           <ui.Logo id="settings" />&nbsp;
           Settings
         </ui.SideBar.Btn>
@@ -158,10 +159,15 @@ function JoinLobby() {
           md:bg-[image:var(--bg-desktop)]
         "
         style={{
-          "--bg-mobile": `url(${bgMobile})`,
-          "--bg-desktop": `url(${bgLandscape})`,
+          "--bg-mobile": `url(${assets.bgMobile})`,
+          "--bg-desktop": `url(${assets.bgLandscape})`,
         }}
       >
+
+        {showSettings &&
+        <ui.Settings onClose={() => setShowSettings(false)} />
+        }
+
         <div
           className="
             flex flex-col w-[80%] h-[80%]

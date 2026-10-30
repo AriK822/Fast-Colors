@@ -11,10 +11,6 @@ import lobby_ui from "../components/lobby/lobby_ui"
 import Loader from "../components/loaders/_loaders";
 import Skeleton from "react-loading-skeleton";
 
-import bgLandscape from "../assets/images/bg1.jpg"
-import bgMobile from "../assets/images/bg2.jpg"
-import paintTexture from "../assets/images/sidebar-texture.jpg"
-
 
 
 Object.assign(ui, {Lobby:lobby_ui})
@@ -24,9 +20,11 @@ function Lobby() {
   const navigate = useNavigate();
   const { showNotification } = useNotification();
   const { session, setSession, runSyncSession } = useApp();
+  const assets = ui.Assets();
 
   const [lobby, setLobby] = useState(null);
 
+  const [showSettings, setShowSettings] = useState(false);
   const [leave_lobby_loading, setLeaveLobbyLoading] = useState(false);
   const [kick_player_loading, setKickPlayerLoading] = useState(null);
   const [nameInputValue, setNameInputValue] = useState(session.player_name);
@@ -296,7 +294,7 @@ function Lobby() {
     <ui.FullScreen className="flex">
 
       <ui.SideBar 
-        style={{"--bg-paint-texture": `url(${paintTexture})`,}}
+        style={{"--bg-paint-texture": `url(${assets.sideBarTexture})`,}}
       >
         <h1 className="ui-text text-2xl truncate shrink-0">
           Play as: &nbsp;
@@ -351,10 +349,11 @@ function Lobby() {
           md:bg-[image:var(--bg-desktop)]
         "
         style={{
-          "--bg-mobile": `url(${bgMobile})`,
-          "--bg-desktop": `url(${bgLandscape})`,
+          "--bg-mobile": `url(${assets.bgMobile})`,
+          "--bg-desktop": `url(${assets.bgLandscape})`,
         }}
       >
+
         <ui.Frame
           className={`
             flex flex-col w-[92%] h-[92%]
@@ -427,7 +426,7 @@ function Lobby() {
     <ui.FullScreen className="flex">
 
       <ui.SideBar 
-        style={{"--bg-paint-texture": `url(${paintTexture})`,}}
+        style={{"--bg-paint-texture": `url(${assets.sideBarTexture})`,}}
       >
         <h1 className="ui-text text-2xl truncate shrink-0">
           Play as: &nbsp;
@@ -549,8 +548,10 @@ function Lobby() {
         </ui.SideBar.Btn>
         <ui.SideBar.Btn
           className="shrink-0"
+          onClick={() => setShowSettings(true)}
         >
-          <ui.Logo id="settings" /> Settings
+          <ui.Logo id="settings" />&nbsp;
+          Settings
         </ui.SideBar.Btn>
         <ui.SideBar.Btn 
           onClick={leaveLobbyBtn}
@@ -576,10 +577,15 @@ function Lobby() {
           md:bg-[image:var(--bg-desktop)]
         "
         style={{
-          "--bg-mobile": `url(${bgMobile})`,
-          "--bg-desktop": `url(${bgLandscape})`,
+          "--bg-mobile": `url(${assets.bgMobile})`,
+          "--bg-desktop": `url(${assets.bgLandscape})`,
         }}
       >
+
+        {showSettings &&
+        <ui.Settings onClose={() => setShowSettings(false)} />
+        }
+
         <ui.Frame
           className={`
             flex flex-col w-[92%] h-[92%]

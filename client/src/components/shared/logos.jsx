@@ -35,6 +35,7 @@ import WinnerCrownLogo from "../../assets/logos/winner_crown.svg?react";
 import XLogo from "../../assets/logos/x.svg?react";
 import PlayersLogo from "../../assets/logos/players.svg?react";
 import SidebarLogo from "../../assets/logos/sidebar.svg?react";
+import CheckLogo from "../../assets/logos/check.svg?react";
 import GameDirectionArrow from "../../assets/logos/game_direction.svg?react"
 
 
@@ -73,11 +74,12 @@ const logos = {
   x: XLogo,
   players: PlayersLogo,
   sidebar: SidebarLogo,
+  check: CheckLogo,
 
   GameDirectionArrow,
 };
 
-export function Logo({ id, color = "white", className = "" }) {
+export function Logo({ id, color = "var(--theme-text)", className = "" }) {
   const Svg = logos[id];
 
   if (!Svg) return null;
@@ -92,5 +94,5 @@ export function Logo({ id, color = "white", className = "" }) {
 }
 
 export default {
-    Logo,
+  Logo,
 };

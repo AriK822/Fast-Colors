@@ -141,6 +141,11 @@
     outline: 1px solid var(--theme-highlight);
 }
 
+.frame-input::placeholder{
+    color:var(--theme-text);
+    opacity: 50%;
+}
+
 
 .frame-label-dark{
     background: color-mix(in srgb, 
