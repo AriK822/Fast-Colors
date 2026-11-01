@@ -130,6 +130,15 @@ function Home() {
           <ui.Logo id="settings" />&nbsp;
           Settings
         </ui.SideBar.Btn>
+        <ui.SideBar.Btn
+          onClick={() => window.open(
+            'https://github.com/AriK822/Fast-Colors', 
+            '_blank'
+          )}
+        >
+          <ui.Logo id="github_logo" />
+          github
+        </ui.SideBar.Btn>
 
       </ui.SideBar>
 

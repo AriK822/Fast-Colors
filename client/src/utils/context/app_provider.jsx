@@ -4,6 +4,7 @@ import React, {
     useEffect,
     useState,
 } from "react";
+import { MotionConfig } from "motion/react";
 
 import socket from "../../api/socket_init";
 import * as SocketAPI from "../../api/socket_handler"
@@ -37,6 +38,10 @@ function getSettings(){
     return JSON.parse(localStorage.getItem("settings")) ?? 
     {
         theme:"default",
+        motion:{
+            animations:true,
+            drag:true,
+        },
     };
 }
 
@@ -151,7 +156,13 @@ export const AppProvider = ({ children }) => {
                 SocketStatusModes = {SocketStatusModes} 
                 display={true} 
             />
+            <MotionConfig
+                key={settings.motion.animations ? "enabled" : "disabled"}
+                reducedMotion={settings.motion.animations ? "never" : "always"}
+                transition={settings.motion.animations ? undefined : { duration: 0 }}
+            >
             {children}
+            </MotionConfig>
         </AppContext.Provider>
     );
 };

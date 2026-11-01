@@ -82,7 +82,7 @@ function PlayersStrip({game, sideLength=2}){
 }
 
 
-function PlayersCircle({game, thisPlayer}){
+function PlayersCircle({game, thisPlayer, settings}){
   const thisIdx = game.players.indexOf(thisPlayer);
   const playersLen = game.players.length;
 
@@ -96,7 +96,7 @@ function PlayersCircle({game, thisPlayer}){
         blockedCount={game.effects_data?.skip_blocked_players?.[(thisIdx+1)%playersLen] ?? 0}
         className="w-[150px] lg:w-[250px] shrink-0
           !absolute left-[50%] top-[7%] -translate-x-1/2"
-        drag
+        drag={settings.motion.drag}
         dragSnapToOrigin
       />
     </>)
@@ -110,7 +110,7 @@ function PlayersCircle({game, thisPlayer}){
         blockedCount={game.effects_data?.skip_blocked_players?.[(thisIdx+1)%playersLen] ?? 0}
         className="w-[150px] lg:w-[250px] shrink-0
           !absolute left-[5%] top-[12%]"
-        drag
+        drag={settings.motion.drag}
         dragSnapToOrigin
       />
       <ui.Game.PlayerStripLabel
@@ -121,7 +121,7 @@ function PlayersCircle({game, thisPlayer}){
         blockedCount={game.effects_data?.skip_blocked_players?.[(thisIdx+2)%playersLen] ?? 0}
         className="w-[150px] lg:w-[250px] shrink-0
           !absolute right-[5%] top-[12%]"
-        drag
+        drag={settings.motion.drag}
         dragSnapToOrigin
       />
     </>)
@@ -135,7 +135,7 @@ function PlayersCircle({game, thisPlayer}){
         blockedCount={game.effects_data?.skip_blocked_players?.[(thisIdx+1)%playersLen] ?? 0}
         className="w-[150px] lg:w-[250px] shrink-0
           !absolute left-[5%] top-[15%]"
-        drag
+        drag={settings.motion.drag}
         dragSnapToOrigin
       />
       <ui.Game.PlayerStripLabel
@@ -146,7 +146,7 @@ function PlayersCircle({game, thisPlayer}){
         blockedCount={game.effects_data?.skip_blocked_players?.[(thisIdx+2)%playersLen] ?? 0}
         className="w-[150px] lg:w-[250px] shrink-0
           !absolute left-[50%] top-[2%] sm:top-[7%] -translate-x-1/2"
-        drag
+        drag={settings.motion.drag}
         dragSnapToOrigin
       />
       <ui.Game.PlayerStripLabel
@@ -157,7 +157,7 @@ function PlayersCircle({game, thisPlayer}){
         blockedCount={game.effects_data?.skip_blocked_players?.[(thisIdx+3)%playersLen] ?? 0}
         className="w-[150px] lg:w-[250px] shrink-0
           !absolute right-[5%] top-[15%]"
-        drag
+        drag={settings.motion.drag}
         dragSnapToOrigin
       />
     </>)
@@ -171,7 +171,7 @@ function PlayersCircle({game, thisPlayer}){
         blockedCount={game.effects_data?.skip_blocked_players?.[(thisIdx+1)%playersLen] ?? 0}
         className="w-[125px] xs:w-[150px] lg:w-[250px] shrink-0
           !absolute left-[5%] top-[22%]"
-        drag
+        drag={settings.motion.drag}
         dragSnapToOrigin
       />
       <ui.Game.PlayerStripLabel
@@ -182,7 +182,7 @@ function PlayersCircle({game, thisPlayer}){
         blockedCount={game.effects_data?.skip_blocked_players?.[(thisIdx+2)%playersLen] ?? 0}
         className="w-[125px] xs:w-[150px] lg:w-[250px] shrink-0
           !absolute left-[33%] top-[7%] -translate-x-1/2"
-        drag
+        drag={settings.motion.drag}
         dragSnapToOrigin
       />
       <ui.Game.PlayerStripLabel
@@ -193,7 +193,7 @@ function PlayersCircle({game, thisPlayer}){
         blockedCount={game.effects_data?.skip_blocked_players?.[(thisIdx+3)%playersLen] ?? 0}
         className="w-[125px] xs:w-[150px] lg:w-[250px] shrink-0
           !absolute left-[66%] top-[7%] -translate-x-1/2"
-        drag
+        drag={settings.motion.drag}
         dragSnapToOrigin
       />
       <ui.Game.PlayerStripLabel
@@ -204,7 +204,7 @@ function PlayersCircle({game, thisPlayer}){
         blockedCount={game.effects_data?.skip_blocked_players?.[(thisIdx+4)%playersLen] ?? 0}
         className="w-[125px] xs:w-[150px] lg:w-[250px] shrink-0
           !absolute right-[5%] top-[22%]"
-        drag
+        drag={settings.motion.drag}
         dragSnapToOrigin
       />
     </>)
@@ -218,7 +218,7 @@ function PlayersCircle({game, thisPlayer}){
         blockedCount={game.effects_data?.skip_blocked_players?.[(thisIdx+1)%playersLen] ?? 0}
         className="w-[125px] xs:w-[150px] lg:w-[250px] shrink-0
           !absolute left-[5%] top-[66%]"
-        drag
+        drag={settings.motion.drag}
         dragSnapToOrigin
       />
       <ui.Game.PlayerStripLabel
@@ -229,7 +229,7 @@ function PlayersCircle({game, thisPlayer}){
         blockedCount={game.effects_data?.skip_blocked_players?.[(thisIdx+2)%playersLen] ?? 0}
         className="w-[125px] xs:w-[150px] lg:w-[250px] shrink-0
           !absolute left-[5%] top-[18%]"
-        drag
+        drag={settings.motion.drag}
         dragSnapToOrigin
       />
       <ui.Game.PlayerStripLabel
@@ -240,7 +240,7 @@ function PlayersCircle({game, thisPlayer}){
         blockedCount={game.effects_data?.skip_blocked_players?.[(thisIdx+3)%playersLen] ?? 0}
         className="w-[125px] xs:w-[150px] lg:w-[250px] shrink-0
           !absolute left-[50%] top-[3%] -translate-x-1/2"
-        drag
+        drag={settings.motion.drag}
         dragSnapToOrigin
       />
       <ui.Game.PlayerStripLabel
@@ -251,7 +251,7 @@ function PlayersCircle({game, thisPlayer}){
         blockedCount={game.effects_data?.skip_blocked_players?.[(thisIdx+4)%playersLen] ?? 0}
         className="w-[125px] xs:w-[150px] lg:w-[250px] shrink-0
           !absolute right-[5%] top-[18%]"
-        drag
+        drag={settings.motion.drag}
         dragSnapToOrigin
       />
       <ui.Game.PlayerStripLabel
@@ -262,7 +262,7 @@ function PlayersCircle({game, thisPlayer}){
         blockedCount={game.effects_data?.skip_blocked_players?.[(thisIdx+5)%playersLen] ?? 0}
         className="w-[125px] xs:w-[150px] lg:w-[250px] shrink-0
           !absolute right-[5%] top-[66%]"
-        drag
+        drag={settings.motion.drag}
         dragSnapToOrigin
       />
     </>)
@@ -391,7 +391,7 @@ function SyncingIndicator({className}){
 function Game(){
   const navigate = useNavigate();
   const { showNotification } = useNotification();
-  const { session, setSession, serverTimerOffset, runSyncSession } = useApp();
+  const { session, setSession, serverTimerOffset, runSyncSession, settings } = useApp();
   const assets = ui.Assets();
 
   const [game, setGame] = useState(null);
@@ -1217,7 +1217,11 @@ function Game(){
         <GameDirectionIndicator game={game} />
 
         {game.players.length <= 6 &&
-          <PlayersCircle game={game} thisPlayer={thisPlayer} />
+          <PlayersCircle 
+            game={game} 
+            thisPlayer={thisPlayer} 
+            settings={settings}
+          />
         }
 
         <AnimatePresence>
@@ -1363,7 +1367,7 @@ function Game(){
               }}
               exit={{ opacity: 0, scale: 0.85 }}
               transition={{ duration: 0.3, ease: "easeOut" }}
-              drag
+              drag={settings.motion.drag}
               dragSnapToOrigin
             />
           ))}
@@ -1375,7 +1379,7 @@ function Game(){
             rednered_text={game.current_card.rednered_text} 
             style={{zIndex:game.history.total_placed_cards}}
 
-            drag
+            drag={settings.motion.drag}
             dragSnapToOrigin
             initial={{opacity:0.8, scale:0.8}}
             animate={{opacity:1, scale:1}}

@@ -71,9 +71,10 @@ function Settings({game, onClose}){
                 }
                 onClick={(e) => e.stopPropagation()}
             >
+
                 <p className="text-lg">Themes:</p>
                 <frame.Frame.SubBox
-                    className="grid md:grid-cols-2 gap-ui-xxs"
+                    className="grid md:grid-cols-2 gap-ui-xxs mb-ui-sm"
                 >
                     {Themes.map((thisTheme, i) => (
                         <frame.Frame.ContrastBtn 
@@ -88,8 +89,36 @@ function Settings({game, onClose}){
                             </p>
                         </frame.Frame.ContrastBtn>
                     ))}
-
                 </frame.Frame.SubBox>
+
+                <p className="text-lg">Motion:</p>
+                <frame.Frame.SubBox>
+                    <div
+                        className="w-full flex flex-row p-ui-xxs"
+                    >
+                    <div className="grow-1 flex align-center">
+                    <label>Animations: &nbsp;</label>
+                    <frame.Frame.CheckBox
+                        checked={settings.motion?.animations ?? true}
+                        onChange={(e) => {setSettings(prev => ({
+                            ...prev, 
+                            motion:{...prev.motion, animations:!prev.motion.animations}
+                        }))}}
+                    />
+                    </div>
+                    <div className="grow-1 flex align-center">
+                    <label>Drag: &nbsp;</label>
+                    <frame.Frame.CheckBox
+                        checked={settings.motion?.drag ?? true}
+                        onChange={(e) => {setSettings(prev => ({
+                            ...prev, 
+                            motion:{...prev.motion, drag:!prev.motion.drag}}
+                        ))}}
+                    />
+                    </div>
+                    </div>
+                </frame.Frame.SubBox>
+
             </frame.Frame.Box>
         </motion.div>
         </div>
