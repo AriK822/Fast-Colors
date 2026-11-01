@@ -31,7 +31,7 @@ import { useApp } from "../../utils/context/app_provider"
 
 
 export function Assets(){
-    const { theme } = useApp();
+    const { settings } = useApp();
 
     const defaultAssets = {
         bgLandscape,
@@ -43,7 +43,7 @@ export function Assets(){
         sideBarBottomLeft,
     }
 
-    if (theme=="dark-theme")
+    if (settings.theme=="dark-theme")
         return {
             ...defaultAssets,
             bgLandscape: bgLandscapeDark,
@@ -52,7 +52,7 @@ export function Assets(){
             sideBarBottomLeft: null,
         }
 
-    if (theme=="focus-theme")
+    if (settings.theme=="focus-theme")
         return {
             ...defaultAssets,
             bgLandscape: bgLandscapeFocus,
@@ -62,7 +62,7 @@ export function Assets(){
             sideBarBottomLeft: null,
         }
 
-    if (theme=="og-theme")
+    if (settings.theme=="og-theme")
         return {
             ...defaultAssets,
             bgLandscape: bgLandscapeOG,
@@ -72,7 +72,7 @@ export function Assets(){
             sideBarBottomLeft: null,
         }
 
-    if (theme=="cloudy-theme")
+    if (settings.theme=="cloudy-theme")
         return {
             ...defaultAssets,
             bgLandscape: bgLandscapeCloudy,
@@ -82,7 +82,7 @@ export function Assets(){
             sideBarBottomLeft: sideBarTopLeftCloudy,
         }
 
-    if (theme=="sorcerer-theme")
+    if (settings.theme=="sorcerer-theme")
         return {
             ...defaultAssets,
             bgLandscape: bgLandscapeSorcerer,

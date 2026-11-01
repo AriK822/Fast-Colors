@@ -7,7 +7,6 @@ import React, {
 
 import socket from "../../api/socket_init";
 import * as SocketAPI from "../../api/socket_handler"
-import * as Cookies from "./cookie_handler"
 
 import SocketConnectionOverlay from "../../components/loaders/socket_connection_overlay"
 import Loader from "../../components/loaders/_loaders"
@@ -34,6 +33,13 @@ export const SocketStatusModes = Object.freeze({
     RECONNECTING: "reconnecting",
 });
 
+function getSettings(){
+    return JSON.parse(localStorage.getItem("settings")) ?? 
+    {
+        theme:"default",
+    };
+}
+
 
 export const AppProvider = ({ children }) => {
 
@@ -46,7 +52,7 @@ export const AppProvider = ({ children }) => {
 
     const [width, setWidth] = useState(null);
 
-    const [theme, setTheme] = useState(Cookies.getCookie("theme") ?? "default");
+    const [settings, setSettings] = useState(getSettings());
 
 
     useEffect(() => {
@@ -110,11 +116,11 @@ export const AppProvider = ({ children }) => {
     }, []);
 
     useEffect(() => {
-        document.documentElement.classList.toggle(theme);
+        document.documentElement.classList.toggle(settings.theme);
     }, []);
     useEffect(() => {
-        Cookies.setCookie("theme", theme);
-    }, [theme]);
+        localStorage.setItem("settings", JSON.stringify(settings))
+    }, [settings]);
 
 
     const value = {
@@ -129,8 +135,8 @@ export const AppProvider = ({ children }) => {
         width,
         setWidth,
 
-        theme,
-        setTheme,
+        settings,
+        setSettings,
     };
 
 

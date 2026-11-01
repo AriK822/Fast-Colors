@@ -41,13 +41,14 @@ const THEME_IDS = Themes.map(t => t.id);
 
 
 function Settings({game, onClose}){
-    const { theme, setTheme } = useApp();
+    const { settings, setSettings } = useApp();
 
-    useEffect(() => {
+    function setTheme(theme){
+        setSettings(prev => ({...prev, theme}))
         const root = document.documentElement;
         root.classList.remove(...THEME_IDS);
         document.documentElement.classList.toggle(theme);
-    }, [theme])
+    }
 
 
     return (
@@ -81,7 +82,7 @@ function Settings({game, onClose}){
                             onClick={() => setTheme(thisTheme.id)}
                         >
                             {thisTheme.title}
-                            {theme == thisTheme.id && <Logo id="check" />}
+                            {settings.theme == thisTheme.id && <Logo id="check" />}
                             <p className="opacity-60">
                                 {thisTheme.desc}
                             </p>
