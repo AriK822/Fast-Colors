@@ -7,8 +7,8 @@ import { useApp } from "../../utils/context/app_provider";
 
 
 function PlayerStripLabel({player, className, 
-    thisTurn=false, hoverEffect=false, winner=false,
-    blockedCount=0, showTimer=true,
+    thisTurn=false, hoverEffect=true, winner=false,
+    blockedCount=0, showTimer=true, insideStrip=false,
     ...props}){
     let status = "";
     let status_color = null;
@@ -110,13 +110,28 @@ function PlayerStripLabel({player, className,
                         className="!h-5 !w-5 -ml-3 shrink-0" 
                         color="var(--theme-highlight)"
                     />
-                    // <img 
-                    //     key={i}
-                    //     src={blockedPlayer} 
-                    //     className="h-5 w-5 -ml-3 shrink-0" 
-                    // />
                 ))}
             </div>
+
+            {thisTurn && !winner && !insideStrip &&
+            <motion.div
+                className="absolute 
+                top-0 -translate-y-[80%]
+                left-[50%] -translate-x-1/2"
+                layoutId="main-game-turn-indicator"
+                layoutCrossfade={false}
+                transition={{
+                    duration: 0.45,
+                    ease: [0.42, 0.19, 0.14, 0.93],
+                }}
+            >
+                <ui.Logo 
+                    id="GameTurnIndicator"
+                    className="!h-[50px]"
+                    color="var(--theme-accent-deep)"
+                />
+            </motion.div>
+            }
         </motion.div>
     )
 }

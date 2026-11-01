@@ -97,7 +97,7 @@ function Settings({game, onClose}){
                         className="w-full flex flex-row p-ui-xxs"
                     >
                     <div className="grow-1 flex align-center">
-                    <label>Animations: &nbsp;</label>
+                    <p>Animations: &nbsp;</p>
                     <frame.Frame.CheckBox
                         checked={settings.motion?.animations ?? true}
                         onChange={(e) => {setSettings(prev => ({
@@ -107,7 +107,7 @@ function Settings({game, onClose}){
                     />
                     </div>
                     <div className="grow-1 flex align-center">
-                    <label>Drag: &nbsp;</label>
+                    <p>Drag: &nbsp;</p>
                     <frame.Frame.CheckBox
                         checked={settings.motion?.drag ?? true}
                         onChange={(e) => {setSettings(prev => ({

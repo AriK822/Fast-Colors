@@ -44,7 +44,7 @@ function PlayersStrip({game, sideLength=2}){
       >
         <ui.Game.PlayerStripLabel
           player={thisPlayer}
-          distance={i}
+          insideStrip={true}
           className="w-full"
           thisTurn={i === 0}
           blockedCount={game.effects_data?.skip_blocked_players?.[game.players.indexOf(thisPlayer)] ?? 0}

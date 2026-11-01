@@ -36,7 +36,9 @@ import XLogo from "../../assets/logos/x.svg?react";
 import PlayersLogo from "../../assets/logos/players.svg?react";
 import SidebarLogo from "../../assets/logos/sidebar.svg?react";
 import CheckLogo from "../../assets/logos/check.svg?react";
+
 import GameDirectionArrow from "../../assets/logos/game_direction.svg?react"
+import GameTurnIndicator from "../../assets/logos/turn_indicator.svg?react"
 
 
 const logos = {
@@ -77,6 +79,7 @@ const logos = {
   check: CheckLogo,
 
   GameDirectionArrow,
+  GameTurnIndicator,
 };
 
 export function Logo({ id, color = "var(--theme-text)", className = "" }) {
